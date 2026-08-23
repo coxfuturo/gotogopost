@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8">
+
+    <title>GOTOGO POST</title>
+
+    <!-- Stylesheets -->
+
+    <!-- bootstrap v3.3.6 css -->
+
+    <link href="https://www.gotogopost.com/website/css/bootstrap.css" rel="stylesheet">
+
+    <!-- font-awesome css -->
+
+    <link href="https://www.gotogopost.com/website/css/font-awesome.css" rel="stylesheet">
+
+    <!-- flaticon css -->
+
+    <link href="https://www.gotogopost.com/website/css/flaticon.css" rel="stylesheet">
+
+    <!-- factoryplus-icons css -->
+
+    <link href="https://www.gotogopost.com/website/css/factoryplus-icons.css" rel="stylesheet">
+
+    <!-- animate css -->
+
+    <link href="https://www.gotogopost.com/website/css/animate.css" rel="stylesheet">
+
+    <!-- owl.carousel css -->
+
+    <link href="https://www.gotogopost.com/website/css/owl.css" rel="stylesheet">
+
+    <!-- fancybox css -->
+
+    <link href="https://www.gotogopost.com/website/css/jquery.fancybox.css" rel="stylesheet">
+
+    <link href="https://www.gotogopost.com/website/css/hover.css" rel="stylesheet">
+
+    <link href="https://www.gotogopost.com/website/css/frontend.css" rel="stylesheet">
+
+    <link href="https://www.gotogopost.com/website/css/style.css" rel="stylesheet">
+
+    <!-- switcher css -->
+
+    <link href="https://www.gotogopost.com/website/css/switcher.css" rel="stylesheet">
+
+    <link rel='stylesheet' id='factoryhub-color-switcher-css' href="https://www.gotogopost.com/website/css/switcher/default.css" />
+
+    <!-- revolution slider css -->
+
+    <link rel="stylesheet" type="text/css" href="https://www.gotogopost.com/css/revolution/settings.css">
+
+    <link rel="stylesheet" type="text/css" href="https://www.gotogopost.com/css/revolution/layers.css">
+
+    <link rel="stylesheet" type="text/css" href="https://www.gotogopost.com/css/revolution/navigation.css">
+
+
+
+    <!--Favicon-->
+
+    <link rel="shortcut icon" href="https://www.gotogopost.com/images/favicon.ico" type="image/x-icon">
+
+    <link rel="icon" href="https://www.gotogopost.com/images/favicon.ico" type="image/x-icon">
+
+    <!-- Responsive -->
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://www.gotogopost.com/website/css/responsive.css" rel="stylesheet">
+
+    <!-- Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+</head>
+
+
+
+<style>
+
+    .header-v1 .nav a {
+
+    color: #000;
+
+}
+
+
+
+.header-transparent .site-header {
+
+    background-color: white;
+
+    position: absolute;
+
+    top: 0;
+
+    left: 0;
+
+    width: 100%;
+
+    z-index: 999;
+
+    border-bottom: 1px solid rgba(35, 41, 81, 0.1);
+
+}
+
+
+
+.site-header {
+
+    background-color: #fff;
+
+    position: relative;
+
+    padding: 12px 0;
+
+}
+
+.fh-btn {
+    font-size: 16px;
+    font-weight: 400;
+    color: #fff;
+    text-align: center;
+    display: inline-block;
+    min-width: 100px;
+    min-height: 22px;
+    line-height: 42px;
+    -webkit-border-radius: 0;
+    border-radius: 0;
+    background-color: #ff0000;
+    text-transform: capitalize;
+    border: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    font-family: 'Montserrat', sans-serif;
+    -webkit-transition: 0.5s;
+    transition: 0.5s;
+}
+
+.header-transparent .navbar-icon .navbars-line, .header-transparent .navbar-icon .navbars-line:before, .header-transparent .navbar-icon .navbars-line:after {
+    background-color: #222;
+}
+
+  .header-v1 .nav li li:hover>ul {
+    top: 0;
+    left: -webkit-calc(100% + 10px);
+    left: calc(-102% + 0px);
+}
+
+/* add vikas css  */
+/* General Navigation Styling */
+.nav-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background: #007bff;
+    display: flex;
+    justify-content: center;
+}
+
+.nav-menu > li {
+    position: relative;
+}
+
+/* Main Menu Links */
+.nav-menu a {
+    text-decoration: none;
+    color: #3d0e0e;
+    font-size: 16px;
+    padding: 12px 20px;
+    display: block;
+    transition: all 0.3s ease-in-out;
+    text-align: left; /* Text left aligned */
+}
+
+.nav-menu a:hover {
+    background: #0056b3;
+}
+
+/* Sub-Menu Styling */
+.sub-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    right: 0;  /* Submenu ko right shift kiya */
+    top: 100%;
+    background: #c77272;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    width: 250px;
+    display: none;
+    z-index: 100;
+}
+
+.sub-menu li {
+    width: 100%;
+    text-align: left; /* Text left align */
+    padding-right: 15px; /* List items right shift */
+}
+
+.sub-menu a {
+    color: #ffffff;
+    background: #818080;
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
+    transition: all 0.3s ease-in-out;
+}
+
+.sub-menu a:hover {
+    background: #007bff;
+    color: white;
+}
+
+/* Show Submenu on Hover */
+.has-children:hover > .sub-menu {
+    display: block;
+}
+
+/* Nested Sub-Menu */
+.has-children .sub-menu .sub-menu {
+    right: 100%; /* Submenu ko right shift kiya */
+    top: 0;
+}
+
+/* Responsive Styling */
+@media (max-width: 768px) {
+    .nav-menu {
+        display: block;
+    }
+    .nav-menu > li {
+        display: block;
+        width: 100%;
+    }
+    .sub-menu {
+        width: 100%;
+        position: relative;
+    }
+}
+</style>
+
+
+
+<body class="home header-transparent  header-sticky header-v1 hide-topbar-mobile">
+
+    <div id="page">
+
+        <!-- Preloader-->
+
+        
+
+
+
+        <!-- masthead -->
+
+        
+
+        <header id="masthead" class="site-header clearfix">
+
+
+
+            <div class="header-main clearfix">
+
+                <div class="container mobile_relative">
+
+                    <div class="row">
+
+                        <div class="site-logo col-md-2 col-sm-6 col-xs-6">
+
+                            <a href="https://www.gotogopost.com" class="logo">
+
+                                <img  src="https://www.gotogopost.com/website/images/logonew.jpg" style="width: 50%;height: 100%;" alt="CargoHub" class="logo-light show-logo">
+
+                                <img src=" https://www.gotogopost.com/website/images/logonew.jpg " style="width: 50%;height: 100%;" alt="CargoHub" class="logo-dark hide-logo">
+
+                            </a>
+
+                        </div>
+
+                        <div class="site-menu col-md-10 col-sm-6 col-xs-6">
+
+                            <nav id="site-navigation" class="main-nav primary-nav nav" style="display:flex; justify-content:flex-end;">
+
+                                <ul class="menu">
+
+                                    <li class=""><a href="https://www.gotogopost.com" class="dropdown-toggle">Home</a>
+
+                                    </li>
+
+                                    
+                                    <li class="has-children">
+                                        <a href="https://www.gotogopost.com/services" class="dropdown-toggle">Services</a>
+                                        <ul class="sub-menu">
+                                    
+                                           
+                                            <li class="has-children">
+                                                <a href="#">Courier Booking Services</a>
+                                                <ul class="sub-menu">
+                                                    <li class="has-children">
+                                                    <li><a href="#">GOTOGO Super Speed Packet</a></li>
+                                                    <li><a href="#">GOTOGO Express Package</a></li>
+                                                    <li><a href="#">GOTOGO Secure Packet</a></li>
+                                                       
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                    
+                                           
+                                            <li class="has-children">
+                                                <a href="#">GoToGo Digital Courier Services</a>
+                                                <ul class="sub-menu">
+                                                    <li class="has-children">
+                                                        <a href="#">E2E</a>
+                                                        <a href="#">E2H</a>
+                                                       
+                                                    </li>
+
+                                                </ul>
+                                            </li>
+                                            <li class="has-children">
+                                                <a href="#">GOTOGO All India Post Services</a>
+                                                <ul class="sub-menu">
+                                                    <li class="has-children">
+                                                    <li><a href="#">GOTOGO Speed Packet</a></li>
+                                                    <li><a href="#">GOTOGO Business Package</a></li>
+                                                        
+                                                    </li>
+
+                                                </ul>
+                                            </li>
+                                    
+                                            <li class="has-children">
+                                                <a href="#">International Service</a>
+                                                <ul class="sub-menu">
+                                                    <li class="has-children">
+                                                        <a href="#">B2B</a>
+                                                        <a href="#">B2C</a>
+                                                        
+                                                    </li>
+
+                                                </ul>
+                                            </li>
+                                           
+                                        </ul>
+                                    </li>
+                                    
+
+                                    
+
+                                    <li><a href="https://www.gotogopost.com/contact">Contact</a></li>
+
+                                    <li><a href="https://www.gotogopost.com/about">About Us</a></li>
+                                    <li><a href="https://www.gotogopost.com/pay">Payment</a></li>
+
+                                    <li class="has-children"><a href="#" class="dropdown-toggle fh-btn btn" style="color:white">Login</a>
+
+                                        <ul class="sub-menu">
+
+                                            
+                                            <li><a href="https://www.gotogopost.com/franchise/login">Franchise Login</a></li>
+                                            
+                                            <li><a href="https://www.gotogopost.com/cms/login">CPH login</a></li>
+                                            
+                                            <li><a href="https://www.gotogopost.com/pph/login">PPH login</a></li>
+                                            
+                                            <li><a href="https://www.gotogopost.com/delboy/login">Delivery | Pickup Boy Login</a></li>
+                                        </ul>
+
+                                    </li>
+
+                                    <li class="has-children"><a href="#" class="dropdown-toggle fh-btn btn" style="color:white">Register</a>
+
+                                        <ul class="sub-menu">
+
+                                            <li><a href="https://www.gotogopost.com/franchise/register">Franchise Register</a>
+                                            <!-- <ul class="child-menu">
+                                                    <li><a>Tsddsftd</a></li>
+                                                    <li><a>Tsddsftd</a></li>
+                                                    <li><a>Tsddsftd</a></li>
+                                                </ul> -->
+                                            </li>
+
+                                            <li><a href="https://www.gotogopost.com/cms/register">CPH Register</a></li>
+
+                                            <li><a href="https://www.gotogopost.com/pph/register">PPH Register</a></li>
+                                               <li><a href="https://www.gotogopost.com/delboy/register">Delivery | Pickup Boy Register</a></li>
+
+                                        </ul>
+
+                                    </li>
+                                 
+
+                                </ul>
+
+                            </nav>
+
+                        </div>
+
+                    </div>
+
+                    <a href="#" class="navbar-toggle">
+
+                        <span class="navbar-icon">
+
+                            <span class="navbars-line"></span>
+
+                        </span>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </header>
+
+        
+
+
+        <!--mobile view-->
+
+    <div class="primary-mobile-nav header-v1" id="primary-mobile-nav" role="navigation">
+
+        <a href="#" class="close-canvas-mobile-panel">×</a>
+
+        <ul class="menu">
+
+            <li class=""><a href="https://www.gotogopost.com">Home</a>
+
+                
+
+            </li>
+
+            <li class="menu-item-has-children"><a href="#" class="dropdown-toggle">Services</a>
+
+                <!-- <ul class="sub-menu">
+
+                    <li><a href="https://www.gotogopost.com/services">Gotogo Speed Packet</a></li>
+
+                    <li><a href="https://www.gotogopost.com/road-freight">Gotogo Business Package</a></li>
+
+                    <li><a href="ocean-freight-forwarding.html">Gotogo Legal Document Delivery</a></li>
+
+                    <li><a href="air-freight-forwarding.html">Gotogo Digital Courier</a></li>
+
+                </ul> -->
+
+                <ul class="sub-menu">
+
+                                          <li><a href="https://www.gotogopost.com/services">Courier Booking Services</a></li>
+                                          <li><a href="https://www.gotogopost.com/services">GOTOGO Speed Packet </a></li>
+                                          <li><a href="https://www.gotogopost.com/road-freight">GOTOGO Express </a></li>
+                                         
+                                          <li><a href="https://www.gotogopost.com/delivery"> GOTOGO Secure Packet</a></li>
+                                          <!-- <li><a href="https://www.gotogopost.com/logistic">Logistic Services </a></li> -->
+                                          <li><a href="https://www.gotogopost.com/ecommerce">B2B Service </a></li>
+                                          <li><a href="#">Digital Courier Service  </a></li>
+                                          <li><a href="#">Gotogo Post All India Post Service  </a>
+                                            <ul>
+                                                <li><a href="#">Gotogo Speed Packaet</a></li>
+                                                <li><a href="#">GOTOGO Business Package</a></li>
+                                            </ul>
+                                          </li>
+                                        </ul>
+
+            </li>
+
+            <li class="menu-item-has-children"><a href="#" class="dropdown-toggle">Pages</a>
+
+                <ul class="sub-menu">
+
+                    <li><a href="about-us.html">About Us</a></li>
+
+                    <li><a href="faqs.html">FAQS</a></li>
+
+                    <li><a href="our-prices.html">Our Prices</a></li>
+
+                    <li><a href="testimonials.html">Testimonials</a></li>
+
+                </ul>
+
+            </li>
+
+            <li><a href="https://www.gotogopost.com/contact">Contact</a></li>
+
+            <li><a href="https://www.gotogopost.com/about">About Us</a></li>
+            <li><a href="https://www.gotogopost.com/pay">Payment</a></li>
+
+            <li class="menu-item-has-children extra-menu-item menu-item-button-link">  <a href="#" class="">Login</a>
+
+                <ul class="sub-menu">  
+                    <li><a class="fh-btn" href="https://www.gotogopost.com/delboy/login">Delivery Boy Login</a></li>
+                    <li><a class="fh-btn" href="https://www.gotogopost.com/franchise/login">Franchise Login</a></li>
+                    <li><a class="fh-btn" href="https://www.gotogopost.com/cms/login">CPH login</a></li>
+                    <li><a class="fh-btn" href="https://www.gotogopost.com/cms/login">PPH login</a></li>
+                </ul>
+
+            </li>
+
+            <li class="menu-item-has-children extra-menu-item menu-item-button-link">  <a href="#" class="">Register</a>
+
+                <ul class="sub-menu">  
+                    <li><a class="fh-btn" href="https://www.gotogopost.com/delboy/register">Delivery Boy Register</a></li>
+                    <li><a class="fh-btn" href="https://www.gotogopost.com/franchise/register">Franchise Register</a></li>
+                    <li><a class="fh-btn" href="https://www.gotogopost.com/cms/register">CPH Register</a></li>
+                    <li><a class="fh-btn" href="https://www.gotogopost.com/cms/register">PPH Register</a></li>
+                </ul>
+
+            </li>
+
+        </ul>
+
+
+
+    </div>
+
+    
+
+    <!--mobile view-->        
+
+<style>
+    .ban_sec {
+        width: 100%;
+        margin-top: 88px;
+    }
+
+    .ban_img {
+        width: 100%;
+        position: relative;
+    }
+
+    .ban_img img {
+        width: 100%;
+    }
+
+    .contact-banner {
+        max-width: 100%;
+        height: auto;
+        height: 420px;
+    }
+
+    @media only screen and (max-width: 778px) {
+
+        .contact-banner {
+            height: auto;
+        }
+    }
+</style>
+
+
+<section class="ban_sec">
+
+    <div class="ban_img">
+        <img class="contact-banner" src="https://www.gotogopost.com/website/images/contactBanner2.jpg" alt="banner" border="0" />
+    </div>
+
+</section>
+
+<!--Page Header-->
+<div class="page-header title-area">
+    
+
+    <div class="breadcrumb-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 col-sm-12 col-xs-12 site-breadcrumb">
+                    <nav class="breadcrumb">
+                        <a class="home" href="#"><span>Home</span></a>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                        <span>Contact</span>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Page Header end-->
+
+<!--contact pagesec-->
+<section class="contactpagesec secpadd">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="fh-section-title clearfix f25 text-left version-dark paddbtm40">
+                    <h2>Contact Details</h2>
+                </div>
+                <p class="margbtm30">If you have any questions about what we offer for consumers or for business, you
+                    can always email us or call us via the below details. We’ll reply within 24 hours.</p>
+                <div class="row">
+                    <div class="col-md-6 col-sm-12">
+                        <div class="fh-contact-box type-address "><i class="flaticon-pin"></i>
+                            <h4 class="box-title">Visit our office</h4>
+                            <div class="desc">
+                                <p>Office No. 955,9th Floor,Gaur City Mall CO1,BHG,Sec-4,Greater Noida West,Gautam Bddha
+                                    Nagar,(U.P)-201318</p>
+                            </div>
+                        </div>
+                        <div class="fh-contact-box type-email "><i class="flaticon-business"></i>
+                            <h4 class="box-title">Mail Us at</h4>
+                            <div class="desc">
+                             <p>corp.office@gotogopost.in</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                        <div class="fh-contact-box type-phone "><i class="flaticon-phone-call "></i>
+                            <h4 class="box-title">Call us on</h4>
+                            <div class="desc">
+
+                                <p>1800 123 1617
+                                    
+
+                                    
+                            </div>
+                        </div>
+                        <div class="fh-contact-box type-social "><i class="flaticon-share"></i>
+                            <h4 class="box-title">We are social</h4>
+                            <ul class="clearfix">
+                                <li class="facebook">
+                                    <a href="https://www.facebook.com/share/BVJeAPEcHNBwCnN9/?mibextid=qi2Omg"
+                                        target="_blank">
+
+                                        <i class="fa fa-facebook"></i>
+                                    </a>
+                                </li>
+                                <li class="twitter">
+                                    <a href="https://www.instagram.com/gotogopost/?utm_source=qr&igsh=MWQ3aDV6NGlkNmZvZg%3D%3D"
+                                        target="_blank">
+
+                                        <i class="fa fa-instagram"></i>
+                                    </a>
+                                </li>
+                                <li class="googleplus">
+                                    <a href="https://www.youtube.com/channel/UCkLQWa6_bv4CnuQZqdh-l4g" target="_blank">
+                                        <i class="fa fa-youtube"></i>
+                                    </a>
+                                </li>
+                                <li class="pinterest">
+
+                                    <a href="https://wa.me/+91 9810657990" target="_blank">
+                                        <i class="fa fa-whatsapp"></i>
+                                    </a>
+                                </li>
+                                
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</section>
+
+<!--contact end-->
+
+
+
+<!--contact form -->
+
+<section class="contactpagform graybg secpadd">
+
+    <div class="container">
+
+        <div class="fh-section-title clearfix f25 text-center version-dark paddbtm40">
+
+            <h2>Leave Your Message</h2>
+
+        </div>
+
+        <p class="paddbtm40 text-center">Any Question About What we offer for Consumers And for Business?<br>Please
+            Email us or call at below given details.We will be Glad to reply within 24 hours.</p>
+
+        
+        <div class="container">
+            <div class="row">
+                <!-- Left Side: Form -->
+                <div class="col-lg-6">
+                    <form method="post" action="https://www.gotogopost.com/contact-us-store" id="contact-form">
+                        <input type="hidden" name="_token" value="lC5COVW4ejwYAvvyd5GZeRyHoZ6i5AjAuX3GyjKx" autocomplete="off">                        <div class="fh-form fh-form-3">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p class="field">
+                                        <input name="name" placeholder="Your Name*" type="text" class="form-control">
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="field">
+                                        <input name="email" placeholder="Email Address*" type="email" class="form-control">
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="field">
+                                        <input name="phone" placeholder="Phone" type="text" class="form-control">
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="field">
+                                        <select name="option" class="form-control">
+                                            <option value="">Please choose an option</option>
+                                            <option value="PPH">Prime Processing Hub(PPH)</option>
+                                            <option value="CPH">Collection Processing Hub(CPH)</option>
+                                            <option value="DELIVERY">DELIVERY/PICKUP BOY</option>
+                                            <option value="FRANCHISE">FRANCHISE</option>
+                                        </select>
+                                    </p>
+                                </div>
+                                <div class="col-md-12">
+                                    <p class="field">
+                                        <textarea name="message" cols="40" rows="5" placeholder="Your Message..." class="form-control"></textarea>
+                                    </p>
+                                </div>
+                                <div class="col-md-12">
+                                    <p class="field submit">
+                                        <button class="fh-btn btn btn-primary pt-4" type="submit">Submit</button>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+        
+                <!-- Right Side: Google Map -->
+                <div class="col-lg-6">
+                    <div class="map-container" style="height: 400px;">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d112089.35736709561!2d77.34723109193371!3d28.606003593214258!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sin!4v1742545950106!5m2!1sen!2sin" width="590" height="370" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!--contact form  end -->
+
+
+
+<!--google map-->
+
+
+
+<!--google map end-->
+
+
+
+<!--footer sec-->
+        <div class="footer-widgets widgets-area">
+
+            <div class="contact-widget">
+
+                <div class="container">
+
+                    <div class="row">
+
+                        <div class="contact col-md-2 col-xs-12 col-sm-12">
+
+                            <a href="https://gotogopost.com/" class="footer-logo">
+                                <img style="width: 60%;height: 100%;object-fit: contain;in; background-color: transparent;" src="https://www.gotogopost.com/website/images/logoNoBg.png" alt="Footer Logo"></a>
+
+                        </div>
+
+                        <div class="contact col-md-4 col-xs-12 col-sm-12"><i class="flaticon-signs"></i>
+
+                            <p>Office No. 955,9th Floor,Gaur City Mall CO1,BHG,Sec-4,Greater Noida West,Gautam Bddha Nagar,(U.P)-201318</p>
+
+                            
+
+                        </div>
+
+                        <div class="contact col-md-3 col-xs-12 col-sm-12"><i class="flaticon-phone-call "></i>
+
+                            <p>Toll Free Number :</p>
+
+                            <h4>1800 123 1617</h4>
+
+                        </div>
+
+                        <div class="contact col-md-3 col-xs-12 col-sm-12"><i class="flaticon-clock-1"></i>
+
+                            <p>Opening Hours :</p>
+
+                            <h4>MON – FRI: 10AM – 7PM</h4>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="footer-sidebars">
+
+                <div class="container">
+
+                    <div class="row">
+
+                        <div class="footer-sidebar footer-1 col-xs-12 col-sm-6 col-md-4">
+
+                            <div class="widget widget_text">
+
+                                <h4 class="widget-title">About GOTOGO Post</h4>
+
+                                <div class="textwidget">
+
+                                    <p>GOTOGO Post Logistics Services is a global supplier of transport and logistics solutions. We have offices in more than 20 countries and an international network of partners and agents.</p>
+
+                                </div>
+
+                            </div>
+
+                            
+                            <div class="fh-contact-box type-social " style="text-align: left;">
+
+
+                                <ul class="clearfix">
+
+                                    <li class="facebook">
+
+                                        <a href="https://www.facebook.com/share/BVJeAPEcHNBwCnN9/?mibextid=qi2Omg" target="_blank">
+
+                                            <i class="fa fa-facebook"></i>
+
+                                        </a>
+
+                                    </li>
+
+                                    <li class="twitter">
+
+                                        <a href="https://www.instagram.com/gotogopost/?utm_source=qr&igsh=MWQ3aDV6NGlkNmZvZg%3D%3D" target="_blank">
+
+                                            <i class="fa fa-instagram"></i>
+
+                                        </a>
+
+                                    </li>
+
+                                    <li class="googleplus">
+                                        <a href="https://www.youtube.com/channel/UCkLQWa6_bv4CnuQZqdh-l4g" target="_blank">
+                                            <i class="fa fa-youtube"></i>
+                                        </a>
+                                    </li>
+
+                                    <li class="pinterest">
+
+                                        <a href="https://wa.me/+91 9810657990" target="_blank">
+                                            <i class="fa fa-whatsapp"></i>
+                                        </a>
+
+                                    </li>
+
+                                    
+
+                                </ul>
+
+                            </div>
+
+                        </div>
+
+                        <div class="footer-sidebar footer-2 col-xs-12 col-sm-6 col-md-4">
+
+                            <div class="widget widget_nav_menu">
+
+                                <h4 class="widget-title">Useful Links</h4>
+
+                                <div class="menu-service-menu-container">
+
+                                    <ul class="menu">
+
+                                        <li><a href="https://www.gotogopost.com">Home</a></li>
+
+                                        <li><a href="https://www.gotogopost.com/contact">Contact Us</a></li>
+
+                                        <li><a href="https://www.gotogopost.com/about">About Us</a></li>
+
+                                        <li><a href="https://www.gotogopost.com/privacy-policy">Privacy Policy</a></li>
+
+                                        <li><a href="https://www.gotogopost.com/terms">Terms and Condiation</a></li>
+
+                                        <li><a href="https://www.gotogopost.com/faq">Faqs</a></li>
+
+                                    </ul>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="footer-sidebar footer-4 col-xs-12 col-sm-6 col-md-4">
+
+                            <div class="widget widget_mc4wp_form_widget">
+
+                                <h4 class="widget-title">Our Newsletter</h4>
+
+                                <form>
+
+                                    <div class="footform">
+
+                                        <div class="fh-form-field">
+
+                                            <p>
+
+                                                Sign up today for tips and latest news and exclusive special offers.
+
+                                            </p>
+
+                                            <div class="subscribe">
+
+                                                <input name="EMAIL" placeholder="Enter Your Email" required="" type="email">
+
+                                                <input value="Sign Up" type="submit">
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </form>
+
+                            </div>
+
+                            <div class="widget widget_text">
+
+                                <div class="textwidget">
+
+                                    <p>We don’t do spam and Your mail id very confidential.</p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!--footer sec end-->
+
+
+
+        <!--copyright sec-->
+
+        <footer class="site-footer">
+
+            <div class="container">
+
+                <div class="row">
+
+                    <div class="footer-copyright col-md-6 col-sm-12 col-sx-12">
+
+                        <div class="site-info">Copyright @ 2025 <a href="https://gotogopost.com/">GOTOGO Post</a>, All Right Reserved </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </footer>
+
+        <!--copyright sec end-->
+
+    </div>
+
+    <!--End pagewrapper-->
+
+
+
+    
+
+
+
+    <!--Scroll to top-->
+
+    <a id="scroll-top" class="backtotop" href="#page-top"><i class="fa fa-angle-up"></i></a>
+
+
+
+    <!--Color switcher-->
+
+    
+
+
+
+    <!-- jquery Liabrary -->
+
+<script src="https://www.gotogopost.com/website/js/jquery-1.12.4.min.js"></script>
+
+<!-- bootstrap v3.3.6 js -->
+
+<script src="https://www.gotogopost.com/website/js/bootstrap.min.js"></script>
+
+<!-- fancybox js -->
+
+<script src="https://www.gotogopost.com/website/js/jquery.fancybox.pack.js"></script>
+
+<script src="https://www.gotogopost.com/website/js/jquery.fancybox-media.js"></script>
+
+<script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>
+
+<!-- owl.carousel js -->
+
+<script src="https://www.gotogopost.com/website/js/owl.js"></script>
+
+<!-- counter js -->
+
+<script src="https://www.gotogopost.com/website/js/jquery.appear.js"></script>
+
+<script src="https://www.gotogopost.com/website/js/jquery.countTo.js"></script>
+
+<!-- validate js -->
+
+<script src="https://www.gotogopost.com/website/js/validate.js"></script>
+
+<!-- switcher js -->
+
+<script src="https://www.gotogopost.com/website/js/switcher.js"></script>
+
+
+
+<!-- google map -->
+
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY"></script>
+
+<script src="https://www.gotogopost.com/website/js/gmap.js"></script>
+
+<script src="https://www.gotogopost.com/website/js/map-helper.js"></script>
+
+
+
+<!-- REVOLUTION JS FILES -->
+
+<script src="https://www.gotogopost.com/website/js/revolution/jquery.themepunch.tools.min.js"></script>
+
+<script src="https://www.gotogopost.com/website/js/revolution/jquery.themepunch.revolution.min.js"></script>
+
+<script src="https://www.gotogopost.com/website/js/revolution/extensions/revolution.extension.actions.min.js"></script>
+
+<script src="https://www.gotogopost.com/website/js/revolution/extensions/revolution.extension.carousel.min.js"></script>
+
+<script src="https://www.gotogopost.com/website/js/revolution/extensions/revolution.extension.kenburn.min.js"></script>
+
+<script src="https://www.gotogopost.com/website/js/revolution/extensions/revolution.extension.layeranimation.min.js"></script>
+
+<script src="https://www.gotogopost.com/website/js/revolution/extensions/revolution.extension.migration.min.js"></script>
+
+<script src="https://www.gotogopost.com/website/js/revolution/extensions/revolution.extension.navigation.min.js"></script>
+
+<script src="https://www.gotogopost.com/website/js/revolution/extensions/revolution.extension.parallax.min.js"></script>
+
+<script src="https://www.gotogopost.com/website/js/revolution/extensions/revolution.extension.slideanims.min.js"></script>
+
+<script src="https://www.gotogopost.com/website/js/revolution/extensions/revolution.extension.video.min.js"></script>
+
+<!-- script JS  -->
+<script src="https://www.gotogopost.com/website/js/scripts.min.js"></script>
+
+<script src="https://www.gotogopost.com/website/js/script.js"></script>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    $(document).ready(function () {
+        $("#contact-form").submit(function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: "https://www.gotogopost.com/contact-us-store",
+                type: "POST",
+                data: $(this).serialize(),
+                dataType: "json",
+                success: function(response) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Your form has been submitted successfully!',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
+                    $("#contact-form")[0].reset();
+                },
+                error: function(jqXHR) {
+                    let errorMessage = "Something went wrong! Please try again.";
+
+                    if (jqXHR.responseJSON && jqXHR.responseJSON.errors) {
+                        errorMessage = Object.values(jqXHR.responseJSON.errors).flat().join("\n");
+                    } else if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
+                        errorMessage = jqXHR.responseJSON.message;
+                    }
+
+                    Swal.fire({
+                        title: 'Error!',
+                        text: errorMessage,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        });
+    });
+</script>
+
+
+</body>
+</html>

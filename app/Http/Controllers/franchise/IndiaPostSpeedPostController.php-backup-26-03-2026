@@ -1,0 +1,5239 @@
+<?php
+
+namespace App\Http\Controllers\franchise;
+
+use App\Http\Controllers\Controller;
+
+use App\Models\IndiaPostSpeedPostParcel;
+use App\Models\IndiaPostSpeedPostTrackOrder;
+use App\Models\IndiaPostBarcode;
+use App\Models\PickupDetails;
+use App\Models\Franchise;
+use App\Models\IndiaPostLink;
+use App\Models\ECustomer;
+use App\Models\GotogoLink;
+use App\Models\FranchiseCommissionDetail;
+use App\Models\NoRegisterCustomer;
+use App\Models\MManager;
+use App\Models\Student;
+use App\Models\MManagerKyc;
+use App\Models\ManagerCommissionDetail;
+use Illuminate\Http\Request;
+use App\Models\PincodeMaster;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use App\Models\Pincode;
+use Illuminate\Support\Facades\File;
+
+use PhpOffice\PhpSpreadsheet\IOFactory;
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
+use Symfony\Component\HttpFoundation\StreamedResponse;
+
+use GuzzleHttp\Client;
+
+use Picqer\Barcode\BarcodeGeneratorPNG;
+
+use App\Models\FranchiseBarcodeSeries;
+
+use App\Models\FranchiseBarcodes;
+
+use Illuminate\Support\Facades\View;
+
+use Carbon\Carbon;
+use App\Models\PostalRates; 
+use PDF;
+
+use Illuminate\Support\Facades\Mail;
+
+use App\Mail\ParcelMail;
+
+use App\Http\Controllers\franchise\RateCalculator;
+
+use App\Notifications\FranchisePushNotification;
+use App\Models\FranchiseBag;
+use App\Models\User;
+
+use Config;
+use App\Notifications\SMSNotification;
+
+use Illuminate\Support\Facades\Log;
+use PhpOffice\PhpSpreadsheet\Style\Color;
+use PhpOffice\PhpSpreadsheet\Style\Font;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use App\Jobs\ProcessIndiaPostExcel;
+use App\Jobs\PreviewIndiaPostExcel;
+use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Http; // ✅ IMPORTANT: Http facade add करें
+
+
+class IndiaPostSpeedPostController extends Controller
+{
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            if (Auth::guard("franchise")->check()) {
+                $user = Auth::guard("franchise")->user();
+            } elseif (Auth::guard("franchiseRoleUser")->check()) {
+                $user = Auth::guard("franchiseRoleUser")->user();
+            } else {
+                return abort(403, "Unauthorized.");
+            }
+
+            $action = $request->route()->getActionMethod();
+
+            $actionToPermissionMap = [
+                "index" => "Bookings-view",
+                "create" => "Bookings-create",
+                "store" => "Bookings-create",
+                "edit" => "Bookings-edit",
+                "delete" => "Bookings-delete",
+            ];
+
+            if (!array_key_exists($action, $actionToPermissionMap)) {
+                return $next($request);
+            }
+
+            if (array_key_exists($action, $actionToPermissionMap)) {
+                $requiredPermission = $actionToPermissionMap[$action];
+
+                // if (!$user->hasPermissionTo($requiredPermission, 'franchise')) {
+
+                //     abort(403, 'You do not have permission to perform this action.');
+                // }
+            }
+            return $next($request);
+        });
+
+        $this->middleware(function ($request, $next) {
+            $serviceStatuses = Franchise::checkServiceStatus(
+                IndiaPostSpeedPostParcel::SERVICE_TYPE_INDIA_POST_SPEED
+            );
+
+            // Check if at least one service status is set to 1
+            if (!$serviceStatuses) {
+                return abort(403, "Service not available.");
+            }
+
+            return $next($request);
+        });
+    }
+
+   public function getBarcodeAvailableCount()
+{
+    $serviceType = IndiaPostSpeedPostParcel::SERVICE_TYPE_INDIA_POST_SPEED;
+    
+    // service type value
+    $serviceTypeValue = IndiaPostSpeedPostParcel::getServiceTypeDB($serviceType);
+    
+    $range_start_column = "parcel_barcode_range_start_{$serviceTypeValue}";
+    $range_end_column = "parcel_barcode_range_end_{$serviceTypeValue}";
+    $last_code_issued_column = "last_parcel_code_issued_{$serviceTypeValue}";
+    
+    $franchiseId = Franchise::getFranchiseId();
+    
+    // Debugging
+    \Log::info("Checking barcode availability for franchise: {$franchiseId}");
+    \Log::info("Service Type: {$serviceType}, DB Value: {$serviceTypeValue}");
+    \Log::info("Columns - Start: {$range_start_column}, End: {$range_end_column}, Last: {$last_code_issued_column}");
+    
+    $franchiseSeriesDetails = FranchiseBarcodeSeries::where("franchise_id", $franchiseId)->first();
+    
+    if (!$franchiseSeriesDetails) {
+        \Log::warning("No barcode series found for franchise: {$franchiseId}");
+        return 0;
+    }
+    
+    \Log::info("Franchise series details:", [
+        'start' => $franchiseSeriesDetails->{$range_start_column},
+        'end' => $franchiseSeriesDetails->{$range_end_column},
+        'last_issued' => $franchiseSeriesDetails->{$last_code_issued_column},
+    ]);
+    
+    $start = (int) ($franchiseSeriesDetails->{$range_start_column} ?? 0);
+    $end = (int) ($franchiseSeriesDetails->{$range_end_column} ?? 0);
+    $lastIssued = (int) ($franchiseSeriesDetails->{$last_code_issued_column} ?? 0);
+    
+    if ($lastIssued === 0) {
+        $lastIssued = $start - 1;
+    }
+    
+    $available = max(0, $end - $lastIssued);
+    
+    \Log::info("Barcode availability calculation: Start={$start}, End={$end}, LastIssued={$lastIssued}, Available={$available}");
+    
+    return $available;
+}
+     public function index(Request $request, RateCalculator $rateCalculator)
+{
+    $totalParcels = 0;
+    $totalAmount = 0;
+    $CodtotalAmount = 0;
+    $type = $request->type;
+    $searchKey = $request->input("searchKey");
+    
+    $fromdate = $request->input("fromdate");
+    $todate = $request->input("todate");
+    $franchise = Franchise::getFranchiseId();
+
+    // Main query
+    $query = IndiaPostSpeedPostParcel::where("franchise_id", Franchise::getFranchiseId())
+        ->where("status", 0)
+       ->orderBy("bulk_batch_id", "ASC")    
+        ->orderBy("excel_row_no", "ASC");  
+
+    if ($request->type == "cod") {
+        $query->where("payment_method", "cod");
+    } else {
+        $query->where("payment_method", "prepaid");
+    }
+
+    if ($searchKey) {
+        $query->where(function ($q) use ($searchKey) {
+            $q->where("pickup_name", "LIKE", "%{$searchKey}%")
+                ->orWhere("pickup_mobile", "LIKE", "%{$searchKey}%")
+                ->orWhere("pickup_email", "LIKE", "%{$searchKey}%")
+                ->orWhere("pickup_pincode", "LIKE", "%{$searchKey}%")
+                ->orWhere("pickup_city", "LIKE", "%{$searchKey}%")
+                ->orWhere("pickup_state", "LIKE", "%{$searchKey}%")
+                ->orWhere("pickup_address", "LIKE", "%{$searchKey}%")
+                ->orWhere("consignee_name", "LIKE", "%{$searchKey}%")
+                ->orWhere("consignee_mobile", "LIKE", "%{$searchKey}%")
+                ->orWhere("consignee_email", "LIKE", "%{$searchKey}%")
+                ->orWhere("consignee_pincode", "LIKE", "%{$searchKey}%")
+                ->orWhere("consignee_city", "LIKE", "%{$searchKey}%")
+                ->orWhere("consignee_state", "LIKE", "%{$searchKey}%")
+                ->orWhere("consignee_address", "LIKE", "%{$searchKey}%")
+                ->orWhere("barcode_no", "LIKE", "%{$searchKey}%");
+        });
+    }
+
+    // Date filtering
+    if (!empty($fromdate) || !empty($todate)) {
+        if (!empty($fromdate) && !empty($todate)) {
+            $fromdate = Carbon::createFromFormat("d-m-Y", $fromdate)
+                ->startOfDay()
+                ->toDateString();
+            $todate = Carbon::createFromFormat("d-m-Y", $todate)
+                ->startOfDay()
+                ->toDateString();
+            $query->whereBetween("created_at", [$fromdate, $todate]);
+        } elseif (!empty($fromdate)) {
+            $fromdate = Carbon::createFromFormat("d-m-Y", $fromdate)->toDateString();
+            $query->whereDate("created_at", $fromdate);
+        } elseif (!empty($todate)) {
+            $todate = Carbon::createFromFormat("d-m-Y", $todate)->toDateString();
+            $query->whereDate("created_at", $todate);
+        }
+    } else {
+        $query->whereDate("created_at", Carbon::today());
+    }
+
+    // Clone query for totals (without pagination)
+    $countQuery = clone $query;
+    $totalParcels = $countQuery->count();
+    $CodtotalAmount = $countQuery->sum("cod_amount");
+    $totalAmount = $countQuery->sum("payment_amount");
+
+    // Apply pagination (50 records per page)
+    $datas = $query->paginate(50)->withQueryString();
+
+    return view(
+        "franchise.indiaPost-speedPost.index",
+        compact(
+            "datas",
+            "type",
+            "totalAmount",
+            "totalParcels",
+            "CodtotalAmount",
+            "franchise"
+        )
+    );
+}
+
+/**
+ * Check price in database table first, then calculate if not found
+ */
+private function getPriceFromDBOrCalculate($origin, $destination, $weight, $fuel_charge = 0, $pickup_charge = 0, $other_service_charge = 0, $register_amount = 0)
+{
+    $weight = round(floatval($weight), 2);
+    
+    // Step 1: Check in pincode_distance_prices table
+    $existingPrice = DB::table('pincode_distance_prices')
+        ->where('origin_pincode', $origin)
+        ->where('destination_pincode', $destination)
+        ->where('weight', $weight)
+        ->first();
+    
+    if ($existingPrice) {
+        // Update hit count and last used
+        DB::table('pincode_distance_prices')
+            ->where('id', $existingPrice->id)
+            ->update([
+                'hit_count' => $existingPrice->hit_count + 1,
+                'last_used_at' => now()
+            ]);
+        
+        \Log::info("✅ Price found in database table for {$origin}-{$destination}-{$weight}kg");
+        
+        // Calculate additional charges
+        $additionalCharges = $fuel_charge + $pickup_charge + $other_service_charge + $register_amount;
+        $subtotal = $existingPrice->price + $additionalCharges;
+        $gst = $subtotal * 0.18;
+        $total = $subtotal + $gst;
+        
+        return [
+            'status' => 'success',
+            'price' => round($existingPrice->price, 2),
+            'fuel_charge' => $fuel_charge,
+            'pickup_charge' => $pickup_charge,
+            'other_service_charge' => $other_service_charge,
+            'register_amount' => $register_amount,
+            'subtotal' => round($subtotal, 2),
+            'gst' => round($gst, 2),
+            'total' => round($total, 2),
+            'weight_used' => $weight,
+            'source' => 'database_table',
+            'message' => 'Price retrieved from database table'
+        ];
+    }
+    
+    // Step 2: Calculate via API if not found in table
+    \Log::info("🔄 Price not found in database, calculating for {$origin}-{$destination}-{$weight}kg");
+    
+    $result = $this->calculatePriceDirect($origin, $destination, $weight, $fuel_charge, $pickup_charge, $other_service_charge, $register_amount);
+    
+    // Step 3: Store in database table if calculation successful
+    if ($result['status'] === 'success') {
+        try {
+            DB::table('pincode_distance_prices')->insert([
+                'origin_pincode' => $origin,
+                'destination_pincode' => $destination,
+                'weight' => $weight,
+                'price' => $result['price'],
+                'gst' => $result['gst'],
+                'total' => $result['total'],
+                'distance_km' => null, // You can add distance calculation if needed
+                'hit_count' => 1,
+                'last_used_at' => now(),
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+            \Log::info("✅ Price stored in database table for {$origin}-{$destination}-{$weight}kg");
+        } catch (\Exception $e) {
+            \Log::error("Failed to store price in database: " . $e->getMessage());
+        }
+        
+        $result['source'] = 'api_calculation';
+    }
+    
+    return $result;
+}
+
+
+ private function getCachedPrice($origin, $destination, $weight, $fuel_charge = 0, $pickup_charge = 0, $other_service_charge = 0, $register_amount = 0)
+{
+    $cacheKey = "indiapost_rate_{$origin}_{$destination}_{$weight}_{$fuel_charge}_{$pickup_charge}_{$other_service_charge}_{$register_amount}";
+    
+    // Pehle cache check
+    $cachedResult = Cache::get($cacheKey);
+    if ($cachedResult) {
+        return $cachedResult;
+    }
+    
+    // Cache mein nahi mila to database/calculation se lein
+    $result = $this->getPriceFromDBOrCalculate($origin, $destination, $weight, $fuel_charge, $pickup_charge, $other_service_charge, $register_amount);
+    
+    // Cache mein store karein (1 week)
+    if ($result['status'] === 'success') {
+        Cache::put($cacheKey, $result, 604800);
+    }
+    
+    return $result;
+}
+    
+  
+   private function calculatePriceDirect($origin, $destination, $weight, $fuel_charge = 0, $pickup_charge = 0, $other_service_charge = 0, $register_amount = 0)
+{
+    $weight = floatval($weight);
+    
+    $request = new Request([
+        "originPincode" => $origin,
+        "destinationPincode" => $destination,
+        "packageWeight" => $weight,
+        "service_type" => IndiaPostSpeedPostParcel::SERVICE_TYPE_INDIA_POST_SPEED,
+    ]);
+    
+    try {
+        \Log::info("Calling RateCalculator with: " . json_encode($request->all()));
+        
+        $rateCalculator = new RateCalculator();
+        $result = $rateCalculator->calculate($request);
+        
+        \Log::info("RateCalculator response: " . json_encode($result));
+        
+        if ($result['status'] === 'fail') {
+            return $result;
+        }
+        
+        $basePrice = $result['price'] ?? 0;
+        $subTotal = $basePrice + $fuel_charge + $pickup_charge + $other_service_charge + $register_amount;
+        $gst = $subTotal * 0.18;
+        $total = $subTotal + $gst;
+        
+        return [
+            'status' => 'success',
+            'price' => round($basePrice, 2),
+            'fuel_charge' => $fuel_charge,
+            'pickup_charge' => $pickup_charge,
+            'other_service_charge' => $other_service_charge,
+            'register_amount' => $register_amount,
+            'subtotal' => round($subTotal, 2),
+            'gst' => round($gst, 2),
+            'total' => round($total, 2),
+            'weight_used' => $weight,
+            'message' => 'Price calculated successfully'
+        ];
+        
+    } catch (\Exception $e) {
+        \Log::error("RateCalculator exception: " . $e->getMessage());
+        
+        // Fallback to mock prices if API fails
+        $basePrice = $this->getMockPrice($origin, $destination, $weight);
+        
+        if ($basePrice === false) {
+            return [
+                'status' => 'fail',
+                'message' => 'Service not available. Please try again later.'
+            ];
+        }
+        
+        $subTotal = $basePrice + $fuel_charge + $pickup_charge + $other_service_charge + $register_amount;
+        $gst = $subTotal * 0.18;
+        $total = $subTotal + $gst;
+        
+        return [
+            'status' => 'success',
+            'price' => round($basePrice, 2),
+            'fuel_charge' => $fuel_charge,
+            'pickup_charge' => $pickup_charge,
+            'other_service_charge' => $other_service_charge,
+            'register_amount' => $register_amount,
+            'subtotal' => round($subTotal, 2),
+            'gst' => round($gst, 2),
+            'total' => round($total, 2),
+            'weight_used' => $weight,
+            'message' => 'Price calculated (fallback mode)'
+        ];
+    }
+}
+
+ public function getPrice($origin, $destination, $weight, $fuel_charge = 0, $pickup_charge = 0, $other_service_charge = 0, $register_amount = 0) {
+        return $this->getCachedPrice($origin, $destination, $weight, $fuel_charge, $pickup_charge, $other_service_charge, $register_amount);
+    }
+    public function showPrice(Request $request, RateCalculator $rateCalculater)
+    {
+        
+        if ($request->isMethod("post")) {
+            try {
+                // if ($request->amount) {
+                //     $result = $rateCalculater->calculateByAmount($request);
+                //     return response()->json(['status' => 'success', 'data' => $result, 'message' => "data fetched successfully"]);
+                // } else {
+
+                $from = $request->from;
+                $to = $request->to;
+                $weight = $request->weight;
+                $fuel_charge = $request->fuel_charge ?? 0;
+                $pickup_charge = $request->pickup_charge ?? 0;
+                $other_service_charge = $request->other_service_charge ?? 0;
+                $register_amount = $request->register_amount ?? 0;
+                $result = $this->getPrice($from, $to, $weight, $fuel_charge, $pickup_charge, $other_service_charge, $register_amount);
+
+                return response()->json([
+                    "status" => "success",
+                    "data" => $result,
+                    "message" => "data fetched successfully",
+                ]);
+                // }
+            } catch (\Throwable $th) {
+                return response()->json(
+                    ["status" => "error", "message" => $th->getMessage()],
+                    500
+                );
+            }
+        }
+
+        return response()->json(
+            ["status" => "error", "message" => "Invalid request method"],
+            400
+        );
+    }
+
+    public function create()
+    {
+        $franchise_details = Franchise::where("id", Franchise::getFranchiseId())
+            ->select("franchise_no","india_credit_amount","credit_balance","indiapost_balance","gst_number")->first();
+        $linkDetails = IndiaPostLink::where("franchise_no", $franchise_details->franchise_no)->first();
+        $pickupDetails = ECustomer::where("cph_link", Franchise::getFranchiseId())
+            ->where("status", 1)
+            ->get();
+        $barcodeAvailable = $this->getBarcodeAvailableCount();
+
+        return view("franchise.indiaPost-speedPost.create", [
+            "pickupDetails" => $pickupDetails,
+
+            "franchise_details" => $franchise_details,
+            "linkDetails" => $linkDetails,
+            "barcodeAvailable" => $barcodeAvailable,
+        ]);
+    }
+
+    public function savePdf($parcel)
+    {
+        $generator = new BarcodeGeneratorPNG();
+        $code = $parcel->barcode_no;
+        $barcode = $generator->getBarcode($code, $generator::TYPE_CODE_128);
+        $barcode = base64_encode($barcode);
+
+        $fuel_charge = $parcel->fuel_charge;
+        $pickup_charge = $parcel->pickup_charge;
+        $other_service_charge = $parcel->other_service_charge;
+        $total_payment_amount = $parcel->payment_amount;
+        $net_price = $total_payment_amount / 1.18;
+        $amount =
+            $net_price -
+            ($fuel_charge + $pickup_charge + $other_service_charge);
+        $gst = number_format($net_price * 0.18, 2, ".", "");
+        $net_price_formatted = number_format($net_price, 2, ".", "");
+
+        $rateDetails = [
+            "fuel_charge" => $fuel_charge,
+            "pickup_charge" => $pickup_charge,
+            "other_service_charge" => $other_service_charge,
+            "total_payment_amount" => number_format(
+                $total_payment_amount,
+                2,
+                ".",
+                ""
+            ),
+            "net_price" => $net_price_formatted,
+            "amount" => number_format($amount, 2, ".", ""),
+            "gst" => $gst,
+        ];
+
+        $pdf = PDF::loadView("franchise.mail.pdfview", [
+            "parcel" => $parcel,
+            "barcode" => $barcode,
+            "rateDetails" => $rateDetails,
+        ]);
+        $destinationPath = public_path("tenancy/assets/franchise/Pdf/");
+
+        $fileName = uniqid() . "_parcel_" . ".pdf";
+        $filePath = $destinationPath . $fileName;
+        $pdf->save($filePath);
+
+        return $filePath;
+    }
+
+    public function sendNotificationToUser($franchise, $parcel)
+    {
+        try {
+            $service_type = IndiaPostSpeedPostParcel::SERVICE_TYPE_INDIA_POST_SPEED;
+            $link = route("franchise.parcel.receipt.download", [$service_type,$parcel->id]);
+            \Log::info("sendNotificationToUser function called", ["parcel_id" => $parcel->id ?? null, "franchise_id" => $franchise->id ?? null, "receipt_link" => $link, "type" => $service_type,]);
+
+            \Log::info("Fetching user with phone: {$parcel->pickup_mobile}");
+
+            $userPhone = $parcel->pickup_mobile;
+            $user = User::where("phone", $userPhone)->first();
+
+            if (!$user) {
+                \Log::error("User not found for phone: {$userPhone}");
+                return;
+            }
+
+            \Log::info("User found", ["user_id" => $user->id]);
+
+            $token = $user->fcm_token;
+            if ($token) {
+                \Log::info("FCM token found", ["user_id" => $user->id, "fcm_token" => $token,]);
+
+                $title = FranchiseBag::getServiceType(IndiaPostSpeedPostParcel::SERVICE_TYPE_INDIA_POST_SPEED);
+                $body =
+                    "тЬЕ Order Placed: Article No. {$parcel->barcode_no}\n" .
+                    "ЁЯУЕ Date: " .
+                    date("M d, Y, h:i A", strtotime($parcel->created_at)) .
+                    "\n" .
+                    "ЁЯУН From: {$parcel->pickup_address}\n" .
+                    "ЁЯУН To: {$parcel->consignee_address}\n" .
+                    "ЁЯТ░ Amount: тВ╣{$parcel->payment_amount}\n" .
+                    "ЁЯз╛ Receipt: {$link}\n" .
+                    "ЁЯЪА Your order is placed successfully and will be processed soon!";
+
+                \Log::info("Preparing to send push notification", ["title" => $title, "body" => $body, "user_id" => $user->id, "parcel_id" => $parcel->id, "link" => $link,]);
+
+                $notification = new FranchisePushNotification($token, $parcel, $title, $body);
+                $notification->sendPushNotification();
+
+                \Log::info("Push notification sent successfully", ["user_id" => $user->id,]);
+
+                \Log::info("Saving user notification record");
+                 $links = NULL;
+                if($franchise->id == 238){
+                    $links = NuLL;
+                }else{
+                    $links = $link;
+                }
+
+                $parcel->userNotifications()->create([
+                    "user_id" => $user->id,
+                    "service_type" => get_class($parcel),
+                    "parcel_id" => $parcel->id,
+                    "message" => "Order Placed successfully",
+                    "barcode_no" => $parcel->barcode_no,
+                    "body" => $body,
+                    "current_location" => $franchise->address,
+                    'link'             => $links,
+                ]);
+
+                \Log::info("User notification record created successfully");
+            } else {
+                \Log::error("FCM token not found for user", [
+                    "user_id" => $user->id,
+                ]);
+            }
+        } catch (\Exception $e) {
+            \Log::error(
+                "Error in sendNotificationToUser: " . $e->getMessage(),
+                [
+                    "parcel_id" => $parcel->id ?? null,
+                    "user_phone" => $userPhone ?? null,
+                    "exception" => $e,
+                ]
+            );
+        }
+    }
+
+    public function sendNotificationToFranchise($franchise, $parcel)
+    {
+        try {
+            $franchiseId = $franchise->id;
+            if (!$franchise) {
+                return;
+            }
+
+            // Get FCM Token
+            $token = $franchise->fcm_token;
+            if (!$token) {
+                return;
+            }
+
+            // Prepare Notification
+            $title = FranchiseBag::getServiceType(IndiaPostSpeedPostParcel::SERVICE_TYPE_INDIA_POST_SPEED);
+            $body =
+                "тЬЕ Order Placed: Article No. {$parcel->barcode_no}\n" .
+                "ЁЯУЕ Date: " .
+                date("M d, Y, h:i A", strtotime($parcel->created_at)) .
+                "\n" .
+                "ЁЯУН From: {$parcel->pickup_address}\n" .
+                "ЁЯУН To: {$parcel->consignee_address}\n" .
+                "ЁЯТ░ Amount: тВ╣{$parcel->payment_amount}\n" .
+                "ЁЯЪА Your order is placed successfully";
+
+            // Send Push Notification
+
+            $notification = new FranchisePushNotification($token, $parcel, $title, $body);
+            $notification->sendPushNotification();
+            \Log::info("notification  sent to franchise");
+
+            $parcel->franchiseNotifications()->create([
+                "franchise_id" => $franchiseId,
+                "service_type" => get_class($parcel),
+                "parcel_id" => $parcel->id,
+                "message" => "Order Placed successfully",
+                "barcode_no" => $parcel->barcode_no,
+                "body" => $body,
+                "current_location" => $franchise->address,
+            ]);
+
+            \Log::info("franchise notification created");
+        } catch (\Exception $e) {
+            \Log::error(
+                "Error in sendNotificationToFranchise: " . $e->getMessage(),
+                [
+                    "parcel_id" => $parcel->id ?? "N/A",
+                    "franchise_id" => $franchiseId ?? "N/A",
+                    "exception" => $e,
+                ]
+            );
+        }
+    }
+
+    public function store(Request $request, RateCalculator $rateCalculater)
+{
+    $payment_type = null;
+    $requestData = $request->all();
+
+    $this->validate($request, [
+        "PickupName" => "required|string|max:191",
+        "PickupMobile" => "required|string",
+        "PickupPincode" => "required|string|max:6",
+        "PickupCity" => "required|string|max:191",
+        "PickupState" => "required|string|max:191",
+        "PickupAddress" => "required|string|max:255",
+        "ConsigneeName" => "required|string|max:191",
+        "ConsigneePincode" => "required|string|max:6",
+        "ConsigneeCity" => "required|string|max:191",
+        "ConsigneeState" => "required|string|max:191",
+        "ConsigneeAddress" => "required|string|max:255",
+        "package_weight" => "required|numeric",
+    ]);
+
+    $print = $request->printNumber ?: 1;
+
+    $franchiseId = Franchise::getFranchiseId();
+    $franchise = Franchise::findOrFail($franchiseId);
+    $linkDetail = IndiaPostLink::where("franchise_no", $franchise->franchise_no)->first();
+
+    $from = $request->PickupPincode;
+    $to = $request->ConsigneePincode;
+    $weight = $request->total_weight;
+    $register_amount = $request->register_amount ?? 0;
+    
+    $rateDetails = $this->getPrice($from, $to, $weight, 0, 0, 0, $register_amount);
+
+    // Barcode Logic
+    $todate = Carbon::today()->toDateString();
+    $barcode_no = $request->scanned_barcode_no ?: $this->getNextBarcode();
+    
+    $existingParcel = IndiaPostSpeedPostParcel::where("barcode_no", $barcode_no)
+        ->whereDate("created_at", $todate)
+        ->first();
+
+    if ($existingParcel) {
+        return response()->json([
+            "status" => 400,
+            "message" => "Barcode Already Exist",
+        ]);
+    }
+
+    $generator = new BarcodeGeneratorPNG();
+    $barcode = $generator->getBarcode($barcode_no, $generator::TYPE_CODE_128);
+    $barcode_image_src = base64_encode($barcode);
+
+    // Cast payment amount to float for math safety
+    $payment_amount = (float)($rateDetails["total"] ?? 0);
+    $cod_amount = (float)($request->amount ?? 0);
+
+    if ($rateDetails["status"] == "fail") {
+        return response()->json([
+            "status" => 400,
+            "message" => $rateDetails["message"],
+            "data" => $requestData,
+        ]);
+    }
+
+    if ($payment_amount <= 0) {
+        return response()->json([
+            "status" => 400,
+            "showMessage" => "1",
+            "message" => "Service Not Available",
+            "data" => $requestData,
+        ]);
+    }
+
+    // Balance Checks - Cast to float
+    $gotogo_balance = (float)($franchise->indiapost_balance ?? 0);
+    $credit_balance = (float)($franchise->india_credit_amount ?? 0);
+    $indiapost_balance = $gotogo_balance + $credit_balance;
+
+    if ($indiapost_balance < $payment_amount) {
+        return response()->json([
+            "status" => 400,
+            "showMessage" => "1",
+            "message" => "Balance Low",
+            "data" => $requestData,
+        ]);
+    }
+
+    if (empty($barcode_no)) {
+        return response()->json([
+            "status" => 400,
+            "showMessage" => "1",
+            "message" => "Barcode Not Available",
+            "data" => $requestData,
+        ]);
+    }
+
+    try {
+        $franchise_role_user_id = Auth::guard("franchiseRoleUser")->check() ? Auth::guard("franchiseRoleUser")->user()->id : null;
+
+        $cod_parcel_id = null;
+        if ($request->payment_method == "franchise" && $request->payment_type_cod == "prepaid") {
+            $cod_parcel_id = $this->getOrCreateCodUser($request, $franchise);
+        } elseif ($request->payment_method != "franchise" && $request->payment_type_cod == "prepaid") {
+            $cod_parcel_id = $request->pickupDetails;
+        }
+
+        if (in_array($request->payment_method, ["manager", "pickup"])) {
+            $payment_type = $request->payment_type;
+        }
+
+        $pickup_details = ($request->payment_type_cod == "cod") ? $request->pickupDetails : null;
+
+        $parcel = IndiaPostSpeedPostParcel::create([
+            "franchise_id" => $franchiseId,
+            "franchise_role_users_id" => $franchise_role_user_id,
+            "cod_customer_id" => $pickup_details,
+            "no_r_customer_id" => $cod_parcel_id,
+            "booking_type" => $request->payment_method,
+            "pickup_name" => $request->PickupName,
+            "pickup_mobile" => $request->PickupMobile,
+            "pickup_gst_number" => $request->PickupGstNo,
+            "pickup_email" => $request->PickupEmail ?? null,
+            "pickup_pincode" => $request->PickupPincode,
+            "pickup_city" => $request->PickupCity,
+            "pickup_state" => $request->PickupState,
+            "pickup_address" => $request->PickupAddress,
+            "consignee_name" => $request->ConsigneeName,
+            "consignee_mobile" => $request->ConsigneeMobile,
+            "consignee_gst_number" => $request->ConsigneeGstNo ?? null,
+            "consignee_email" => $request->ConsigneeEmail ?? null,
+            "consignee_pincode" => $request->ConsigneePincode,
+            "consignee_city" => $request->ConsigneeCity,
+            "consignee_state" => $request->ConsigneeState,
+            "consignee_address" => $request->ConsigneeAddress,
+            "package_weight" => $request->package_weight,
+            "package_length" => $request->package_length,
+            "package_width" => $request->package_width,
+            "package_height" => $request->package_height,
+            "fuel_charge" => $request->fuel_charge ?? 0,
+            "pickup_charge" => $request->pickup_charge ?? 0,
+            "other_service_charge" => $request->other_service_charge ?? 0,
+            "payment_amount" => $payment_amount,
+            "cod_amount" => $cod_amount,
+            "payment_method" => $request->payment_type_cod,
+            "totalOtherAmount" => $request->totalOther ?? 0,
+            "register_amount" => $request->register_amount ?? 0,
+            "barcode_no" => $barcode_no,
+            "barcode_image_src" => $barcode_image_src,
+            "insert_type" => IndiaPostSpeedPostParcel::INSERT_TYPE_SINGLE,
+        ]);
+
+        IndiaPostSpeedPostTrackOrder::create([
+            "parcel_id" => $parcel->id,
+            "barcode_no" => $barcode_no,
+            "source_franchise_id" => $franchiseId,
+            "order_placed_datetime" => now(),
+            "source_franchise_location" => $franchise->address,
+        ]);
+
+        // Commission Logic Fixes
+        $commission = (float)$rateCalculater->calculateCommissionForIndiaPost($request->package_weight, $payment_amount, IndiaPostSpeedPostParcel::SERVICE_TYPE_INDIA_POST_SPEED);
+        $marketcommission = 0.0;
+
+        if (in_array($request->payment_method, ["manager", "pickup"])) {
+            $marketcommission = (float)$rateCalculater->calculateCommissionForIndiaPostMarket($payment_type, $payment_amount);
+            $commission = $commission - $marketcommission; // Safe subtraction
+        }
+
+        // Wallet Deduction
+        if ($gotogo_balance > $payment_amount) {
+            $franchise->decrement("indiapost_balance", $payment_amount);
+        } else {
+            $franchise->decrement("india_credit_amount", $payment_amount);
+        }
+
+        FranchiseCommissionDetail::create([
+            "franchise_id" => $franchiseId,
+            "service_type" => IndiaPostSpeedPostParcel::SERVICE_TYPE_INDIA_POST_SPEED,
+            "amount" => $payment_amount / 1.18,
+            "commission" => number_format($commission, 2, ".", ""),
+            "payment_method" => $request->payment_type_cod,
+        ]);
+
+        if (in_array($request->payment_method, ["manager", "pickup"])) {
+            ManagerCommissionDetail::create([
+                "commission_id" => $payment_type,
+                "servicetype" => IndiaPostSpeedPostParcel::SERVICE_TYPE_INDIA_POST_SPEED,
+                "amount" => $payment_amount / 1.18,
+                "commission" => number_format($marketcommission, 2, ".", ""),
+                "type" => $request->payment_method,
+                "payment_method" => $request->payment_type_cod,
+            ]);
+        }
+
+        // Barcode Series Logic Fix (The common point of failure)
+        $serviceTypeValue = IndiaPostSpeedPostParcel::getServiceTypeDB(IndiaPostSpeedPostParcel::SERVICE_TYPE_INDIA_POST_SPEED);
+        $range_start_column = "parcel_barcode_range_start_{$serviceTypeValue}";
+        $last_code_issued_column = "last_parcel_code_issued_{$serviceTypeValue}";
+
+        $franchiseSeriesDetails = FranchiseBarcodeSeries::where("franchise_id", $franchiseId)->first();
+
+        if (!empty($franchiseSeriesDetails->{$last_code_issued_column})) {
+            $seriesNum = (int)$franchiseSeriesDetails->{$last_code_issued_column} + 1;
+        } else {
+            $seriesNum = (int)($franchiseSeriesDetails->{$range_start_column} ?? 0);
+        }
+
+        // Update Series
+        $franchiseSeriesDetails->{$last_code_issued_column} = $seriesNum;
+        $franchiseSeriesDetails->save();
+
+        // Update Pickup Status if applicable
+        if ($request["pickup-details"]) {
+            PickupDetails::where("id", $request["pickup-details"])->update(["status" => 2]);
+        }
+
+        // Notifications & PDF (Silently Log Errors)
+        try { $this->sendNotificationToUser($franchise, $parcel); } catch (\Exception $e) { \Log::error("Notification Error: " . $e->getMessage()); }
+        
+        $savedPdfFilePath = null;
+        try { $savedPdfFilePath = $this->savePdf($parcel); } catch (\Exception $e) { \Log::error("PDF Error: " . $e->getMessage()); }
+
+        if ($savedPdfFilePath && $request->PickupEmail) {
+            try { Mail::to($request->PickupEmail)->send(new ParcelMail([$savedPdfFilePath, $parcel])); } catch (\Exception $e) { \Log::error("Mail Error: " . $e->getMessage()); }
+        }
+
+        try {
+            $notification = new SMSNotification($request->ConsigneeMobile, "ORDER", [$barcode_no, now()]);
+            $notification->sendMessage();
+        } catch (\Exception $e) { \Log::error("SMS Error: " . $e->getMessage()); }
+
+        // Save Barcode Record
+        $franchiseBarcode = new FranchiseBarcodes();
+        $franchiseBarcode->barcodes = $barcode_no;
+        $franchiseBarcode->franchise_barcodeseries_id = $franchiseSeriesDetails->id;
+        $franchiseBarcode->save();
+
+        return response()->json([
+            "status" => 200,
+            "message" => "New Parcel Create",
+            "parcel_id" => $parcel->id,
+            "data" => $requestData,
+            "barcodeImageSrc" => $barcode_image_src,
+            "franchiseDetails" => $franchise,
+            "barcode_available" => $this->getBarcodeAvailableCount(),
+            "payment_method" => $request->payment_method,
+            "customer_id" => $request->pickupDetails,
+            "payment_type_cod" => $request->payment_type_cod,
+            "payment_type" => $request->payment_type,
+        ]);
+
+    } catch (\Exception $th) {
+        \Log::error("Store Exception: " . $th->getMessage() . " at " . $th->getLine());
+        return response()->json([
+            "status" => 500,
+            "message" => $th->getMessage()
+        ], 500);
+    }
+}
+    public function view($id)
+    {
+        $data = IndiaPostSpeedPostParcel::findorfail($id);
+
+        $fuel_charge = $data->fuel_charge;
+        $pickup_charge = $data->pickup_charge;
+        $other_service_charge = $data->other_service_charge;
+        $total_payment_amount = $data->payment_amount;
+        $net_price = $total_payment_amount / 1.18;
+        $amount =
+            $net_price -
+            ($fuel_charge + $pickup_charge + $other_service_charge);
+        $gst = number_format($net_price * 0.18, 2, ".", "");
+        $net_price_formatted = number_format($net_price, 2, ".", "");
+
+        $rateDetails = [
+            "fuel_charge" => $fuel_charge,
+            "pickup_charge" => $pickup_charge,
+            "other_service_charge" => $other_service_charge,
+            "total_payment_amount" => number_format(
+                $total_payment_amount,
+                2,
+                ".",
+                ""
+            ),
+            "net_price" => $net_price_formatted,
+            "amount" => number_format($amount, 2, ".", ""),
+            "gst" => $gst,
+        ];
+
+        return view(
+            "franchise.indiaPost-speedPost.view",
+            compact("data", "rateDetails")
+        );
+    }
+
+    public function edit(Request $request, $id)
+    {
+        $post = IndiaPostSpeedPostParcel::findOrFail($id);
+
+        if ($request->isMethod("POST")) {
+            $this->validate($request, [
+                // Pickup details validation rules
+
+                "PickupName" => "required|string|max:191",
+
+                "PickupMobile" => "required|string",
+
+                // 'PickupEmail' => 'required|email|max:191',
+
+                "PickupPincode" => "required|string|max:6",
+
+                "PickupCity" => "required|string|max:191",
+
+                "PickupState" => "required|string|max:191",
+
+                "PickupAddress" => "required|string|max:255",
+
+                // Consignee details validation rules
+
+                "ConsigneeName" => "required|string|max:191",
+
+                // 'ConsigneeMobile' => 'required|string',
+
+                // 'ConsigneeEmail' => 'required|email|max:191',
+
+                "ConsigneePincode" => "required|string|max:6",
+
+                "ConsigneeCity" => "required|string|max:191",
+
+                "ConsigneeState" => "required|string|max:191",
+
+                "ConsigneeAddress" => "required|string|max:255",
+
+                // Parcel details validation rules
+
+                "package_weight" => "required|numeric",
+            ]);
+
+            try {
+                $post->pickup_name = $request->PickupName;
+
+                $post->pickup_mobile = $request->PickupMobile;
+
+                $post->pickup_email = $request->PickupEmail;
+
+                $post->pickup_pincode = $request->PickupPincode;
+
+                $post->pickup_city = $request->PickupCity;
+
+                $post->pickup_state = $request->PickupState;
+
+                $post->pickup_address = $request->PickupAddress;
+
+                $post->consignee_name = $request->ConsigneeName;
+
+                $post->consignee_mobile = $request->ConsigneeMobile;
+
+                $post->consignee_email = $request->ConsigneeEmail;
+
+                $post->consignee_pincode = $request->ConsigneePincode;
+
+                $post->consignee_city = $request->ConsigneeCity;
+
+                $post->consignee_state = $request->ConsigneeState;
+
+                $post->consignee_address = $request->ConsigneeAddress;
+
+                $post->package_weight = $request->package_weight;
+
+                $post->package_length = $request->package_length;
+
+                $post->package_width = $request->package_width;
+
+                $post->package_height = $request->package_height;
+
+                $post->save();
+
+                return redirect()
+                    ->route("franchise.india-post-speed-post.index", [
+                        "insert_type" => $post->insert_type,
+                    ])
+                    ->with("success", "Parcel updated successfully!");
+            } catch (\Exception $th) {
+                return back()
+                    ->with("error", $th->getMessage())
+                    ->withInput();
+            }
+        }
+
+        $data = $post;
+
+        $pickupDetails = PickupDetails::where(
+            "franchise_id",
+            Franchise::getFranchiseId()
+        )
+        ->get();
+
+        return view(
+            "franchise.indiaPost-speedPost.edit",
+            compact("data", "pickupDetails")
+        );
+    }
+
+   public function delete($id)
+{
+    try {
+        $franchiseId = Franchise::getFranchiseId();
+        $data = IndiaPostSpeedPostParcel::findOrFail($id);  // Find the parcel, throws error if not found
+        
+        // Find the franchise by ID
+        $franchise = Franchise::findOrFail($franchiseId);
+        
+        // Increment the india_credit_amount with the payment amount from the parcel
+        $franchise->increment("indiapost_balance", $data->payment_amount);
+        
+        // Proceed with deleting the parcel
+        $data->delete();
+
+        // Return success response
+        return redirect()
+            ->back()
+            ->with("success", "Parcel Deleted Successfully");
+
+    } catch (\Exception $th) {
+        // In case of an error, return back with error message
+        return back()
+            ->with("error", $th->getMessage())
+            ->withInput();
+    }
+}
+
+
+    public function downloadFormat()
+    {
+        try {
+            $filePath = public_path("admin/assets/file/excelFomatFile.xlsx");
+
+            if (!file_exists($filePath)) {
+                return back()->with("error", "File not found");
+            }
+
+            return response()->download($filePath, "excelFomatFile.xlsx");
+        } catch (\Exception $e) {
+            return back()->with(
+                "error",
+                "Error downloading file: " . $e->getMessage()
+            );
+        }
+    }
+public function previewByFile(Request $request)
+{
+    ini_set('memory_limit', '1024M');
+    set_time_limit(300);
+    
+    \Log::info('=== EXCEL PREVIEW STARTED ===');
+    
+    try {
+        // ✅ STEP 0: Check if table exists
+        try {
+            $tableCheck = DB::select("SHOW TABLES LIKE 'pincode_distance_prices'");
+            if (empty($tableCheck)) {
+                \Log::error("❌ Table 'pincode_distance_prices' does not exist!");
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Database table pincode_distance_prices does not exist. Please create it first.'
+                ], 500);
+            }
+            \Log::info("✅ Table exists");
+        } catch (\Exception $e) {
+            \Log::error("❌ Table check failed: " . $e->getMessage());
+        }
+        
+        if (!$request->hasFile('file')) {
+            return response()->json(['status' => false, 'message' => 'No file uploaded'], 400);
+        }
+
+        $filePath = $request->file('file')->getRealPath();
+        
+        // Read Excel file
+        $reader = IOFactory::createReaderForFile($filePath);
+        $reader->setReadDataOnly(true);
+        $spreadsheet = $reader->load($filePath);
+        $sheet = $spreadsheet->getActiveSheet();
+        
+        $rows = $sheet->toArray();
+        if (empty($rows)) {
+            return response()->json(['status' => false, 'message' => 'Empty file'], 400);
+        }
+
+        $header = array_shift($rows);
+        $totalRows = count($rows);
+        
+        \Log::info("Total rows: {$totalRows}");
+
+        $uniqueCombinations = [];
+        $rowData = [];
+        
+        foreach ($rows as $rowIndex => $row) {
+            $rowAssoc = [];
+            foreach ($header as $colIndex => $colName) {
+                $rowAssoc[trim($colName)] = $row[$colIndex] ?? '';
+            }
+            
+            if (empty($rowAssoc['Pickup Pincode']) || empty($rowAssoc['Consignee Pincode']) || empty($rowAssoc['Package Weight'])) {
+                continue;
+            }
+            
+            $origin = substr(trim($rowAssoc['Pickup Pincode']), 0, 6);
+            $destination = substr(trim($rowAssoc['Consignee Pincode']), 0, 6);
+            $weight = round(floatval($rowAssoc['Package Weight'] ?? 0), 2);
+            
+            $cacheKey = "{$origin}_{$destination}_{$weight}";
+            
+            $rowData[] = [
+                'index' => $rowIndex + 2,
+                'data' => $rowAssoc,
+                'cache_key' => $cacheKey,
+                'origin' => $origin,
+                'destination' => $destination,
+                'weight' => $weight
+            ];
+            
+            if (!isset($uniqueCombinations[$cacheKey])) {
+                $uniqueCombinations[$cacheKey] = [
+                    'origin' => $origin,
+                    'destination' => $destination,
+                    'weight' => $weight,
+                    'count' => 0
+                ];
+            }
+            $uniqueCombinations[$cacheKey]['count']++;
+        }
+
+        \Log::info("Unique combinations: " . count($uniqueCombinations));
+
+        $stats = [
+            'from_db' => 0,
+            'calculated_and_stored' => 0,
+            'failed' => 0,
+            'insert_errors' => 0
+        ];
+        
+        $priceCache = [];
+        
+        foreach ($uniqueCombinations as $cacheKey => $combination) {
+            \Log::info("Processing combination: {$cacheKey}");
+            
+            try {
+                // Check in database
+                $dbRecord = DB::table('pincode_distance_prices')
+                    ->where('origin_pincode', $combination['origin'])
+                    ->where('destination_pincode', $combination['destination'])
+                    ->where('weight', $combination['weight'])
+                    ->first();
+                
+                if ($dbRecord) {
+                    \Log::info("✅ Found in DB: {$cacheKey}");
+                    $priceCache[$cacheKey] = [
+                        'status' => 'success',
+                        'price' => $dbRecord->price,
+                        'gst' => $dbRecord->gst,
+                        'total' => $dbRecord->total,
+                        'source' => 'database'
+                    ];
+                    
+                    // Update hit count
+                    DB::table('pincode_distance_prices')
+                        ->where('id', $dbRecord->id)
+                        ->update([
+                            'hit_count' => $dbRecord->hit_count + 1,
+                            'last_used_at' => now()
+                        ]);
+                    
+                    $stats['from_db']++;
+                    
+                } else {
+                    \Log::info("🔄 Not in DB, calculating: {$cacheKey}");
+                    
+                    $priceResult = $this->calculatePriceDirect(
+                        $combination['origin'],
+                        $combination['destination'],
+                        $combination['weight'],
+                        0, 0, 0, 0
+                    );
+                    
+                    if ($priceResult['status'] == 'success') {
+                        \Log::info("✅ Calculated price: {$priceResult['price']} for {$cacheKey}");
+                        
+                        // Try to insert in database
+                        try {
+                            $insertData = [
+                                'origin_pincode' => $combination['origin'],
+                                'destination_pincode' => $combination['destination'],
+                                'weight' => $combination['weight'],
+                                'price' => $priceResult['price'],
+                                'gst' => $priceResult['gst'],
+                                'total' => $priceResult['total'],
+                                'distance_km' => null,
+                                'hit_count' => 1,
+                                'last_used_at' => now(),
+                                'created_at' => now(),
+                                'updated_at' => now()
+                            ];
+                            
+                            \Log::info("Attempting DB insert:", $insertData);
+                            
+                            $inserted = DB::table('pincode_distance_prices')->insert($insertData);
+                            
+                            if ($inserted) {
+                                \Log::info("✅ Successfully inserted into DB: {$cacheKey}");
+                                $stats['calculated_and_stored']++;
+                            } else {
+                                \Log::error("❌ DB insert returned false for {$cacheKey}");
+                                $stats['insert_errors']++;
+                            }
+                            
+                        } catch (\Exception $e) {
+                            \Log::error("❌ DB insert exception for {$cacheKey}: " . $e->getMessage());
+                            $stats['insert_errors']++;
+                        }
+                        
+                        $priceCache[$cacheKey] = $priceResult;
+                        
+                    } else {
+                        \Log::error("❌ Calculation failed for {$cacheKey}");
+                        $priceCache[$cacheKey] = $priceResult;
+                        $stats['failed']++;
+                    }
+                }
+                
+            } catch (\Exception $e) {
+                \Log::error("❌ Error processing {$cacheKey}: " . $e->getMessage());
+                $priceCache[$cacheKey] = [
+                    'status' => 'fail',
+                    'message' => $e->getMessage()
+                ];
+                $stats['failed']++;
+            }
+        }
+
+        // Calculate totals for preview
+        $successRows = 0;
+        $failedRows = 0;
+        $totalAmount = 0;
+        $totalGst = 0;
+        $totalNetAmount = 0;
+        $failedDetails = [];
+        
+        foreach ($rowData as $item) {
+            $cacheKey = $item['cache_key'];
+            $row = $item['data'];
+            $rowNumber = $item['index'];
+            
+            if (!isset($priceCache[$cacheKey]) || $priceCache[$cacheKey]['status'] != 'success') {
+                $failedRows++;
+                $failedDetails[] = [
+                    'row' => $rowNumber,
+                    'error' => $priceCache[$cacheKey]['message'] ?? 'Price not available',
+                    'pincodes' => [
+                        'from' => $row['Pickup Pincode'] ?? '',
+                        'to' => $row['Consignee Pincode'] ?? ''
+                    ]
+                ];
+                continue;
+            }
+            
+            $priceResult = $priceCache[$cacheKey];
+            
+            $fuel_charge = floatval($row['Fuel Charge'] ?? 0);
+            $pickup_charge = floatval($row['Pickup Charge'] ?? 0);
+            $other_service_charge = floatval($row['Other service Charge'] ?? 0);
+            $register_amount = floatval($row['Register Fee'] ?? 0);
+            
+            $basePrice = $priceResult['price'] ?? 0;
+            $additionalCharges = $fuel_charge + $pickup_charge + $other_service_charge + $register_amount;
+            $subtotal = $basePrice + $additionalCharges;
+            $gst = $subtotal * 0.18;
+            $paymentAmount = $subtotal + $gst;
+            
+            $totalAmount += $paymentAmount;
+            $totalGst += $gst;
+            $totalNetAmount += $subtotal;
+            $successRows++;
+        }
+
+        \Log::info("Preview completed. Stats: " . json_encode($stats));
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Preview generated successfully',
+            'data' => [
+                'total_rows' => $totalRows,
+                'success_rows' => $successRows,
+                'failed_rows' => $failedRows,
+                'stats' => $stats,
+                'total_amount' => number_format($totalAmount, 2),
+                'gst_amount' => number_format($totalGst, 2),
+                'net_amount' => number_format($totalNetAmount, 2),
+                'failed_details' => array_slice($failedDetails, 0, 50)
+            ]
+        ]);
+        
+    } catch (\Throwable $e) {
+        \Log::error('Preview error: ' . $e->getMessage());
+        \Log::error($e->getTraceAsString());
+        
+        return response()->json([
+            'status' => false,
+            'message' => 'Preview failed: ' . $e->getMessage()
+        ], 500);
+    }
+}
+
+
+
+public function testDatabaseConnection()
+{
+    try {
+        // Test 1: Basic DB connection
+        $connection = DB::connection()->getPdo();
+        $dbName = DB::connection()->getDatabaseName();
+        
+        // Test 2: Check if table exists
+        $tables = DB::select('SHOW TABLES');
+        $tableList = array_map(function($table) {
+            return array_values((array)$table)[0];
+        }, $tables);
+        
+        // Test 3: Try to insert a simple record
+        $testId = 'TEST_' . time();
+        $insertData = [
+            'origin_pincode' => 'TEST1',
+            'destination_pincode' => 'TEST2',
+            'weight' => 1.00,
+            'price' => 100.00,
+            'gst' => 18.00,
+            'total' => 118.00,
+            'hit_count' => 1,
+            'last_used_at' => now(),
+            'created_at' => now(),
+            'updated_at' => now()
+        ];
+        
+        $inserted = DB::table('pincode_distance_prices')->insert($insertData);
+        
+        // Test 4: Try to read the inserted record
+        $record = DB::table('pincode_distance_prices')
+            ->where('origin_pincode', 'TEST1')
+            ->where('destination_pincode', 'TEST2')
+            ->where('weight', 1.00)
+            ->first();
+        
+        return response()->json([
+            'success' => true,
+            'database_name' => $dbName,
+            'connection_ok' => $connection ? true : false,
+            'tables_found' => $tableList,
+            'table_exists' => in_array('pincode_distance_prices', $tableList),
+            'insert_worked' => $inserted,
+            'record_found' => $record ? true : false,
+            'record_data' => $record
+        ]);
+        
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+    }
+}
+
+
+public function getPreviewResult($key)
+{
+
+    $data = Cache::get($key);
+    if (!$data) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Preview not ready'
+        ], 404);
+    }
+
+    return response()->json([
+        'status' => true,
+        'summary' => $data['summary'],
+        'success_rows' => $data['success_rows'],
+        'failed_rows' => $data['failed_rows'],
+    ]);
+}
+
+
+
+
+private function generateBatchNumber($franchiseId)
+{
+
+    $prefix = "BATCH";
+    
+    
+    $lastBatch = IndiaPostSpeedPostParcel::where('franchise_id', $franchiseId)
+        ->where('bulk_batch_id', 'like', $prefix . '%')
+        ->orderBy('bulk_batch_id', 'desc')
+        ->first();
+    
+    if ($lastBatch) {
+     
+        $lastNumber = intval(substr($lastBatch->bulk_batch_id, 5));
+        $newNumber = $lastNumber + 1;
+        $newSequence = str_pad($newNumber, 6, '0', STR_PAD_LEFT);
+    } else {
+      
+        $newSequence = '000001';
+    }
+    
+    $batchId = $prefix . $newSequence; 
+    
+    \Log::info("========== BULK BATCH ID GENERATED ==========");
+    \Log::info("Franchise ID: {$franchiseId}");
+    \Log::info("Batch ID: {$batchId}");
+    
+    return $batchId;
+}
+
+/**
+ * Updated processBatch function with mode support
+ */
+private function processBatch(
+    $batch,
+    $franchise,
+    $barcodeOption,
+    &$successCount,
+    &$failCount,
+    &$successRows,
+    &$failedRowsData,
+    &$totalAmount,
+    &$gstAmount,
+    &$netAmount,
+    $bulkBatchId,
+    $batchSequence,
+    $processingMode,
+    $firstOrigin,
+    $isSpecialFranchise   // 🔴 NEW PARAMETER
+) {
+    \Log::info("========== PROCESS BATCH ==========");
+    \Log::info("Mode: {$processingMode}, Special Franchise: " . ($isSpecialFranchise ? 'YES' : 'NO'));
+    \Log::info("Batch data count: " . count($batch));
+    \Log::info("Bulk Batch ID: {$bulkBatchId}");
+    \Log::info("Batch Sequence: {$batchSequence}");
+    
+    // SR No helper function
+    $getSrNo = function($element) {
+        $possibleKeys = [
+            'sr no', 'sr_no', 'srno', 's no', 's.no', 
+            'SR NO', 'Sr No', 'S.No', 'S No',
+            'serial no', 'Serial No', 'sl no', 'Sl No',
+            'row no', 'Row No', '#', 'क्रमांक'
+        ];
+        
+        foreach ($possibleKeys as $key) {
+            if (isset($element[$key]) && $element[$key] !== '' && $element[$key] !== null) {
+                return $element[$key];
+            }
+        }
+        
+        foreach ($element as $key => $value) {
+            if (is_numeric($value) && !empty($value)) {
+                return $value;
+            }
+        }
+        
+        return '';
+    };
+    
+    // 🔴 SPECIAL FRANCHISE PROCESSING (245 और 250)
+    if ($isSpecialFranchise) {
+        \Log::info("🔴 Processing with special franchise rules (ID: {$franchise->id})");
+        $this->processSpecialFranchiseBatch(
+            $batch,
+            $franchise,
+            $barcodeOption,
+            $successCount,
+            $failCount,
+            $successRows,
+            $failedRowsData,
+            $totalAmount,
+            $gstAmount,
+            $netAmount,
+            $bulkBatchId,
+            $batchSequence,
+            $getSrNo
+        );
+        return;
+    }
+    
+    // 🔴 NORMAL PROCESSING (for all other franchises)
+    \Log::info("🟡 Processing with normal rules");
+    $this->processNormalBatch(
+        $batch,
+        $franchise,
+        $barcodeOption,
+        $successCount,
+        $failCount,
+        $successRows,
+        $failedRowsData,
+        $totalAmount,
+        $gstAmount,
+        $netAmount,
+        $bulkBatchId,
+        $batchSequence,
+        $getSrNo
+    );
+}
+ 
+    
+    
+    
+ 
+
+/**
+ * Normal batch processing for mixed origins
+ */
+private function processNormalBatch(
+    $batchData,
+    $franchise,
+    $barcodeOption,
+    &$successCount,
+    &$failCount,
+    &$successRows,
+    &$failedRowsData,
+    &$totalAmount,
+    &$gstAmount,
+    &$netAmount,
+    $bulkBatchId,
+    $batchSequence,
+    $getSrNo
+) {
+    \Log::info("========== NORMAL BATCH PROCESSING STARTED ==========");
+    
+    // Collect unique combinations
+    $uniqueCombinations = [];
+    $rowSrNoMap = [];
+    
+    foreach ($batchData as $index => $element) {
+        $srNo = $getSrNo($element);
+        $rowSrNoMap[$index] = $srNo;
+        
+        $origin = trim($element["Pickup Pincode"] ?? '');
+        $destination = trim($element["Consignee Pincode"] ?? '');
+        $weight = floatval($element["Package Weight"] ?? 0);
+        
+        if (empty($origin) || empty($destination) || $weight <= 0) {
+            \Log::warning("Row {$index} skipped - missing required fields");
+            continue;
+        }
+        
+        $cacheKey = "{$origin}_{$destination}_{$weight}";
+        
+        if (!isset($uniqueCombinations[$cacheKey])) {
+            $uniqueCombinations[$cacheKey] = [
+                'origin' => $origin,
+                'destination' => $destination,
+                'weight' => $weight,
+                'rows' => []
+            ];
+        }
+        $uniqueCombinations[$cacheKey]['rows'][] = $index;
+    }
+    
+    \Log::info("Unique combinations found: " . count($uniqueCombinations));
+    
+    // Calculate prices for unique combinations
+    $priceCache = [];
+    $cacheHits = 0;
+    $cacheMisses = 0;
+    
+    foreach ($uniqueCombinations as $cacheKey => $combination) {
+        try {
+            $cachedPrice = Cache::get("excel_price_{$cacheKey}");
+            if ($cachedPrice) {
+                $priceCache[$cacheKey] = $cachedPrice;
+                $cacheHits++;
+                \Log::info("✅ Cache HIT for {$cacheKey}");
+                continue;
+            }
+            
+            $priceResult = $this->getCachedPrice(
+                $combination['origin'], 
+                $combination['destination'], 
+                $combination['weight'],
+                0, 0, 0, 0  
+            );
+            
+            if ($priceResult["status"] == "success") {
+                Cache::put("excel_price_{$cacheKey}", $priceResult, 604800);
+                $priceCache[$cacheKey] = $priceResult;
+                $cacheMisses++;
+                \Log::info("✅ Calculated and cached price for {$cacheKey}");
+            } else {
+                throw new \Exception($priceResult["message"]);
+            }
+            
+        } catch (\Exception $e) {
+            $priceCache[$cacheKey] = ['status' => 'fail', 'message' => $e->getMessage()];
+            \Log::error("❌ Price calculation failed for {$cacheKey}: " . $e->getMessage());
+        }
+    }
+    
+    \Log::info("Cache stats - Hits: {$cacheHits}, Misses: {$cacheMisses}");
+    
+    // Process each row
+    $batchSuccessCount = 0;
+    $batchFailCount = 0;
+    
+    foreach ($batchData as $index => $element) {
+        try {
+            $srNo = $rowSrNoMap[$index] ?? '';
+            
+            $origin = trim($element["Pickup Pincode"]);
+            $destination = trim($element["Consignee Pincode"]);
+            $weight = floatval($element["Package Weight"]);
+            
+            $cacheKey = "{$origin}_{$destination}_{$weight}";
+            
+            if (!isset($priceCache[$cacheKey]) || $priceCache[$cacheKey]['status'] != 'success') {
+                throw new \Exception("Price not available for route: {$origin} to {$destination}");
+            }
+            
+            $basePriceResult = $priceCache[$cacheKey];
+            $basePrice = (float)($basePriceResult["price"] ?? 0);
+            
+            $fuel_charge = floatval($element["Fuel Charge"] ?? 0);
+            $pickup_charge = floatval($element["Pickup Charge"] ?? 0);
+            $other_service_charge = floatval($element["Other service Charge"] ?? 0);
+            $register_amount = floatval($element["Register Fee"] ?? 0);
+            
+            $additionalCharges = $fuel_charge + $pickup_charge + $other_service_charge + $register_amount;
+            $subtotal = $basePrice + $additionalCharges;
+            $gst = $subtotal * 0.18;
+            $payment_amount = $subtotal + $gst;
+            
+            $successRow = [
+                'data' => $element,
+                'calculated_price' => round($payment_amount, 2),
+                'calculated_gst' => round($gst, 2),
+                'calculated_net' => round($subtotal, 2),
+                'calculated_weight' => $weight,
+                'barcode_option' => $barcodeOption,
+                'excel_sr_no' => $srNo,
+                'excel_row_index' => $index,
+                'bulk_batch_id' => $bulkBatchId,
+                'batch_sequence' => $batchSequence,
+                'calculation_type' => 'normal'
+            ];
+            
+            $successRows[] = $successRow;
+            $batchSuccessCount++;
+            
+            $totalAmount += $payment_amount;
+            $gstAmount += $gst;
+            $netAmount += $subtotal;
+            
+        } catch (\Exception $e) {
+            $batchFailCount++;
+            $element["Error Reason"] = $e->getMessage();
+            $element["sr_no"] = $rowSrNoMap[$index] ?? '';
+            $element["row_index"] = $index;
+            $element["bulk_batch_id"] = $bulkBatchId;
+            $element["batch_sequence"] = $batchSequence;
+            
+            $failedRowsData[] = $element;
+            \Log::error("❌ Row {$index} failed: " . $e->getMessage());
+        }
+    }
+    
+    $successCount += $batchSuccessCount;
+    $failCount += $batchFailCount;
+    
+    \Log::info("Normal batch completed - Success: {$batchSuccessCount}, Failed: {$batchFailCount}");
+}
+
+private function processSpecialFranchiseBatch(
+    $batchData,
+    $franchise,
+    $barcodeOption,
+    &$successCount,
+    &$failCount,
+    &$successRows,
+    &$failedRowsData,
+    &$totalAmount,
+    &$gstAmount,
+    &$netAmount,
+    $bulkBatchId,
+    $batchSequence,
+    $getSrNo
+) {
+    $startTime = microtime(true);
+    \Log::info("========== SPECIAL FRANCHISE BATCH PROCESSING ==========");
+    
+    // STEP 1: सारे pincodes clean करके इकट्ठा करो
+    $allPickups = [];
+    $allConsignees = [];
+    $rowData = [];
+    
+    foreach ($batchData as $index => $element) {
+        $srNo = $getSrNo($element);
+        $pickupPincode = preg_replace('/\s+/', '', trim($element["Pickup Pincode"] ?? ''));
+        $consigneePincode = preg_replace('/\s+/', '', trim($element["Consignee Pincode"] ?? ''));
+        $weight = floatval($element["Package Weight"] ?? 0);
+        
+        if (empty($pickupPincode)) {
+            $failCount++;
+            $element["Error Reason"] = "Pickup Pincode is missing";
+            $failedRowsData[] = $element;
+            continue;
+        }
+        
+        if ($weight <= 0) {
+            $failCount++;
+            $element["Error Reason"] = "Invalid package weight";
+            $failedRowsData[] = $element;
+            continue;
+        }
+        
+        $allPickups[$pickupPincode] = $pickupPincode;
+        if (!empty($consigneePincode)) {
+            $allConsignees[$consigneePincode] = $consigneePincode;
+        }
+        
+        $rowData[] = [
+            'index' => $index,
+            'sr_no' => $srNo,
+            'pickup' => $pickupPincode,
+            'consignee' => $consigneePincode,
+            'weight' => $weight,
+            'element' => $element
+        ];
+    }
+    
+    \Log::info("Valid rows to process: " . count($rowData));
+    \Log::info("Unique pickup pincodes: " . json_encode(array_keys($allPickups)));
+    \Log::info("Unique consignee pincodes: " . json_encode(array_keys($allConsignees)));
+    
+    // STEP 2: 🔴 SINGLE QUERY - सिर्फ pincode table check करो
+    $allPincodes = array_unique(array_merge($allPickups, $allConsignees));
+    $pincodeMasterLookup = [];  // यह बताएगा कि कौन-से pincodes master table में हैं
+    
+    if (!empty($allPincodes)) {
+        $pincodeList = "'" . implode("','", $allPincodes) . "'";
+        
+        // 🔴 सिर्फ pincode column check करो
+        $masterResults = DB::select("
+            SELECT pincode 
+            FROM pincode_master 
+            WHERE pincode IN ($pincodeList)
+        ");
+        
+        foreach ($masterResults as $item) {
+            $pincodeMasterLookup[$item->pincode] = true;
+        }
+        
+        \Log::info("Pincodes found in master table: " . json_encode(array_keys($pincodeMasterLookup)));
+    }
+    
+    // STEP 3: PINCODE TABLE CHECK (साधारण pincodes table)
+    $validPincodes = [];
+    if (!empty($allPincodes)) {
+        $pincodeList = "'" . implode("','", $allPincodes) . "'";
+        
+        $pincodeResults = DB::select("
+            SELECT pincode 
+            FROM pincodes 
+            WHERE pincode IN ($pincodeList)
+        ");
+        
+        foreach ($pincodeResults as $item) {
+            $validPincodes[$item->pincode] = true;
+        }
+        
+        // Check कौन-से pincodes missing हैं
+        $missingPincodes = array_diff($allPincodes, array_keys($validPincodes));
+        \Log::info("Valid pincodes in pincodes table: " . json_encode(array_keys($validPincodes)));
+        if (!empty($missingPincodes)) {
+            \Log::warning("Pincodes not found in any table: " . json_encode($missingPincodes));
+        }
+    }
+    
+    // STEP 4: Postal rates cache
+    static $postalRates = null;
+    if ($postalRates === null) {
+        $rateResults = DB::select("
+            SELECT weight, Local, upto_200_kms, rate_201_to_500_kms,
+                   rate_501_to_1000_kms, rate_1001_to_2000_kms, above_2000_kms
+            FROM postal_rates 
+            WHERE weight IN ('Up to 50 gm', '51 to 250 gm', '251 to 500 gm', 'Additional 500 gm or part thereof')
+        ");
+        
+        $postalRates = [];
+        foreach ($rateResults as $rate) {
+            $postalRates[$rate->weight] = $rate;
+        }
+    }
+    
+    // STEP 5: Process each row
+    $batchSuccessCount = 0;
+    $batchFailCount = 0;
+    $priceCache = [];
+    $distanceCounts = ['50' => 0, '150' => 0, 'fail_pickup' => 0, 'fail_consignee' => 0];
+    
+    foreach ($rowData as $item) {
+        try {
+            $pickup = $item['pickup'];
+            $consignee = $item['consignee'];
+            $weight = $item['weight'];
+            $element = $item['element'];
+            $srNo = $item['sr_no'];
+            $index = $item['index'];
+            
+            \Log::info("========== Processing Row {$srNo} ==========");
+            \Log::info("Pickup: {$pickup}, Consignee: {$consignee}");
+            
+            // 🔴 STEP A: पहले check करो कि pickup pincode pincodes table में है या नहीं
+            if (!isset($validPincodes[$pickup])) {
+                $distanceCounts['fail_pickup']++;
+                throw new \Exception("Pickup pincode {$pickup} not found in pincodes table");
+            }
+            
+            // 🔴 STEP B: अब consignee pincode check करो
+            $consigneeValid = !empty($consignee) && isset($validPincodes[$consignee]);
+            
+            if (!$consigneeValid) {
+                // Consignee pincode नहीं मिला - FAIL
+                $distanceCounts['fail_consignee']++;
+                throw new \Exception("Consignee pincode {$consignee} not found in pincodes table");
+            }
+            
+            // 🔴 STEP C: अब देखो कि दोनों pincodes master table में हैं या नहीं
+            $pickupInMaster = isset($pincodeMasterLookup[$pickup]);
+            $consigneeInMaster = isset($pincodeMasterLookup[$consignee]);
+            
+            if ($pickupInMaster && $consigneeInMaster) {
+                // दोनों master table में हैं → 50km
+                $distance = 50;
+                $source = 'master_both';
+                $distanceCounts['50']++;
+                \Log::info("✅ Row {$srNo}: BOTH pincodes in master table - using 50km");
+            } else {
+                // कोई एक या दोनों master में नहीं → 150km
+                $distance = 150;
+                $source = 'master_not_both';
+                $distanceCounts['150']++;
+                \Log::info("🟡 Row {$srNo}: Not both in master table - using 150km");
+                \Log::info("   Pickup in master: " . ($pickupInMaster ? 'Yes' : 'No') . 
+                          ", Consignee in master: " . ($consigneeInMaster ? 'Yes' : 'No'));
+            }
+            
+            // STEP D: Price calculate करो
+            $priceKey = $weight . '_' . $distance;
+            if (!isset($priceCache[$priceKey])) {
+                $priceResult = $this->fastPriceCalcForSpecial($weight, $distance, $postalRates);
+                $priceCache[$priceKey] = $priceResult;
+            } else {
+                $priceResult = $priceCache[$priceKey];
+            }
+            
+            // STEP E: Additional charges
+            $fuel_charge = floatval($element["Fuel Charge"] ?? 0);
+            $pickup_charge = floatval($element["Pickup Charge"] ?? 0);
+            $other_service_charge = floatval($element["Other service Charge"] ?? 0);
+            $register_amount = floatval($element["Register Fee"] ?? 0);
+            
+            $additionalCharges = $fuel_charge + $pickup_charge + $other_service_charge + $register_amount;
+            $subtotal = $priceResult['price'] + $additionalCharges;
+            $gst = $subtotal * 0.18;
+            $payment_amount = $subtotal + $gst;
+            
+            \Log::info("Row {$srNo} final: Distance={$distance}km, Base Price={$priceResult['price']}, Total={$payment_amount}");
+            
+            // STEP F: Success row store करो
+            $successRows[] = [
+                'data' => $element,
+                'calculated_price' => round($payment_amount, 2),
+                'calculated_gst' => round($gst, 2),
+                'calculated_net' => round($subtotal, 2),
+                'base_price' => round($priceResult['price'], 2),
+                'base_gst' => round($priceResult['gst'] ?? 0, 2),
+                'base_total' => round($priceResult['total'] ?? 0, 2),
+                'calculated_weight' => $weight,
+                'barcode_option' => $barcodeOption,
+                'excel_sr_no' => $srNo,
+                'excel_row_index' => $index,
+                'bulk_batch_id' => $bulkBatchId,
+                'batch_sequence' => $batchSequence,
+                'distance_used' => $distance,
+                'distance_source' => $source,
+                'pickup_in_master' => $pickupInMaster,
+                'consignee_in_master' => $consigneeInMaster,
+                'rate_used' => $priceResult['rate_used'] ?? 'Unknown',
+                'pickup_pincode' => $pickup,
+                'consignee_pincode' => $consignee,
+            ];
+            
+            $batchSuccessCount++;
+            $totalAmount += $payment_amount;
+            $gstAmount += $gst;
+            $netAmount += $subtotal;
+            
+        } catch (\Exception $e) {
+            $batchFailCount++;
+            $element["Error Reason"] = $e->getMessage();
+            $element["sr_no"] = $srNo;
+            $element["row_index"] = $index + 2;
+            $element["bulk_batch_id"] = $bulkBatchId;
+            $element["batch_sequence"] = $batchSequence;
+            $failedRowsData[] = $element;
+            \Log::error("❌ Row {$srNo} failed: " . $e->getMessage());
+        }
+    }
+    
+    $successCount += $batchSuccessCount;
+    $failCount += $batchFailCount;
+    
+    \Log::info("========== BATCH SUMMARY ==========");
+    \Log::info("Success: {$batchSuccessCount}, Failed: {$batchFailCount}");
+    \Log::info("Distance summary: 50km={$distanceCounts['50']}, 150km={$distanceCounts['150']}");
+    \Log::info("Failures: Pickup missing={$distanceCounts['fail_pickup']}, Consignee missing={$distanceCounts['fail_consignee']}");
+    \Log::info("Execution time: " . round(microtime(true) - $startTime, 2) . " seconds");
+}
+
+
+
+/**
+ * Fast price calculation using pre-fetched postal rates
+ */
+private function fastPriceCalcForSpecial($weightInGrams, $distance, $postalRates)
+{
+    // Distance category mapping (optimized)
+    if ($distance <= 63) {
+        $distanceCategory = 'Local';
+    } elseif ($distance <= 200) {
+        $distanceCategory = 'upto_200_kms';
+    } elseif ($distance <= 500) {
+        $distanceCategory = 'rate_201_to_500_kms';
+    } elseif ($distance <= 1000) {
+        $distanceCategory = 'rate_501_to_1000_kms';
+    } elseif ($distance <= 2000) {
+        $distanceCategory = 'rate_1001_to_2000_kms';
+    } else {
+        $distanceCategory = 'above_2000_kms';
+    }
+    
+    // Weight-based pricing
+    if ($weightInGrams <= 50) {
+        $rate = $postalRates['Up to 50 gm'] ?? null;
+        $price = $rate ? ($rate->$distanceCategory ?? 0) : 0;
+        $rateUsed = 'Up to 50 gm';
+    } elseif ($weightInGrams <= 250) {
+        $rate = $postalRates['51 to 250 gm'] ?? null;
+        $price = $rate ? ($rate->$distanceCategory ?? 0) : 0;
+        $rateUsed = '51 to 250 gm';
+    } elseif ($weightInGrams <= 500) {
+        $rate = $postalRates['251 to 500 gm'] ?? null;
+        $price = $rate ? ($rate->$distanceCategory ?? 0) : 0;
+        $rateUsed = '251 to 500 gm';
+    } else {
+        $baseRate = $postalRates['251 to 500 gm'] ?? null;
+        $additionalRate = $postalRates['Additional 500 gm or part thereof'] ?? null;
+        
+        if ($baseRate && $additionalRate) {
+            $basePrice = $baseRate->$distanceCategory ?? 0;
+            $additionalWeight = $weightInGrams - 500;
+            $additionalIncrements = (int)ceil($additionalWeight / 500);
+            $additionalPrice = $additionalIncrements * ($additionalRate->$distanceCategory ?? 0);
+            $price = $basePrice + $additionalPrice;
+            $rateUsed = '251 to 500 gm + Additional';
+        } else {
+            $price = 0;
+            $rateUsed = 'Rates not found';
+        }
+    }
+    
+    return [
+        'price' => round($price, 2),
+        'rate_used' => $rateUsed
+    ];
+}
+
+
+
+
+
+
+
+
+private function calculatePriceForSpecialFranchise($weightInGrams, $distance)
+{
+    try {
+        // Determine distance category based on postal rates
+        if ($distance <= 63) {
+            $distanceCategory = 'Local';
+        } elseif ($distance <= 200) {
+            $distanceCategory = 'upto_200_kms';
+        } elseif ($distance <= 500) {
+            $distanceCategory = 'rate_201_to_500_kms';
+        } elseif ($distance <= 1000) {
+            $distanceCategory = 'rate_501_to_1000_kms';
+        } elseif ($distance <= 2000) {
+            $distanceCategory = 'rate_1001_to_2000_kms';
+        } else {
+            $distanceCategory = 'above_2000_kms';
+        }
+        
+        \Log::info("Price calculation: Weight={$weightInGrams}g, Distance={$distance}km, Category={$distanceCategory}");
+        
+        // Get price from PostalRates based on weight
+        if ($weightInGrams <= 50) {
+            $rate = PostalRates::where('weight', 'Up to 50 gm')->first();
+            $rateUsed = 'Up to 50 gm';
+        } elseif ($weightInGrams <= 250) {
+            $rate = PostalRates::where('weight', '51 to 250 gm')->first();
+            $rateUsed = '51 to 250 gm';
+        } elseif ($weightInGrams <= 500) {
+            $rate = PostalRates::where('weight', '251 to 500 gm')->first();
+            $rateUsed = '251 to 500 gm';
+        } else {
+            // For weight > 500g
+            $baseRate = PostalRates::where('weight', '251 to 500 gm')->first();
+            $additionalRate = PostalRates::where('weight', 'Additional 500 gm or part thereof')->first();
+            
+            if (!$baseRate || !$additionalRate) {
+                return [
+                    'status' => 'fail',
+                    'message' => 'Postal rates not found for weight > 500g'
+                ];
+            }
+            
+            $basePrice = $baseRate->$distanceCategory ?? 0;
+            $additionalWeight = $weightInGrams - 500;
+            $additionalIncrements = ceil($additionalWeight / 500);
+            $additionalPrice = $additionalIncrements * ($additionalRate->$distanceCategory ?? 0);
+            
+            $price = $basePrice + $additionalPrice;
+            $gst = $price * 0.18;
+            $total = $price + $gst;
+            
+            return [
+                'status' => 'success',
+                'price' => round($price, 2),
+                'gst' => round($gst, 2),
+                'total' => round($total, 2),
+                'rate_used' => '251 to 500 gm + Additional',
+                'base_price' => $basePrice,
+                'additional_increments' => $additionalIncrements,
+                'distance_category' => $distanceCategory
+            ];
+        }
+        
+        if (!$rate) {
+            return [
+                'status' => 'fail',
+                'message' => "Postal rate not found for weight {$weightInGrams}g"
+            ];
+        }
+        
+        $price = $rate->$distanceCategory ?? 0;
+        $gst = $price * 0.18;
+        $total = $price + $gst;
+        
+        return [
+            'status' => 'success',
+            'price' => round($price, 2),
+            'gst' => round($gst, 2),
+            'total' => round($total, 2),
+            'rate_used' => $rateUsed,
+            'distance_category' => $distanceCategory
+        ];
+        
+    } catch (\Exception $e) {
+        \Log::error("Price calculation error: " . $e->getMessage());
+        return [
+            'status' => 'fail',
+            'message' => $e->getMessage()
+        ];
+    }
+}
+
+
+
+
+
+private function calculatePriceWithDistanceAndWeight($origin, $distance, $weightInGrams)
+{
+    try {
+        // Determine distance category
+        if ($distance <= 63) {
+            $distanceCategory = 'Local';
+        } elseif ($distance <= 200) {
+            $distanceCategory = 'upto_200_kms';
+        } elseif ($distance <= 500) {
+            $distanceCategory = 'rate_201_to_500_kms';
+        } elseif ($distance <= 1000) {
+            $distanceCategory = 'rate_501_to_1000_kms';
+        } elseif ($distance <= 2000) {
+            $distanceCategory = 'rate_1001_to_2000_kms';
+        } else {
+            $distanceCategory = 'above_2000_kms';
+        }
+        
+        \Log::info("Price calculation: Weight={$weightInGrams}g, Distance={$distance}km, Category={$distanceCategory}");
+        
+        // Get price from PostalRates based on weight
+        $rate = null;
+        $rateUsed = '';
+        
+        if ($weightInGrams <= 50) {
+            $rate = PostalRates::where('weight', 'Up to 50 gm')->first();
+            $rateUsed = 'Up to 50 gm';
+        } elseif ($weightInGrams <= 250) {
+            $rate = PostalRates::where('weight', '51 to 250 gm')->first();
+            $rateUsed = '51 to 250 gm';
+        } elseif ($weightInGrams <= 500) {
+            $rate = PostalRates::where('weight', '251 to 500 gm')->first();
+            $rateUsed = '251 to 500 gm';
+        } else {
+            // For weight > 500g
+            $baseRate = PostalRates::where('weight', '251 to 500 gm')->first();
+            $additionalRate = PostalRates::where('weight', 'Additional 500 gm or part thereof')->first();
+            
+            if (!$baseRate || !$additionalRate) {
+                return [
+                    'status' => 'fail',
+                    'message' => 'Postal rates not found for weight > 500g'
+                ];
+            }
+            
+            $basePrice = $baseRate->$distanceCategory ?? 0;
+            $additionalWeight = $weightInGrams - 500;
+            $additionalIncrements = ceil($additionalWeight / 500);
+            $additionalPrice = $additionalIncrements * ($additionalRate->$distanceCategory ?? 0);
+            
+            $price = $basePrice + $additionalPrice;
+            $gst = $price * 0.18;
+            $total = $price + $gst;
+            
+            return [
+                'status' => 'success',
+                'price' => round($price, 2),
+                'gst' => round($gst, 2),
+                'total' => round($total, 2),
+                'rate_used' => '251 to 500 gm + Additional',
+                'base_price' => $basePrice,
+                'additional_increments' => $additionalIncrements,
+                'distance_category' => $distanceCategory
+            ];
+        }
+        
+        if (!$rate) {
+            return [
+                'status' => 'fail',
+                'message' => "Postal rate not found for weight {$weightInGrams}g"
+            ];
+        }
+        
+        $price = $rate->$distanceCategory ?? 0;
+        $gst = $price * 0.18;
+        $total = $price + $gst;
+        
+        return [
+            'status' => 'success',
+            'price' => round($price, 2),
+            'gst' => round($gst, 2),
+            'total' => round($total, 2),
+            'rate_used' => $rateUsed,
+            'distance_category' => $distanceCategory
+        ];
+        
+    } catch (\Exception $e) {
+        \Log::error("Price calculation error: " . $e->getMessage());
+        return [
+            'status' => 'fail',
+            'message' => $e->getMessage()
+        ];
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+public function storeByFile(Request $request, RateCalculator $rateCalculater) {
+    ini_set('memory_limit', '2048M');
+    set_time_limit(3600);
+    
+    if (!$request->hasFile("file")) {
+        return response()->json(['status' => 'error', 'message' => 'No file uploaded.'], 400);
+    }
+
+    $franchiseId = Franchise::getFranchiseId();
+    $franchise = Franchise::findOrFail($franchiseId);
+    $barcodeOption = $request->barcode_option; 
+    
+ 
+    $specialFranchises = [245, 250,249];
+    $isSpecialFranchise = in_array($franchiseId, $specialFranchises);
+    
+    if ($isSpecialFranchise) {
+        \Log::info("🔴 SPECIAL FRANCHISE DETECTED: ID {$franchiseId} - Using special pincode validation");
+    } else {
+        \Log::info("🟡 NORMAL FRANCHISE: ID {$franchiseId} - Using normal processing");
+    }
+    
+    $successCount = 0;
+    $failCount = 0;
+    $failedRowsData = [];
+    $successRows = [];
+    
+    $totalAmount = 0;
+    $gstAmount = 0;
+    $netAmount = 0;
+
+    try {
+        $file = $request->file("file");
+        $fileName = uniqid() . "_" . $file->getClientOriginalName();
+      
+        if ($file->getSize() > 20 * 1024 * 1024) {
+            return response()->json([
+                'status' => 'error', 
+                'message' => 'File size too large. Maximum 20MB allowed.'
+            ], 400);
+        }
+
+        $filePath = $file->getRealPath();
+        
+        \Log::info("Starting Excel processing for file: {$fileName}");
+        \Log::info("File size: " . round($file->getSize() / 1024 / 1024, 2) . " MB");
+        \Log::info("Barcode option selected: {$barcodeOption}");
+        \Log::info("Franchise ID: {$franchiseId}, Is Special: " . ($isSpecialFranchise ? 'Yes' : 'No'));
+        
+        $reader = IOFactory::createReaderForFile($filePath);
+        $reader->setReadDataOnly(true);
+        
+        $spreadsheet = $reader->load($filePath);
+        $sheet = $spreadsheet->getActiveSheet();
+        $totalRowCount = $sheet->getHighestRow() - 1;
+        
+        \Log::info("Total rows in Excel (excluding header): {$totalRowCount}");
+   
+        if ($totalRowCount > 10000) {
+            return response()->json([
+                'status' => 'warning',
+                'message' => 'Large file detected (' . number_format($totalRowCount) . ' rows). Processing may take time.',
+                'continue_processing' => true,
+                'row_count' => $totalRowCount
+            ], 200);
+        }
+      
+        $data = [];
+        $header = null;
+      
+        foreach ($sheet->getRowIterator() as $rowIndex => $row) {
+            $rowData = [];
+            $hasData = false;
+            
+            foreach ($row->getCellIterator() as $cell) {
+                $cellValue = $cell->getValue();
+                $rowData[] = $cellValue;
+                if (!is_null($cellValue) && trim((string)$cellValue) !== "") { 
+                    $hasData = true; 
+                }
+            }
+            
+            if ($hasData) {
+                if (is_null($header)) { 
+                    $header = $rowData; 
+                    \Log::info("Header found with " . count($header) . " columns");
+                    \Log::info("Header columns: " . json_encode($header));
+                } else { 
+                    $data[] = array_combine($header, array_pad($rowData, count($header), null));
+                }
+            }
+            
+            if ($rowIndex % 1000 === 0) {
+                \Log::info("Read {$rowIndex} rows...");
+                gc_collect_cycles();
+            }
+        }
+        
+        \Log::info("Total data rows collected: " . count($data));
+      
+        $validationErrors = $this->validateBarcodeRules($data, $barcodeOption, $franchiseId);
+        
+        if (!empty($validationErrors)) {
+            return response()->json([
+                'status' => 'validation_error',
+                'message' => 'Barcode validation failed',
+                'validation_errors' => $validationErrors,
+                'preview_blocked' => true
+            ], 400);
+        }
+        
+        unset($spreadsheet, $sheet, $reader);
+        
+        // Get first origin for logging
+        $firstOrigin = null;
+        $sampleSize = min(50, count($data));
+        
+        for ($i = 0; $i < $sampleSize; $i++) {
+            $currentOrigin = $data[$i]["Pickup Pincode"] ?? '';
+            if ($firstOrigin === null) {
+                $firstOrigin = $currentOrigin;
+            }
+        }
+        
+        // 🔴 PROCESSING MODE BASED ON FRANCHISE
+        if ($isSpecialFranchise) {
+            // Special franchises ke liye batch size 500
+            \Log::info("Using special franchise mode with batch size 500");
+            $batchSize = 500;
+            $processingMode = 'special_franchise';
+        } else {
+            // Normal franchises ke liye
+            \Log::info("Using normal mode with batch size 200");
+            $batchSize = 200;
+            $processingMode = 'normal';
+        }
+        
+        $bulkBatchId = $this->generateBatchNumber($franchiseId);
+        $batchSequence = 1;
+        
+        \Log::info("Batch ID: {$bulkBatchId}, Mode: {$processingMode}, Batch Size: {$batchSize}");
+        \Log::info("Special Franchise: " . ($isSpecialFranchise ? 'Yes' : 'No'));
+        
+        $totalBatches = ceil(count($data) / $batchSize);
+        
+        for ($batchIndex = 0; $batchIndex < $totalBatches; $batchIndex++) {
+            $start = $batchIndex * $batchSize;
+            $batch = array_slice($data, $start, $batchSize);
+            
+            \Log::info("Processing batch " . ($batchIndex + 1) . "/{$totalBatches}");
+            
+            // 🔴 PASS isSpecialFranchise FLAG
+            $this->processBatch(
+                $batch,
+                $franchise,
+                $barcodeOption,
+                $successCount,
+                $failCount,
+                $successRows,
+                $failedRowsData,
+                $totalAmount,
+                $gstAmount,
+                $netAmount,
+                $bulkBatchId,
+                $batchSequence,
+                $processingMode,
+                $firstOrigin,
+                $isSpecialFranchise  // 🔴 SPECIAL FRANCHISE FLAG
+            );
+            
+            $batchSequence++;
+            gc_collect_cycles();
+            
+            $processedRows = ($batchIndex + 1) * $batchSize;
+            $progress = min(100, round(($processedRows / count($data)) * 100, 2));
+            \Log::info("Progress: {$progress}%");
+            
+            if ($batchIndex < $totalBatches - 1) {
+                usleep(50000);
+            }
+        }
+        
+        \Log::info("Processing complete. Success: {$successCount}, Failed: {$failCount}");
+        
+        // Debugging logs
+        \Log::info("========== FINAL CHECK ==========");
+        \Log::info("Total Success: {$successCount}");
+        \Log::info("Total Failed: {$failCount}");
+        \Log::info("Failed rows data count: " . count($failedRowsData));
+        
+        if ($failCount > 0) {
+            \Log::info("First 3 failed rows: " . json_encode(array_slice($failedRowsData, 0, 3)));
+        }
+        
+        if ($successCount == 0 && $failCount > 0) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'All rows failed to process',
+                'failed_rows' => array_slice($failedRowsData, 0, 50)
+            ], 400);
+        }
+
+        $sessionKey = 'excel_preview_' . $franchiseId . '_' . time();
+        
+        $sessionData = [
+            'success_rows' => $successRows,
+            'failed_rows' => $failedRowsData,
+            'barcode_option' => $barcodeOption,
+            'franchise_id' => $franchiseId,
+            'bulk_batch_id' => $bulkBatchId,
+            'processing_mode' => $processingMode,
+            'origin' => $firstOrigin,
+            'is_special_franchise' => $isSpecialFranchise,
+            'amounts' => [
+                'total_amount' => round($totalAmount, 2),
+                'gst_amount' => round($gstAmount, 2),
+                'net_amount' => round($netAmount, 2)
+            ],
+            'summary' => [
+                'total_rows' => $successCount + $failCount,
+                'success' => $successCount,
+                'failed' => $failCount
+            ]
+        ];
+        
+        \Log::info("Session data failed rows count: " . count($sessionData['failed_rows']));
+        
+        session([$sessionKey => $sessionData]);
+        
+        $response = [
+            'status' => 'success',
+            'message' => 'File processed successfully',
+            'data' => [
+                'success_rows_count' => $successCount,
+                'failed_rows_count' => $failCount,
+                'failed_rows' => $failedRowsData,
+                'session_key' => $sessionKey,
+                'bulk_batch_id' => $bulkBatchId,
+                'processing_mode' => $processingMode,
+                'origin' => $firstOrigin,
+                'is_special_franchise' => $isSpecialFranchise,
+                'summary' => [
+                    'total_rows' => $successCount + $failCount,
+                    'success' => $successCount,
+                    'failed' => $failCount,
+                    'total_amount' => round($totalAmount, 2),
+                    'gst_amount' => round($gstAmount, 2),
+                    'net_amount' => round($netAmount, 2)
+                ]
+            ]
+        ];
+        
+        if ($successCount > 0) {
+            $response['data']['success_rows_sample'] = array_slice($successRows, 0, min(5, $successCount));
+        }
+        
+        return response()->json($response);
+
+    } catch (\Exception $e) {
+        \Log::error('Excel upload error: ' . $e->getMessage());
+        \Log::error($e->getTraceAsString());
+        
+        return response()->json([
+            'status' => 'error', 
+            'message' => 'File processing failed: ' . $e->getMessage()
+        ], 500);
+    }
+}
+
+
+
+
+private function validateBarcodeRules($data, $barcodeOption, $franchiseId)
+{
+    $errors = [];
+    $barcodeColumn = null;
+    
+    // First, find the barcode column
+    if (!empty($data)) {
+        foreach ($data[0] as $key => $value) {
+            if (strtolower(trim($key)) === 'barcode') {
+                $barcodeColumn = $key;
+                break;
+            }
+        }
+    }
+    
+    \Log::info("Barcode column found: " . ($barcodeColumn ?: 'Not found'));
+    
+    // Check 1: For custom barcode option, ensure barcode column exists
+    if ($barcodeOption === 'barcode_custom' && !$barcodeColumn) {
+        $errors[] = [
+            'row' => 'ALL',
+            'message' => 'Barcode column is missing in the Excel file',
+            'column' => 'Barcode',
+            'value' => '',
+            'error_type' => 'missing_column'
+        ];
+        return $errors;
+    }
+    
+    // Step 1: Collect all barcode values for various checks
+    $fileBarcodeValues = [];
+    $rowsWithMissingBarcode = [];
+    $rowsWithBarcode = [];
+    
+    foreach ($data as $rowIndex => $row) {
+        $rowNumber = $rowIndex + 2;
+        $barcodeValue = isset($row[$barcodeColumn]) ? trim((string)$row[$barcodeColumn]) : '';
+        
+        // Track barcodes for duplicate check
+        if (!empty($barcodeValue)) {
+            if (isset($fileBarcodeValues[$barcodeValue])) {
+                $fileBarcodeValues[$barcodeValue]['count']++;
+                $fileBarcodeValues[$barcodeValue]['rows'][] = $rowNumber;
+            } else {
+                $fileBarcodeValues[$barcodeValue] = [
+                    'count' => 1,
+                    'rows' => [$rowNumber]
+                ];
+            }
+            $rowsWithBarcode[$rowNumber] = $barcodeValue;
+        } else {
+            // Track rows with missing barcode
+            $rowsWithMissingBarcode[] = $rowNumber;
+        }
+    }
+    
+    // Step 2: For custom barcode option, check for missing barcodes
+    if ($barcodeOption === 'barcode_custom') {
+        foreach ($rowsWithMissingBarcode as $rowNumber) {
+            $errors[] = [
+                'row' => $rowNumber,
+                'message' => 'Barcode is required for custom barcode option',
+                'column' => $barcodeColumn,
+                'value' => '',
+                'error_type' => 'missing_barcode'
+            ];
+        }
+        
+        // If there are missing barcodes, we can still check for duplicates
+        // in rows that do have barcodes
+    }
+    
+    // Step 3: Check for duplicates within the file
+    foreach ($fileBarcodeValues as $barcodeValue => $info) {
+        if ($info['count'] > 1) {
+            foreach ($info['rows'] as $rowNumber) {
+                $errors[] = [
+                    'row' => $rowNumber,
+                    'message' => "Barcode '{$barcodeValue}' is duplicate within the Excel file",
+                    'column' => $barcodeColumn,
+                    'value' => $barcodeValue,
+                    'error_type' => 'duplicate_in_file'
+                ];
+            }
+        }
+    }
+    
+    // Step 4: Check database for existing barcodes (ONLY for custom barcode option)
+    // IMPORTANT: Only check if we have barcodes to check
+    if ($barcodeOption === 'barcode_custom' && !empty($fileBarcodeValues)) {
+        $barcodeValuesToCheck = array_keys($fileBarcodeValues);
+        
+        // Batch query to check all barcodes at once
+        $existingBarcodes = IndiaPostSpeedPostParcel::whereIn("barcode_no", $barcodeValuesToCheck)
+            ->where("franchise_id", $franchiseId)
+            ->whereDate("created_at", Carbon::today())
+            ->pluck('barcode_no')
+            ->toArray();
+        
+        \Log::info("Existing barcodes in database: " . json_encode($existingBarcodes));
+        
+        if (!empty($existingBarcodes)) {
+            // Create a lookup array for quick checking
+            $existingBarcodeLookup = array_flip($existingBarcodes);
+            
+            // Check each barcode value
+            foreach ($fileBarcodeValues as $barcodeValue => $info) {
+                if (isset($existingBarcodeLookup[$barcodeValue])) {
+                    foreach ($info['rows'] as $rowNumber) {
+                        $errors[] = [
+                            'row' => $rowNumber,
+                            'message' => "Barcode '{$barcodeValue}' already exists in the database (used today)",
+                            'column' => $barcodeColumn,
+                            'value' => $barcodeValue,
+                            'error_type' => 'duplicate_in_database'
+                        ];
+                    }
+                }
+            }
+        }
+    }
+    
+    // Step 5: For auto generate option, check for unexpected barcodes
+    if ($barcodeOption === 'barcode_auto') {
+        foreach ($rowsWithBarcode as $rowNumber => $barcodeValue) {
+            $errors[] = [
+                'row' => $rowNumber,
+                'message' => 'Barcode should be empty for auto generate option',
+                'column' => $barcodeColumn,
+                'value' => $barcodeValue,
+                'error_type' => 'unexpected_barcode'
+            ];
+        }
+    }
+    
+    // Step 6: Sort errors by row number for better display
+    usort($errors, function($a, $b) {
+        // Handle 'ALL' row first
+        if ($a['row'] === 'ALL') return -1;
+        if ($b['row'] === 'ALL') return 1;
+        
+        // Then sort by numeric row
+        return $a['row'] - $b['row'];
+    });
+    
+    return $errors;
+}
+
+public function confirmAndStoreExcel(Request $request, RateCalculator $rateCalculater)
+{
+    ini_set('memory_limit', '2048M');
+    set_time_limit(3600);
+    \Log::info('=== CONFIRM EXCEL CALLED ===');
+    
+    $sessionKey = $request->input('session_key');
+    
+    if (!$sessionKey) {
+        return response()->json(['status' => 'error', 'message' => 'Session key missing'], 400);
+    }
+    
+    $previewData = session($sessionKey);
+    
+    if (!$previewData) {
+        return response()->json(['status' => 'error', 'message' => 'Preview data expired'], 400);
+    }
+    
+    $franchiseId = Franchise::getFranchiseId();
+    $franchise = Franchise::findOrFail($franchiseId);
+    $barcodeOption = $previewData['barcode_option'] ?? 'barcode_auto';
+    $bulkBatchId = $previewData['bulk_batch_id'] ?? null;
+    $isSpecialFranchise = $previewData['is_special_franchise'] ?? false;
+    
+    \Log::info("Processing with Bulk Batch ID: {$bulkBatchId}");
+    \Log::info("Special Franchise: " . ($isSpecialFranchise ? 'Yes' : 'No'));
+    
+    // BARCODE AVAILABILITY CHECK
+    if ($barcodeOption === 'barcode_auto') {
+        $availableCount = $this->getBarcodeAvailableCount();
+        $requiredCount = count($previewData['success_rows']);
+        
+        \Log::info("Barcode check - Available: {$availableCount}, Required: {$requiredCount}");
+        
+        if ($availableCount < $requiredCount) {
+            return response()->json([
+                'status' => 'error',
+                'message' => "Insufficient barcodes. Available: {$availableCount}, Required: {$requiredCount}"
+            ], 400);
+        }
+    }
+    
+    // Get franchise series details
+    $franchiseSeriesDetails = FranchiseBarcodeSeries::where("franchise_id", $franchiseId)->first();
+    
+    // Get service type value
+    $serviceTypeValue = IndiaPostSpeedPostParcel::getServiceTypeDB(IndiaPostSpeedPostParcel::SERVICE_TYPE_INDIA_POST_SPEED);
+    $last_code_issued_column = "last_parcel_code_issued_{$serviceTypeValue}";
+    $range_start_column = "parcel_barcode_range_start_{$serviceTypeValue}";
+    $range_end_column = "parcel_barcode_range_end_{$serviceTypeValue}";
+    
+    // Track barcode start
+    $startBarcode = 0;
+    if ($barcodeOption === 'barcode_auto' && $franchiseSeriesDetails) {
+        $startBarcode = (int)($franchiseSeriesDetails->{$last_code_issued_column} ?? 0);
+        $rangeStart = (int)($franchiseSeriesDetails->{$range_start_column} ?? 0);
+        
+        if ($startBarcode === 0 || $startBarcode < $rangeStart) {
+            $startBarcode = $rangeStart - 1;
+        }
+        
+        \Log::info("Starting barcode from: {$startBarcode}");
+    }
+    
+    DB::beginTransaction();
+    
+    try {
+        $successCount = 0;
+        $failCount = 0;
+        $failedRows = [];
+        $createdParcelIds = [];
+        $totalPaymentAmount = 0;
+        
+        // Process each success row from preview
+        foreach ($previewData['success_rows'] as $index => $rowData) {
+            try {
+                $element = $rowData['data'];
+                $srNo = $rowData['excel_sr_no'] ?? $element["sr no"] ?? ($index + 1);
+                $weight = $rowData['calculated_weight'] ?? floatval($element["Package Weight"] ?? 0);
+                
+                // 🔴 STOREBYFILE की तरह DISTANCE और SOURCE use करें
+                $distance = $rowData['distance_used'] ?? null;
+                $distanceSource = $rowData['distance_source'] ?? null;
+                $origin = trim($element["Pickup Pincode"] ?? '');
+                
+                \Log::info("Processing row {$srNo}: Distance={$distance}km, Source={$distanceSource}, Weight={$weight}g");
+                
+                // 🔴 DISTANCE के आधार पर PRICE CALCULATE करें
+                if (!$distance) {
+                    throw new \Exception("Distance not available for row {$srNo}");
+                }
+                
+                // Price calculate करें - storeByFile की तरह
+                $priceResult = $this->calculatePriceWithDistanceAndWeight($origin, $distance, $weight);
+                
+                if ($priceResult['status'] !== 'success') {
+                    throw new \Exception($priceResult['message'] ?? "Price calculation failed for row {$srNo}");
+                }
+                
+                $basePrice = $priceResult['price'];
+                $gst = $priceResult['gst'];
+                $totalPrice = $priceResult['total'];
+                
+                // Additional charges
+                $fuel_charge = floatval($element["Fuel Charge"] ?? 0);
+                $pickup_charge = floatval($element["Pickup Charge"] ?? 0);
+                $other_service_charge = floatval($element["Other service Charge"] ?? 0);
+                $register_amount = floatval($element["Register Fee"] ?? 0);
+                
+                $additionalCharges = $fuel_charge + $pickup_charge + $other_service_charge + $register_amount;
+                $payment_amount = $totalPrice + $additionalCharges;
+                
+                \Log::info("Price for row {$srNo}: Base={$basePrice}, GST={$gst}, Total={$totalPrice}, Additional={$additionalCharges}, Final={$payment_amount}");
+                
+                // Generate barcode
+                $code = null;
+                if ($barcodeOption === "barcode_custom") {
+                    $code = trim($element["Barcode"] ?? '');
+                    if (empty($code)) {
+                        throw new \Exception('Custom barcode is missing');
+                    }
+                    
+                    $existingParcel = IndiaPostSpeedPostParcel::where("barcode_no", $code)
+                                ->where("franchise_id", $franchiseId)
+                                ->whereDate("created_at", Carbon::today())
+                                ->exists();
+                    if ($existingParcel) {
+                        throw new \Exception("Barcode $code already used today");
+                    }
+                } else {
+                    // Auto generate barcode
+                    $startBarcode++;
+                    
+                    $rangeEnd = (int)($franchiseSeriesDetails->{$range_end_column} ?? 0);
+                    if ($startBarcode > $rangeEnd) {
+                        throw new \Exception("Barcode series exhausted");
+                    }
+                    
+                    $code = $this->getNextBarcode();
+                    \Log::info("Generated barcode: {$code} for row {$srNo}");
+                }
+                
+                // Balance check
+                $indiapost_balance = (float)$franchise->indiapost_balance;
+                $credit_balance = (float)$franchise->india_credit_amount;
+                $totalBalance = $indiapost_balance + $credit_balance;
+                
+                if ($totalBalance < $payment_amount) {
+                    throw new \Exception("Insufficient balance. Required: {$payment_amount}, Available: {$totalBalance}");
+                }
+                
+                // Resolve customer
+                $customer = $this->resolveCustomer($element, $franchiseId);
+                $bookingType = $this->determineBookingTypeFromCustomer($customer);
+                
+                // Generate barcode image
+                $generator = new BarcodeGeneratorPNG();
+                $barcode_img = base64_encode($generator->getBarcode($code, $generator::TYPE_CODE_128));
+                
+                // Create parcel
+                $parcelData = [
+                    "franchise_id" => $franchiseId,
+                    "franchise_role_users_id" => Auth::guard('franchiseRoleUser')->check() ? 
+                        Auth::guard('franchiseRoleUser')->user()->id : null,
+                    "no_r_customer_id" => $customer->id,
+                    "booking_type" => $bookingType,
+                    "excel_row_no" => $srNo,
+                    "bulk_batch_id" => $bulkBatchId,
+                    "batch_sequence" => 1,
+                    "pickup_name" => $element["Pickup Name"] ?? '',
+                    "pickup_mobile" => $element["Pickup Phone"] ?? '',
+                    "pickup_email" => $element["Pickup Email"] ?? '',
+                    "pickup_gst_number" => $element["Pickup gst"] ?? '',
+                    "pickup_pincode" => $element["Pickup Pincode"] ?? '',
+                    "pickup_city" => $element["Pickup City"] ?? '',
+                    "pickup_state" => $element["Pickup State"] ?? '',
+                    "pickup_address" => $element["Pickup Address"] ?? '',
+                    "consignee_name" => $element["Consignee Name"] ?? '',
+                    "consignee_mobile" => $element["Consignee Phone"] ?? '',
+                    "consignee_email" => $element["Consignee Email"] ?? '',
+                    "consignee_gst_number" => $element["Consignee gst"] ?? '',
+                    "consignee_pincode" => $element["Consignee Pincode"] ?? '',
+                    "consignee_city" => $element["Consignee City"] ?? '',
+                    "consignee_state" => $element["Consignee State"] ?? '',
+                    "consignee_address" => $element["Consignee Address"] ?? '',
+                    "package_weight" => $weight,
+                    "package_length" => floatval($element["Package Length"] ?? 0),
+                    "package_width" => floatval($element["Package Width"] ?? 0),
+                    "package_height" => floatval($element["Package Height"] ?? 0),
+                    "fuel_charge" => $fuel_charge,
+                    "pickup_charge" => $pickup_charge,
+                    "other_service_charge" => $other_service_charge,
+                    "register_amount" => $register_amount,
+                    "payment_amount" => round($payment_amount, 2),
+                    "totalOtherAmount" => round($payment_amount, 2),
+                    "payment_method" => "prepaid",
+                    "cod_amount" => 0,
+                    "barcode_no" => $code,
+                    "barcode_image_src" => $barcode_img,
+                    "insert_type" => IndiaPostSpeedPostParcel::INSERT_TYPE_BULK,
+                ];
+                
+    
+               
+                
+                $parcel = IndiaPostSpeedPostParcel::create($parcelData);
+                
+                \Log::info("✅ Parcel created - ID: {$parcel->id}, Barcode: {$code}, Amount: {$payment_amount}, Distance: {$distance}km");
+                
+                // Create track order
+                IndiaPostSpeedPostTrackOrder::create([
+                    "parcel_id" => $parcel->id,
+                    "barcode_no" => $code,
+                    "source_franchise_id" => $franchiseId,
+                    "order_placed_datetime" => now(),
+                    "source_franchise_location" => $franchise->address ?? '',
+                ]);
+                
+                // Deduct balance
+                if ($indiapost_balance >= $payment_amount) {
+                    $franchise->decrement("indiapost_balance", $payment_amount);
+                } else {
+                    $franchise->decrement("india_credit_amount", $payment_amount);
+                }
+                
+                // Calculate commission
+                $commission = $rateCalculater->calculateCommissionForIndiaPost(
+                    $weight,
+                    $payment_amount,
+                    IndiaPostSpeedPostParcel::SERVICE_TYPE_INDIA_POST_SPEED
+                );
+                
+                FranchiseCommissionDetail::create([
+                    "franchise_id" => $franchiseId,
+                    "service_type" => IndiaPostSpeedPostParcel::SERVICE_TYPE_INDIA_POST_SPEED,
+                    "amount" => $payment_amount / 1.18,
+                    "commission" => number_format($commission, 2, ".", ""),
+                    "payment_method" => "prepaid",
+                ]);
+                
+                // Save barcode
+                if ($barcodeOption === "barcode_auto" && $franchiseSeriesDetails) {
+                    FranchiseBarcodes::create([
+                        'barcodes' => $code,
+                        'franchise_barcodeseries_id' => $franchiseSeriesDetails->id
+                    ]);
+                }
+                
+                $createdParcelIds[] = $parcel->id;
+                $successCount++;
+                $totalPaymentAmount += $payment_amount;
+                
+            } catch (\Exception $e) {
+                $failCount++;
+                $element["Error Reason"] = $e->getMessage();
+                $failedRows[] = $element;
+                \Log::error("❌ Row failed: " . $e->getMessage());
+            }
+        }
+        
+        // Update barcode series
+        if ($barcodeOption === "barcode_auto" && $franchiseSeriesDetails && $startBarcode > 0) {
+            $currentLastIssued = (int)($franchiseSeriesDetails->{$last_code_issued_column} ?? 0);
+            
+            \Log::info("Updating barcode series - Current: {$currentLastIssued}, New: {$startBarcode}");
+            
+            if ($startBarcode > $currentLastIssued) {
+                $franchiseSeriesDetails->{$last_code_issued_column} = $startBarcode;
+                $franchiseSeriesDetails->save();
+                \Log::info("✅ Barcode series updated to: {$startBarcode}");
+            }
+        }
+        
+        DB::commit();
+        
+        session()->forget($sessionKey);
+        
+        return response()->json([
+            'status' => 'success',
+            'message' => "Processing complete. Success: {$successCount}, Failed: {$failCount}",
+            'data' => [
+                'success_count' => $successCount,
+                'fail_count' => $failCount,
+                'failed_rows' => array_slice($failedRows, 0, 100),
+                'created_parcel_ids' => $createdParcelIds,
+                'total_amount' => round($totalPaymentAmount, 2),
+                'bulk_batch_id' => $bulkBatchId
+            ]
+        ]);
+        
+    } catch (\Exception $e) {
+        DB::rollBack();
+        \Log::error("Transaction failed: " . $e->getMessage());
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Transaction failed: ' . $e->getMessage()
+        ], 500);
+    }
+}
+/**
+ * Determine booking type from customer type
+ */
+private function determineBookingTypeFromCustomer($customer)
+{
+    if (!$customer) {
+        return 'franchise'; // Default fallback
+    }
+    
+    \Log::info("Customer type for booking determination: " . $customer->type);
+    
+    switch ($customer->type) {
+        case 'manager':
+            return 'manager';
+        case 'pickup':
+            return 'pickup';
+        case 'franchise':
+        default:
+            return 'franchise';
+    }
+}
+ public function checkPreview($franchiseId)
+{
+    // 1. Fetch from Cache
+    $cache = Cache::get("preview_excel_{$franchiseId}");
+
+    if ($cache) {
+        return response()->json([
+            'status' => true,
+            'data' => $cache // This contains our 'failed_rows' with the Barcode error messages
+        ]);
+    }
+
+    // 2. Fallback if the job is still running or hasn't started
+    return response()->json([
+        'status' => false,
+        'message' => 'Preview not ready or still processing...'
+    ]);
+}
+    // Optional: Delete preview cache after showing
+    public function deletePreview($franchiseId)
+    {
+        Cache::forget("preview_excel_{$franchiseId}");
+        return response()->json([
+            'status' => true,
+            'message' => 'Preview cache deleted'
+        ]);
+    }
+
+   
+
+
+
+
+    public function fullPrint($id)
+    {
+        $parcel = IndiaPostSpeedPostParcel::findorfail($id);
+
+        $generator = new BarcodeGeneratorPNG();
+        $code = $parcel->barcode_no;
+        $barcode = $generator->getBarcode($code, $generator::TYPE_CODE_128);
+        $barcode = base64_encode($barcode);
+
+        $fuel_charge = $parcel->fuel_charge;
+        $pickup_charge = $parcel->pickup_charge;
+        $other_service_charge = $parcel->other_service_charge;
+        $total_payment_amount = $parcel->payment_amount;
+        $net_price = $total_payment_amount / 1.18;
+        $amount =
+            $net_price -
+            ($fuel_charge + $pickup_charge + $other_service_charge);
+        $gst = number_format($net_price * 0.18, 2, ".", "");
+        $net_price_formatted = number_format($net_price, 2, ".", "");
+
+        $rateDetails = [
+            "fuel_charge" => $fuel_charge,
+            "pickup_charge" => $pickup_charge,
+            "other_service_charge" => $other_service_charge,
+            "total_payment_amount" => number_format(
+                $total_payment_amount,
+                2,
+                ".",
+                ""
+            ),
+            "net_price" => $net_price_formatted,
+            "amount" => number_format($amount, 2, ".", ""),
+            "gst" => $gst,
+        ];
+
+        $title = \App\Models\Admin::INDIA_POST_SPEED;
+
+        $otherPageContent = View::make("print.indiaPost.fullPrint", [
+            "parcel" => $parcel,
+            "barcode" => $barcode,
+            "rateDetails" => $rateDetails,
+            "title" => $title,
+        ])->render();
+
+        return response()->json([
+            "otherPageContent" => $otherPageContent,
+        ]);
+    }
+
+    public function shortPrintForCreatedParcel(Request $request)
+{
+    $fromdate = $request->input("fromdate");
+    $todate = $request->input("todate");
+    $searchKey = $request->input("searchKey");
+    $type = $request->input("type");
+
+    if ($type === "cod") {
+        $view = "print.indiaPost.codPrint";
+    } else {
+        $view = "print.indiaPost.prepaidRecipt";
+    }
+
+    $franchiseId = Franchise::getFranchiseId();
+    $franchise = Franchise::findOrFail($franchiseId);
+    $linkDetail = IndiaPostLink::where("franchise_no", $franchise->franchise_no)->first();
+    
+
+    $selectedIds = array_map("intval", $request->input("ids", []));
+    sort($selectedIds); 
+    
+    $query = IndiaPostSpeedPostParcel::where("franchise_id", $franchiseId)
+        ->where("status", 0);
+
+    // Filter by payment method
+    if ($type === "cod") {
+        $query->where("payment_method", "cod");
+    } else {
+        $query->where("payment_method", "prepaid");
+    }
+
+   
+    if (!empty($selectedIds)) {
+
+        $placeholders = implode(',', array_fill(0, count($selectedIds), '?'));
+        $query->whereIn("id", $selectedIds)
+              ->orderByRaw("FIELD(id, $placeholders)", $selectedIds);
+    } else {
+     
+        $query-->orderBy("bulk_batch_id", "ASC")
+                ->orderBy("excel_row_no", "ASC");
+    }
+
+    // Search key filter
+    if ($searchKey) {
+        $query->where(function ($q) use ($searchKey) {
+            $q->where("pickup_name", "LIKE", "%{$searchKey}%")
+                ->orWhere("pickup_mobile", "LIKE", "%{$searchKey}%")
+                ->orWhere("pickup_email", "LIKE", "%{$searchKey}%")
+                ->orWhere("pickup_pincode", "LIKE", "%{$searchKey}%")
+                ->orWhere("pickup_city", "LIKE", "%{$searchKey}%")
+                ->orWhere("pickup_state", "LIKE", "%{$searchKey}%")
+                ->orWhere("pickup_address", "LIKE", "%{$searchKey}%")
+                ->orWhere("consignee_name", "LIKE", "%{$searchKey}%")
+                ->orWhere("consignee_mobile", "LIKE", "%{$searchKey}%")
+                ->orWhere("consignee_email", "LIKE", "%{$searchKey}%")
+                ->orWhere("consignee_pincode", "LIKE", "%{$searchKey}%")
+                ->orWhere("consignee_city", "LIKE", "%{$searchKey}%")
+                ->orWhere("consignee_state", "LIKE", "%{$searchKey}%")
+                ->orWhere("consignee_address", "LIKE", "%{$searchKey}%")
+                ->orWhere("barcode_no", "LIKE", "%{$searchKey}%");
+        });
+    }
+
+    // Date filters
+    if (!empty($fromdate) || !empty($todate)) {
+        if (!empty($fromdate) && !empty($todate)) {
+            $fromdate = Carbon::createFromFormat("d-m-Y", $fromdate)
+                ->startOfDay()
+                ->toDateString();
+            $todate = Carbon::createFromFormat("d-m-Y", $todate)
+                ->startOfDay()
+                ->toDateString();
+            $query->whereBetween("created_at", [$fromdate, $todate]);
+        } elseif (!empty($fromdate)) {
+            $fromdate = Carbon::createFromFormat("d-m-Y", $fromdate)->toDateString();
+            $query->whereDate("created_at", $fromdate);
+        } elseif (!empty($todate)) {
+            $todate = Carbon::createFromFormat("d-m-Y", $todate)->toDateString();
+            $query->whereDate("created_at", $todate);
+        }
+    } else {
+        
+        if (empty($selectedIds)) {
+            $query->whereDate("created_at", Carbon::today());
+        }
+    }
+
+    $parcels = $query->get();
+    $title = \App\Models\Admin::INDIA_POST_SPEED;
+
+    $otherPageContent = View::make($view, [
+        "data" => $parcels,
+        "linkDetail" => $linkDetail,
+        "title" => $title,
+        "franchise" => $franchise,
+        "franchise_no" => $franchise->franchise_no,
+        "type" => 5,
+    ])->render();
+
+    return response()->json([
+        "otherPageContent" => $otherPageContent,
+    ]);
+}
+   public function shortLabelForCreatedParcel(Request $request)
+{
+    $fromdate = $request->input("fromdate");
+    $todate = $request->input("todate");
+    $searchKey = $request->input("searchKey");
+    $type = $request->input("type");
+    $printType = $request->input("printType", 1); // Default to barcode
+
+    if ($type === "cod") {
+        $view = "print.indiaPost.codPrint";
+    } else {
+        if($printType == 1){
+            $view = "print.indiaPost.prepaidLabel3"; // Barcode
+        } else {
+            $view = "print.indiaPost.prepaidLabel2"; // Address
+        }
+    }
+
+    $franchiseId = Franchise::getFranchiseId();
+    $franchise = Franchise::findOrFail($franchiseId);
+    $linkDetail = IndiaPostLink::where("franchise_no", $franchise->franchise_no)->first();
+    
+    
+    $selectedIds = array_map("intval", $request->input("ids", []));
+    sort($selectedIds); 
+    
+    $query = IndiaPostSpeedPostParcel::where("franchise_id", $franchiseId)
+        ->where("status", 0);
+
+    // Filter by payment method
+    if ($type === "cod") {
+        $query->where("payment_method", "cod");
+    } else {
+        $query->where("payment_method", "prepaid");
+    }
+
+
+    if (!empty($selectedIds)) {
+       
+        $placeholders = implode(',', array_fill(0, count($selectedIds), '?'));
+        $query->whereIn("id", $selectedIds)
+              ->orderByRaw("FIELD(id, $placeholders)", $selectedIds);
+    } else {
+
+        $query->orderBy("bulk_batch_id", "ASC")
+              ->orderBy("excel_row_no", "ASC");
+    }
+
+    // Search key filter
+    if ($searchKey) {
+        $query->where(function ($q) use ($searchKey) {
+            $q->where("pickup_name", "LIKE", "%{$searchKey}%")
+                ->orWhere("pickup_mobile", "LIKE", "%{$searchKey}%")
+                ->orWhere("pickup_email", "LIKE", "%{$searchKey}%")
+                ->orWhere("pickup_pincode", "LIKE", "%{$searchKey}%")
+                ->orWhere("pickup_city", "LIKE", "%{$searchKey}%")
+                ->orWhere("pickup_state", "LIKE", "%{$searchKey}%")
+                ->orWhere("pickup_address", "LIKE", "%{$searchKey}%")
+                ->orWhere("consignee_name", "LIKE", "%{$searchKey}%")
+                ->orWhere("consignee_mobile", "LIKE", "%{$searchKey}%")
+                ->orWhere("consignee_email", "LIKE", "%{$searchKey}%")
+                ->orWhere("consignee_pincode", "LIKE", "%{$searchKey}%")
+                ->orWhere("consignee_city", "LIKE", "%{$searchKey}%")
+                ->orWhere("consignee_state", "LIKE", "%{$searchKey}%")
+                ->orWhere("consignee_address", "LIKE", "%{$searchKey}%")
+                ->orWhere("barcode_no", "LIKE", "%{$searchKey}%");
+        });
+    }
+
+    // Date filters
+    if (!empty($fromdate) || !empty($todate)) {
+        if (!empty($fromdate) && !empty($todate)) {
+            $fromdate = Carbon::createFromFormat("d-m-Y", $fromdate)
+                ->startOfDay()
+                ->toDateString();
+            $todate = Carbon::createFromFormat("d-m-Y", $todate)
+                ->startOfDay()
+                ->toDateString();
+            $query->whereBetween("created_at", [$fromdate, $todate]);
+        } elseif (!empty($fromdate)) {
+            $fromdate = Carbon::createFromFormat("d-m-Y", $fromdate)->toDateString();
+            $query->whereDate("created_at", $fromdate);
+        } elseif (!empty($todate)) {
+            $todate = Carbon::createFromFormat("d-m-Y", $todate)->toDateString();
+            $query->whereDate("created_at", $todate);
+        }
+    } else {
+        // рдЕрдЧрд░ рдХреЛрдИ date filter рдирд╣реАрдВ рд╣реИ рдФрд░ selected IDs рднреА рдирд╣реАрдВ рд╣реИрдВ, рддреЛ today рдХреА date show рдХрд░реЗрдВ
+        if (empty($selectedIds)) {
+            $query->whereDate("created_at", Carbon::today());
+        }
+    }
+
+    $parcels = $query->get();
+    $title = \App\Models\Admin::INDIA_POST_SPEED;
+
+    $otherPageContent = View::make($view, [
+        "data" => $parcels,
+        "linkDetail" => $linkDetail,
+        "title" => $title,
+        "franchise" => $franchise,
+        "type" => 5,
+    ])->render();
+
+    return response()->json([
+        "otherPageContent" => $otherPageContent,
+    ]);
+}
+    public function downloadTableForCreatedTable(Request $request)
+    {
+        
+          ini_set('memory_limit', '2048M');
+    set_time_limit(3600); // 1 hour
+        // Fetch data
+        $fromdate = $request->input("fromdate");
+        $todate = $request->input("todate");
+        $searchKey = $request->input("searchKey");
+
+        $type = $request->input("type");
+
+        $query = IndiaPostSpeedPostParcel::where("franchise_id", Franchise::getFranchiseId())->where("status", 0)
+              ->orderBy("bulk_batch_id", "ASC")
+                ->orderBy("excel_row_no", "ASC");
+
+        if ($type === "cod") {
+            $query->where("payment_method", "cod");
+        } else {
+            $query->where("payment_method", "prepaid");
+        }
+
+        if ($searchKey) {
+            $query->where(function ($q) use ($searchKey) {
+                $q->where("pickup_name", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("pickup_mobile", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("pickup_email", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("pickup_pincode", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("pickup_city", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("pickup_state", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("pickup_address", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("consignee_name", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("consignee_mobile", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("consignee_email", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("consignee_pincode", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("consignee_city", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("consignee_state", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("consignee_address", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("barcode_no", "LIKE", "%{$searchKey}%");
+            });
+
+            if (!empty($fromdate) || !empty($todate)) {
+                if (!empty($fromdate) && !empty($todate)) {
+                    $fromdate = Carbon::createFromFormat("d-m-Y", $fromdate)->startOfDay()->toDateString();
+                    $todate = Carbon::createFromFormat("d-m-Y", $todate)->startOfDay()->toDateString();
+                    $query->whereBetween("created_at", [$fromdate, $todate]);
+                } elseif (!empty($fromdate)) {
+                  
+                    $fromdate = Carbon::createFromFormat("d-m-Y", $fromdate)->toDateString();
+                    $query->whereDate("created_at", $fromdate);
+                } elseif (!empty($todate)) {
+                  
+                    $todate = Carbon::createFromFormat("d-m-Y", $todate)->toDateString();
+                    $query->whereDate("created_at", $todate);
+                }
+            }
+            $parcels = $query->get();
+            return $this->getExcel($request, $parcels);
+        }
+
+        if (!empty($fromdate) || !empty($todate)) {
+            if (!empty($fromdate) && !empty($todate)) {
+                $fromdate = Carbon::createFromFormat("d-m-Y", $fromdate)->startOfDay()->toDateString();
+                $todate = Carbon::createFromFormat("d-m-Y", $todate)->startOfDay()->toDateString();
+                $query->whereBetween("created_at", [$fromdate, $todate]);
+            } elseif (!empty($fromdate)) {
+               
+                $fromdate = Carbon::createFromFormat("d-m-Y", $fromdate)->toDateString();
+                $query->whereDate("created_at", $fromdate);
+            } elseif (!empty($todate)) {
+           
+                $todate = Carbon::createFromFormat("d-m-Y", $todate)->toDateString();
+                $query->whereDate("created_at", $todate);
+            }
+            $parcels = $query->get();
+            return $this->getExcel($request, $parcels);
+        }
+
+        $query->whereDate("created_at", Carbon::today());
+        $parcels = $query->get();
+        return $this->getExcel($request, $parcels);
+    }
+
+
+    public function assignBarcode(Request $request)
+    {
+        $parcel = IndiaPostSpeedPostParcel::where(
+            "barcode_no",
+            $request->barcode
+        )->first();
+
+        if ($parcel) {
+            return response()->json([
+                "status" => "success",
+                "data" => $parcel,
+                "message" => "dublicate barcode",
+            ]);
+        }
+
+        if ($request->isMethod("post")) {
+            try {
+                $generator = new BarcodeGeneratorPNG();
+
+                $barcode = $generator->getBarcode(
+                    $request->barcode,
+                    $generator::TYPE_CODE_128
+                );
+
+                $barcode_image_src = base64_encode($barcode);
+
+                $Model = IndiaPostSpeedPostParcel::where("barcode_no", null)
+                    ->orderBy("bulk_batch_id", "ASC")    
+                     ->orderBy("excel_row_no", "ASC")  
+                    ->first();
+
+                $Model->barcode_no = $request->barcode;
+
+                $Model->barcode_image_src = $barcode_image_src;
+
+                $Model->save();
+
+                return response()->json([
+                    "status" => "success",
+                    "data" => $Model,
+                    "message" => "barcode assigned successfully",
+                ]);
+            } catch (\Throwable $th) {
+                return response()->json(
+                    ["status" => "error", "message" => $th->getMessage()],
+                    500
+                );
+            }
+        }
+
+        return response()->json(
+            ["status" => "error", "message" => "Invalid request method"],
+            400
+        );
+    }
+
+    public function showReceivedParcelList(Request $request)
+    {
+        $searchKey = $request->input("searchKey");
+        $date = $request->input("date");
+
+        $userId = Franchise::getFranchiseId();
+        // $insertType = $request->input('insert_type');
+        $formattedDate =
+            !empty($date) && $date !== ""
+                ? Carbon::parse($date)->format("Y-m-d")
+                : Carbon::today()->toDateString();
+
+        $scidData = IndiaPostSpeedPostParcel::where(
+            "sfid_forfile_upload",
+            $userId
+        );
+
+        if ($scidData) {
+            $scidData->where("sfid_file_upload_date", "=", $formattedDate);
+            if ($searchKey) {
+                $scidData->where(function ($query) use ($searchKey) {
+                    $query
+                        ->where("pickup_name", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_mobile", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_email", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_pincode", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_city", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_state", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_address", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_name", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_mobile", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_email", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_pincode", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_city", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_state", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_address", "LIKE", "%{$searchKey}%")
+                        ->orWhere("barcode_no", "LIKE", "%{$searchKey}%");
+                });
+            }
+
+            $scidResults = $scidData->get();
+        }
+
+        $dcidData = IndiaPostSpeedPostParcel::where(
+            "dfid_forfile_upload",
+            $userId
+        );
+
+        if ($dcidData) {
+            $dcidData->where("dfid_file_upload_date", "=", $formattedDate);
+
+            if ($searchKey) {
+                $dcidData->where(function ($query) use ($searchKey) {
+                    $query
+                        ->where("pickup_name", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_mobile", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_email", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_pincode", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_city", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_state", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_address", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_name", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_mobile", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_email", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_pincode", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_city", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_state", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_address", "LIKE", "%{$searchKey}%")
+                        ->orWhere("barcode_no", "LIKE", "%{$searchKey}%");
+                });
+            }
+
+            $dcidResults = $dcidData->get();
+        }
+        $mergedCollection = $scidResults->merge($dcidResults);
+
+        return view("franchise.indiaPost-speedPost.showReceivedParcelList", [
+            "datas" => $mergedCollection,
+        ]);
+    }
+
+    public function excelUploadByFranchise(Request $request)
+    {
+        if (!$request->hasFile("file")) {
+            return back()->with("error", "No file uploaded.");
+        }
+
+        try {
+            $file = $request->file("file");
+
+            $destinationPath = public_path(
+                "tenancy/assets/franchise/RoleUser/"
+            );
+
+            $fileName = uniqid() . "_" . $file->getClientOriginalName();
+
+            $file->move($destinationPath, $fileName);
+
+            // Load the Excel file
+
+            $filePath = public_path(
+                "tenancy/assets/franchise/RoleUser/$fileName"
+            );
+
+            if (!File::exists($filePath)) {
+                return back()->with("error", "File not found.");
+            }
+
+            $spreadsheet = IOFactory::load($filePath);
+
+            $sheet = $spreadsheet->getActiveSheet();
+
+            $data = [];
+
+            $header = null;
+
+            // Iterate through each row in the worksheet
+
+            foreach ($sheet->getRowIterator() as $rowIndex => $row) {
+                $rowData = [];
+
+                $hasData = false;
+
+                foreach ($row->getCellIterator() as $cellIndex => $cell) {
+                    $cellValue = $cell->getValue();
+
+                    $rowData[] = $cellValue;
+
+                    $hyperlink = $cell->getHyperlink();
+
+                    $hyperlinkUrl = $hyperlink ? $hyperlink->getUrl() : null;
+
+                    if ($hyperlinkUrl) {
+                        $rowData["Hyperlink"] = $hyperlinkUrl;
+                    }
+
+                    if (!is_null($cellValue) && $cellValue !== "") {
+                        $hasData = true;
+                    }
+                }
+
+                if ($hasData) {
+                    if (is_null($header)) {
+                        $header = $rowData;
+
+                        $header[] = "Hyperlink";
+                    } else {
+                        if (count($rowData) < count($header)) {
+                            $rowData = array_pad(
+                                $rowData,
+                                count($header),
+                                null
+                            );
+                        }
+
+                        $data[] = array_combine($header, $rowData);
+                    }
+                }
+            }
+
+            $desiredBarcode = [];
+            foreach ($data as $key => $value) {
+                $desiredBarcode[] = $value["Barcode"];
+            }
+
+            IndiaPostSpeedPostParcel::whereIn("barcode_no", $desiredBarcode)
+                ->where(function ($query) {
+                    $userId = Franchise::getFranchiseId();
+                    $query
+                        ->whereNull("scid_forfile_upload")
+                        ->orWhere("scid_forfile_upload", $userId);
+                })
+                ->update([
+                    "sfid_forfile_upload" => Franchise::getFranchiseId(),
+                    "sfid_file_upload_date" => Carbon::today()->toDateString(),
+                ]);
+
+            IndiaPostSpeedPostParcel::whereIn("barcode_no", $desiredBarcode)
+                ->whereNotNull("sfid_forfile_upload")
+                ->where(
+                    "sfid_forfile_upload",
+                    "!=",
+                    Franchise::getFranchiseId()
+                )
+                ->update([
+                    "dfid_forfile_upload" => Franchise::getFranchiseId(),
+                    "dfid_file_upload_date" => Carbon::today()->toDateString(),
+                ]);
+
+            $updatedParcels = IndiaPostSpeedPostParcel::whereIn(
+                "barcode_no",
+                $desiredBarcode
+            )->get();
+
+            return view(
+                "franchise.indiaPost-speedPost.showReceivedParcelList",
+                ["datas" => $updatedParcels]
+            );
+        } catch (\Exception $e) {
+            return back()->with("error", $e->getMessage());
+        }
+    }
+
+    public function downloadTableOfReceivedParcel(Request $request)
+    {
+        // Fetch data
+        $searchKey = $request->input("searchKey");
+        $date = $request->input("date");
+
+        $userId = Franchise::getFranchiseId();
+        // $insertType = $request->input('insert_type');
+        $formattedDate =
+            !empty($date) && $date !== ""
+                ? Carbon::parse($date)->format("Y-m-d")
+                : Carbon::today()->toDateString();
+
+        $scidData = IndiaPostSpeedPostParcel::where(
+            "sfid_forfile_upload",
+            $userId
+        );
+
+        if ($scidData) {
+            $scidData->where("sfid_file_upload_date", "=", $formattedDate);
+            if ($searchKey) {
+                $scidData->where(function ($query) use ($searchKey) {
+                    $query
+                        ->where("pickup_name", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_mobile", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_email", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_pincode", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_city", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_state", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_address", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_name", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_mobile", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_email", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_pincode", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_city", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_state", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_address", "LIKE", "%{$searchKey}%")
+                        ->orWhere("barcode_no", "LIKE", "%{$searchKey}%");
+                });
+            }
+
+            $scidResults = $scidData->get();
+        }
+
+        $dcidData = IndiaPostSpeedPostParcel::where(
+            "dfid_forfile_upload",
+            $userId
+        );
+
+        if ($dcidData) {
+            $dcidData->where("dfid_file_upload_date", "=", $formattedDate);
+
+            if ($searchKey) {
+                $dcidData->where(function ($query) use ($searchKey) {
+                    $query
+                        ->where("pickup_name", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_mobile", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_email", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_pincode", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_city", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_state", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_address", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_name", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_mobile", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_email", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_pincode", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_city", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_state", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_address", "LIKE", "%{$searchKey}%")
+                        ->orWhere("barcode_no", "LIKE", "%{$searchKey}%");
+                });
+            }
+
+            $dcidResults = $dcidData->get();
+        }
+        $parcels = $scidResults->merge($dcidResults);
+
+        // Create a new Spreadsheet object
+
+        $spreadsheet = new Spreadsheet();
+
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Set the headings
+
+        $headings = [
+            "Sl",
+            "Barcode",
+            "Ref",
+            "From Address",
+            "ADD1",
+
+            "ADD2",
+            "ADD3",
+
+            "Pincode",
+            "City",
+            "State",
+            "Mobile",
+            "Email",
+            "To Address",
+            "ADD1",
+            "ADD2",
+
+            "ADD3",
+
+            "Pincode",
+            "City",
+
+            "State",
+            "Mobile",
+            "Email",
+            "Weight",
+        ];
+
+        $column = "A";
+
+        foreach ($headings as $heading) {
+            $sheet->setCellValue($column . "1", $heading);
+
+            $column++;
+        }
+
+        // Populate the data
+
+        $row = 2; // Start from the second row
+
+        foreach ($parcels as $key => $parcel) {
+            // Process pickup address
+
+            $pickupAddressParts = explode(",", $parcel->pickup_address);
+
+            $PADD1 = $pickupAddressParts[0] ?? "";
+
+            $PADD2 = $pickupAddressParts[1] ?? $PADD1;
+
+            $PADD3 = $pickupAddressParts[2] ?? $PADD2;
+
+            $consigneeAddressParts = explode(",", $parcel->consignee_address);
+
+            $CADD1 = $consigneeAddressParts[0] ?? "";
+
+            $CADD2 = $consigneeAddressParts[1] ?? $CADD1;
+
+            $CADD3 = $consigneeAddressParts[2] ?? $CADD2;
+
+            // Set cell values
+
+            $sheet->setCellValue("A" . $row, $key + 1);
+
+            $sheet->setCellValue("B" . $row, $parcel->barcode_no);
+
+            $sheet->setCellValue(
+                "C" . $row,
+                IndiaPostSpeedPostParcel::getServiceType(
+                    IndiaPostSpeedPostParcel::SERVICE_TYPE_INDIA_POST_SPEED
+                )
+            );
+
+            $sheet->setCellValue("D" . $row, $parcel->pickup_address);
+
+            $sheet->setCellValue("E" . $row, $PADD1);
+
+            $sheet->setCellValue("F" . $row, $PADD2);
+
+            $sheet->setCellValue("G" . $row, $PADD3);
+
+            $sheet->setCellValue("H" . $row, $parcel->pickup_pincode);
+
+            $sheet->setCellValue("I" . $row, $parcel->pickup_city);
+
+            $sheet->setCellValue("J" . $row, $parcel->pickup_state);
+
+            $sheet->setCellValue("K" . $row, $parcel->pickup_mobile);
+
+            $sheet->setCellValue("L" . $row, $parcel->pickup_email);
+
+            $sheet->setCellValue("M" . $row, $parcel->consignee_address);
+
+            $sheet->setCellValue("N" . $row, $CADD1);
+
+            $sheet->setCellValue("O" . $row, $CADD2);
+
+            $sheet->setCellValue("P" . $row, $CADD3);
+
+            $sheet->setCellValue("Q" . $row, $parcel->consignee_pincode);
+
+            $sheet->setCellValue("R" . $row, $parcel->consignee_city);
+
+            $sheet->setCellValue("S" . $row, $parcel->consignee_state);
+
+            $sheet->setCellValue("T" . $row, $parcel->consignee_mobile);
+
+            $sheet->setCellValue("U" . $row, $parcel->consignee_email);
+
+            $sheet->setCellValue("V" . $row, $parcel->package_weight);
+
+            $row++;
+        }
+
+        // Create a Writer
+
+        $writer = new Xlsx($spreadsheet);
+
+        // Create a response to stream the file
+
+        $response = new StreamedResponse(function () use ($writer) {
+            $writer->save("php://output");
+        });
+
+        $response->headers->set(
+            "Content-Type",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        );
+
+        $response->headers->set(
+            "Content-Disposition",
+            'attachment;filename="parcels.xlsx"'
+        );
+
+        $response->headers->set("Cache-Control", "max-age=0");
+
+        return $response;
+    }
+
+    public function shortPrintForReceivedParcel(Request $request)
+    {
+        $date = $request->input("date");
+        $searchKey = $request->input("searchKey");
+        $userId = Franchise::getFranchiseId();
+
+        $franchise = Franchise::findOrFail($userId);
+        $linkDetail = IndiaPostLink::where(
+            "franchise_no",
+            $franchise->franchise_no
+        )->first();
+
+        $formattedDate =
+            !empty($date) && $date !== ""
+                ? Carbon::parse($date)->format("Y-m-d")
+                : Carbon::today()->toDateString();
+
+        $scidData = IndiaPostSpeedPostParcel::where(
+            "sfid_forfile_upload",
+            $userId
+        );
+
+        if ($scidData) {
+            $scidData->where("sfid_file_upload_date", "=", $formattedDate);
+            if ($searchKey) {
+                $scidData->where(function ($query) use ($searchKey) {
+                    $query
+                        ->where("pickup_name", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_mobile", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_email", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_pincode", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_city", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_state", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_address", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_name", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_mobile", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_email", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_pincode", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_city", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_state", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_address", "LIKE", "%{$searchKey}%")
+                        ->orWhere("barcode_no", "LIKE", "%{$searchKey}%");
+                });
+            }
+
+            $scidResults = $scidData->get();
+        }
+
+        $dcidData = IndiaPostSpeedPostParcel::where(
+            "dfid_forfile_upload",
+            $userId
+        );
+
+        if ($dcidData) {
+            $dcidData->where("dfid_file_upload_date", "=", $formattedDate);
+
+            if ($searchKey) {
+                $dcidData->where(function ($query) use ($searchKey) {
+                    $query
+                        ->where("pickup_name", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_mobile", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_email", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_pincode", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_city", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_state", "LIKE", "%{$searchKey}%")
+                        ->orWhere("pickup_address", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_name", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_mobile", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_email", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_pincode", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_city", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_state", "LIKE", "%{$searchKey}%")
+                        ->orWhere("consignee_address", "LIKE", "%{$searchKey}%")
+                        ->orWhere("barcode_no", "LIKE", "%{$searchKey}%");
+                });
+            }
+
+            $dcidResults = $dcidData->get();
+        }
+
+        $mergedCollection = $scidResults->merge($dcidResults);
+
+        $title = \App\Models\Admin::INDIA_POST_SPEED;
+        // Pass data to the view
+        $otherPageContent = View::make("print.indiaPost.shortPrint", [
+            "data" => $mergedCollection,
+            "linkDetail" => $linkDetail,
+            "title" => $title,
+        ])->render();
+
+        return response()->json([
+            "otherPageContent" => $otherPageContent,
+        ]);
+    }
+
+    public function trackOrder($id)
+    {
+        $trackingDetails = IndiaPostSpeedPostTrackOrder::where(
+            "parcel_id",
+            $id
+        )->first();
+        return response()->json([
+            "trackingDetails" => $trackingDetails,
+        ]);
+    }
+
+    public function getNextBarcode()
+    {
+        $user = Auth::guard("franchise")->user();
+        $state = $user->state; // Get the state of the franchise
+
+        try {
+            // Get the next available barcode based on state
+            $barcode = IndiaPostBarcode::where("availables", ">", 0)
+            ->where('service_type', IndiaPostSpeedPostParcel::SERVICE_TYPE_INDIA_POST_SPEED)->first();
+            if ($barcode) {
+                $nextBarcode = $barcode->getNextBarcode();
+                // Increment range_from and decrement availables
+                $barcode->increment("range_from");
+                $barcode->decrement("availables");
+
+                return $nextBarcode;
+            } else {
+                return "barcode not found";
+            }
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public function allprint(Request $request)
+    {
+        //    return  $request->type;
+        $ids = is_array($request->id)
+            ? $request->id
+            : explode(",", $request->id);
+        $franchiseId = Franchise::getFranchiseId();
+        $franchise = Franchise::findOrFail($franchiseId);
+        //    return $linkDetail = GotogoLink::where('franchise_no', $franchise->franchise_no)->first();
+        $linkDetail = IndiaPostLink::where(
+            "franchise_no",
+            $franchise->franchise_no
+        )->first();
+        if ($request->type == "cod") {
+            $parcels = IndiaPostSpeedPostParcel::where(
+                "franchise_id",
+                Franchise::getFranchiseId()
+            )
+                ->whereIn("id", $ids)
+                ->where("payment_method", "cod")
+                 ->orderBy("bulk_batch_id", "ASC")
+            ->orderBy("excel_row_no", "ASC")
+                ->get();
+            $otherPageContent = View::make("print.indiaPost.codPrint", [
+                "data" => $parcels,
+                "linkDetail" => $linkDetail,
+                "franchise" => $franchise,
+                "type" => 5,
+            ])->render();
+        } else {
+            $parcels = IndiaPostSpeedPostParcel::where(
+                "franchise_id",
+                Franchise::getFranchiseId()
+            )
+                ->whereIn("id", $ids)
+                ->where("payment_method", "prepaid")
+                 ->orderBy("bulk_batch_id", "ASC")
+            ->orderBy("excel_row_no", "ASC")
+                ->get();
+            $otherPageContent = View::make("print.indiaPost.prepaidLabel3", [
+                "data" => $parcels,
+                "linkDetail" => $linkDetail,
+                "franchise" => $franchise,
+                "type" => 5,
+            ])->render();
+        }
+
+        return response()->json([
+            "otherPageContent" => $otherPageContent,
+        ]);
+    }
+
+    private function getOrCreateCodUser(Request $request, $franchise): ?int
+    {
+        // Check if COD user already exists
+        $codCheck = NoRegisterCustomer::where("phone", $request->PickupMobile)
+            ->where("franchise_id", $franchise->id) // Corrected field name
+            ->where("type", "franchise")
+            ->first();
+
+        if ($codCheck) {
+            return $codCheck->id;
+        }
+
+        // Generate a random 10-digit password
+        $password = substr(str_shuffle("0123456789"), 0, 10);
+
+        // Create new COD user
+        $cod = new NoRegisterCustomer();
+        $cod->type = "franchise";
+        $cod->franchise_id = $franchise->id;
+        $cod->name = $request->PickupName;
+        $cod->phone = $request->PickupMobile;
+        $cod->gst_no = $request->PickupGstNo;
+        $cod->email = $request->PickupEmail;
+        $cod->pincode = $request->PickupPincode;
+        $cod->city = $request->PickupCity;
+        $cod->state = $request->PickupState;
+        $cod->address = $request->PickupAddress;
+        $cod->password = Hash::make($password);
+        $cod->save();
+
+        return $cod->id;
+    }
+
+    public function getExcel($request, $parcels)
+    {
+        $spreadsheet = new Spreadsheet();
+
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Set the headings
+
+        $headings = [
+            "SERIAL NUMBER",
+            "BARCODE NO",
+            "PHYSICAL WEIGHT",
+            "RECEIVER CITY",
+            "RECEIVER PINCODE",
+            "RECEIVER NAME",
+            "RECEIVER ADD LINE 1",
+            "RECEIVER ADD LINE 2",
+            "RECEIVER ADD LINE 3",
+            "FALSE",
+            "SENDER MOBILE NO",
+            "RECEIVER MOBILE NO",
+            "PREPAYMENT CODE",
+            "VALUE OF PREPAYMENT",
+            "CODR/COD",
+            "VALUE FOR CODR/COD",
+            "INSURANCE TYPE",
+            "VALUE OF INSURANCE",
+            "SHAPE OF ARTICLE",
+            "LENGTH",
+            "BREADTH/DIAMETER",
+            "HEIGHT",
+            "PRIORITY FLAG",
+            "DELIVERY INSTRUCTION",
+            "DELIVERY SLOT",
+            "INSTRUCTION RTS",
+            "SENDER NAME",
+            "SENDER COMPANY NAME",
+            "SENDER CITY",
+            "SENDER STATE/UT",
+            "SENDER PINCODE",
+            "SENDER EMAILID",
+            "SENDER ALT CONTACT",
+            "SENDER KYC",
+            "SENDER TAX",
+            "RECEIVER COMPANY NAME",
+            "RECEIVER STATE/UT",
+            "RECEIVER EMAILID",
+            "RECEIVER ALT CONTACT",
+            "RECEIVER KYC",
+            "RECEIVER TAX REF",
+            "ALT ADDRESS FLAG",
+            "BULK REFERENCE",
+            "SENDER ADD LINE 1",
+            "SENDER ADD LINE 2",
+            "SENDER ADD LINE 3",
+        ];
+
+        $redHeaders = [
+            "SERIAL NUMBER",
+            "PHYSICAL WEIGHT",
+            "RECEIVER CITY",
+            "RECEIVER PINCODE",
+            "RECEIVER NAME",
+            "RECEIVER ADD LINE 1",
+            "RECEIVER ADD LINE 2",
+            "FALSE",
+            "SENDER MOBILE NO",
+            "RECEIVER MOBILE NO",
+            "SENDER NAME",
+            "SENDER CITY",
+            "SENDER STATE/UT",
+            "SENDER PINCODE",
+            "RECEIVER STATE/UT",
+            "ALT ADDRESS FLAG",
+            "SENDER ADD LINE 1",
+            "SENDER ADD LINE 2",
+        ];
+
+        $column = "A";
+        foreach ($headings as $heading) {
+            $cell = $column . "1";
+            $sheet->setCellValue($cell, $heading);
+
+            // Apply red font color if in list
+            if (in_array(strtoupper(trim($heading)), $redHeaders)) {
+                $sheet
+                    ->getStyle($cell)
+                    ->getFont()
+                    ->getColor()
+                    ->setRGB(Color::COLOR_RED); // FF0000
+            }
+
+            // Make header bold
+            $sheet
+                ->getStyle($cell)
+                ->getFont()
+                ->setBold(true);
+
+            $column++;
+        }
+
+        // Populate the data
+
+        $row = 2; // Start from the second row
+
+        foreach ($parcels as $key => $parcel) {
+            // Process pickup address
+
+            $pickupAddressParts = explode(",", $parcel->pickup_address);
+
+            $PADD1 = $pickupAddressParts[0] ?? "";
+
+            $PADD2 = $pickupAddressParts[1] ?? $PADD1;
+
+            $PADD3 = $pickupAddressParts[2] ?? $PADD2;
+
+            $consigneeAddressParts = explode(",", $parcel->consignee_address);
+
+            $CADD1 = $consigneeAddressParts[0] ?? "";
+
+            $CADD2 = $consigneeAddressParts[1] ?? $CADD1;
+
+            $CADD3 = $consigneeAddressParts[2] ?? $CADD2;
+
+            // Set cell values
+
+            $sheet->setCellValue("A" . $row, $key + 1);
+
+            $sheet->setCellValue("B" . $row, $parcel->barcode_no);
+
+            // $sheet->setCellValue('C' . $row, IndiaPostSpeedPostParcel::getServiceType(IndiaPostSpeedPostParcel::SERVICE_TYPE_INDIA_POST_SPEED));
+            $sheet->setCellValue("C" . $row, $parcel->package_weight);
+            $sheet->setCellValue("D" . $row, $parcel->consignee_city);
+            $sheet->setCellValue("E" . $row, $parcel->consignee_pincode);
+            $sheet->setCellValue("F" . $row, $parcel->consignee_name);
+            $sheet->setCellValue("G" . $row, $CADD1);
+            $sheet->setCellValue("H" . $row, $CADD2);
+            $sheet->setCellValue("I" . $row, $CADD3);
+            $sheet->setCellValue("J" . $row, "FALSE");
+            $sheet->setCellValue("K" . $row, $parcel->pickup_mobile);
+            $sheet->setCellValue("L" . $row, $parcel->consignee_mobile);
+            $sheet->setCellValue("M" . $row, "");
+            $sheet->setCellValue("N" . $row, "");
+            $sheet->setCellValue("O" . $row, "");
+            $sheet->setCellValue("P" . $row, "");
+            $sheet->setCellValue("Q" . $row, "");
+            $sheet->setCellValue("R" . $row, "");
+            $sheet->setCellValue("S" . $row, "");
+            $sheet->setCellValue("T" . $row, "");
+            $sheet->setCellValue("U" . $row, "");
+            $sheet->setCellValue("V" . $row, "");
+            $sheet->setCellValue("W" . $row, "");
+            $sheet->setCellValue("X" . $row, "");
+            $sheet->setCellValue("Y" . $row, "");
+            $sheet->setCellValue("Z" . $row, "");
+
+            $sheet->setCellValue("AA" . $row, $parcel->pickup_name);
+            $sheet->setCellValue("AB" . $row, "");
+            $sheet->setCellValue("AC" . $row, $parcel->pickup_city);
+            $sheet->setCellValue("AD" . $row, $parcel->pickup_state);
+            $sheet->setCellValue("AE" . $row, $parcel->pickup_pincode);
+            $sheet->setCellValue("AF" . $row, $parcel->pickup_email);
+            $sheet->setCellValue("AG" . $row, "");
+            $sheet->setCellValue("AH" . $row, "");
+            $sheet->setCellValue("AI" . $row, "");
+            $sheet->setCellValue("AJ" . $row, "");
+            $sheet->setCellValue("AK" . $row, $parcel->consignee_state);
+            $sheet->setCellValue("AL" . $row, $parcel->consignee_email);
+            $sheet->setCellValue("AM" . $row, "");
+            $sheet->setCellValue("AN" . $row, "");
+            $sheet->setCellValue("AO" . $row, "");
+            $sheet->setCellValue("AP" . $row, "FALSE");
+            $sheet->setCellValue("AQ" . $row, "");
+            $sheet->setCellValue("AR" . $row, $PADD1);
+            $sheet->setCellValue("AS" . $row, $PADD2);
+            $sheet->setCellValue("AT" . $row, $PADD3);
+
+            $row++;
+        }
+
+        // Create a Writer
+
+        $writer = new Xlsx($spreadsheet);
+
+        // Create a response to stream the file
+
+        $response = new StreamedResponse(function () use ($writer) {
+            $writer->save("php://output");
+        });
+
+        $response->headers->set(
+            "Content-Type",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        );
+
+        $response->headers->set(
+            "Content-Disposition",
+            'attachment;filename="parcels.xlsx"'
+        );
+
+        $response->headers->set("Cache-Control", "max-age=0");
+
+        return $response;
+    }
+
+    public function getBookingDetails(Request $request)
+    {
+        $html =
+            "<select name='payment_type' id='payment_type' class='select form-select' data-tags='true' data-placeholder='Select an option'><option selected disabled>Select Option</option>";
+        $pickupDetails = [];
+
+        if ($request->select == "franchise") {
+            $pickupDetails = Franchise::where("id", Franchise::getFranchiseId())
+                ->where("status", 1)
+                ->select("id", "name", "mobile as phone")
+                ->get();
+        } elseif ($request->select == "manager") {
+            $pickupDetails = MManager::where(
+                "franchise_id",
+                Franchise::getFranchiseId()
+            )
+                ->where("status", 1)
+                ->select("id", "name", "mobile as phone")
+                ->get();
+        } else {
+            $pickupDetails = PickupDetails::where(
+                "franchise_id",
+                Franchise::getFranchiseId()
+            )
+                ->where("status", 1)
+                ->get();
+        }
+
+        if ($pickupDetails->isNotEmpty()) {
+            foreach ($pickupDetails as $list) {
+                $html .= "<option value='{$list->id}'>{$list->name}, ({$list->phone})</option>";
+            }
+        } else {
+            $html .= "<option disabled>No data found</option>";
+        }
+
+        $html .= "</select>";
+
+        return response()->json(["html" => $html]);
+    }
+
+    public function resolveCustomer($element, $franchiseId)
+{
+    // Case 1: Market Manager
+    if (!empty($element["Market Manager _id"])) {
+        $manager = MManager::where("mobile", $element["Market Manager _id"])
+            ->where("franchise_id", $franchiseId)
+            ->first();
+
+        if (!$manager) {
+            throw new \Exception("Market Manager Not Found (" . $element["Market Manager _id"] . ")");
+        }
+
+        $customer = NoRegisterCustomer::where([
+            ["phone", $element["Pickup Phone"]],
+            ["type", "manager"],
+            ["market_id", $manager->id],
+            ["franchise_id", $franchiseId],
+        ])->first();
+
+        if (!$customer) {
+            throw new \Exception("Customer associated with Market Manager Not Found");
+        }
+
+        return $customer;
+    }
+
+    // Case 2: Pickup Boy
+    if (!empty($element["Pickup Boy_id"])) {
+        $pickupBoy = PickupDetails::where("phone", $element["Pickup Boy_id"])
+            ->where("franchise_id", $franchiseId)
+            ->first();
+
+        if (!$pickupBoy) {
+            throw new \Exception("Pickup Boy Not Found (" . $element["Pickup Boy_id"] . ")");
+        }
+
+        $customer = NoRegisterCustomer::where([
+            ["phone", $element["Pickup Phone"]],
+            ["type", "pickup"],
+            ["market_id", $pickupBoy->id],
+            ["franchise_id", $franchiseId],
+        ])->first();
+
+        if (!$customer) {
+            throw new \Exception("Customer associated with Pickup Boy Not Found");
+        }
+
+        return $customer;
+    }
+
+    // Case 3: Neither Market Manager nor Pickup Boy тЖТ Franchise Type
+    if (empty($element["Pickup Boy_id"]) && empty($element["Market Manager _id"])) {
+        $existing = NoRegisterCustomer::where([
+            ["phone", $element["Pickup Phone"]],
+            ["type", "franchise"],
+            ["franchise_id", $franchiseId],
+        ])->first();
+
+        if ($existing) {
+            return $existing; 
+        }
+
+        // Create new customer
+        $password = substr(str_shuffle("0123456789"), 0, 10);
+
+        return NoRegisterCustomer::create([
+            "name" => $element["Pickup Name"] ?? "",
+            "type" => "franchise",
+            "franchise_id" => $franchiseId,
+            "phone" => $element["Pickup Phone"] ?? "",
+            "email" => $element["Pickup Email"] ?? "",
+            "gst_no" => $element["Pickup gst"] ?? "",
+            "pincode" => $element["Pickup Pincode"] ?? "",
+            "city" => $element["Pickup City"] ?? "",
+            "state" => $element["Pickup State"] ?? "",
+            "address" => $element["Pickup Address"] ?? "",
+            "password" => Hash::make($password),
+        ]);
+    }
+
+    throw new \Exception("Unable to resolve customer type");
+}
+    public function expressDetails(Request $request)
+    {
+        // return Franchise::getFranchiseId();
+        // return $request->all();
+        // Use provided select value or fallback to franchise ID
+        $id = filled($request->select)
+            ? $request->select
+            : Franchise::getFranchiseId();
+
+        // Determine type based on 'select' value
+        $type =
+            $request->type === "franchise"
+                ? "franchise"
+                : ($request->type === "manager"
+                    ? "manager"
+                    : "pickup");
+
+        // Fetch data based on type and franchise ID
+        if ($request->cod == "cod") {
+            $pickupDetails = ECustomer::where("cph_link", $request->id)
+                ->select("id", "name", "mobile as phone")
+                ->get();
+        } else {
+            $query = NoRegisterCustomer::where(
+                "franchise_id",
+                Franchise::getFranchiseId()
+            );
+
+            if ($type == "franchise") {
+                $query->where("franchise_id", $id);
+            } else {
+                $query->where("market_id", $id);
+            }
+
+            $pickupDetails = $query->where("type", $type)->get();
+        }
+        // Start building the HTML select element
+        $html =
+            "<select name='payment_method' id='paymentMethod' class='select form-select' data-tags='true' data-placeholder='Select an option'> <option selected disabled>Select Option</option>";
+
+        if ($pickupDetails->isNotEmpty()) {
+            foreach ($pickupDetails as $list) {
+                $html .= "<option value='{$list->id}'>{$list->name}, ({$list->phone})</option>";
+            }
+        } else {
+            // Show a default "no data found" option
+            $html .= "<option disabled>No data found</option>";
+        }
+
+        $html .= "</select>";
+
+        // Return both the HTML and the raw data as JSON
+        return response()->json([
+            "html" => $html,
+            "data" => $pickupDetails->isNotEmpty() ? $pickupDetails : null,
+        ]);
+    }
+
+    public function GetTotalAmount(Request $request)
+    {
+        $totalParcels = 0;
+        $totalAmount = 0;
+        $CodtotalAmount = 0;
+
+        // Build the query (don't run it yet)
+        $dataQuery = IndiaPostSpeedPostParcel::where(
+            "franchise_id",
+            Franchise::getFranchiseId()
+        )
+            ->whereIn("id", $request->id)
+            ->orderBy("bulk_batch_id", "ASC")
+            ->orderBy("excel_row_no", "ASC");
+
+        // Clone and calculate totals
+        $CodtotalAmount = (clone $dataQuery)->sum("cod_amount");
+        $totalAmount = (clone $dataQuery)->sum("payment_amount");
+        $totalParcels = (clone $dataQuery)->count();
+
+        return response()->json([
+            "status" => "success",
+            "CodtotalAmount" => $CodtotalAmount,
+            "totalAmount" => $totalAmount,
+            "totalParcels" => $totalParcels,
+            "message" => "Amount fetched successfully",
+        ]);
+    }
+    //  Start cancel
+public function cancel(Request $request, $id)
+{
+    $request->validate([
+        'cancel_reason' => 'required|string',
+    ]);
+
+    DB::transaction(function () use ($request, $id) {
+        $franchiseId = Franchise::getFranchiseId(); 
+        $franchise = Franchise::findOrFail($franchiseId);
+
+        $parcel = IndiaPostSpeedPostParcel::findOrFail($id);
+
+        // Increment franchise balance
+        $franchise->increment("indiapost_balance", $parcel->payment_amount);
+
+        // Update parcel
+        $parcel->status = 2; // 2 = Cancelled
+        $parcel->cancel = $request->cancel_reason;
+        $parcel->cancel_date = Carbon::today();
+        $parcel->save();
+    });
+
+    return redirect()->route('franchise.india-post-speed-post.cancel.index')->with('success', 'Parcel has been cancelled successfully.');
+
+    // return redirect()->back()->with('success', 'Parcel has been cancelled successfully.');
+}
+
+ public function cancel_index(Request $request, RateCalculator $rateCalculator){
+   $totalParcels = 0;
+        $totalAmount = 0;
+        $CodtotalAmount = 0;
+        $type = $request->type;
+        $searchKey = $request->input("searchKey");
+
+        $fromdate = $request->input("fromdate");
+        $todate = $request->input("todate");
+
+        $franchise = Franchise::getFranchiseId();
+
+        $query = IndiaPostSpeedPostParcel::where(
+            "franchise_id",
+            Franchise::getFranchiseId()
+        )
+
+            // ->where("insert_type", $request->insert_type)
+             ->where("status", 2)
+
+            ->orderBy("cancel_date", "desc");
+
+        if ($request->type == "cod") {
+            $query->where("payment_method", "cod");
+        } else {
+            $query->where("payment_method", "prepaid");
+        }
+
+        if ($searchKey) {
+            $query->where(function ($q) use ($searchKey) {
+                $q->where("pickup_name", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("pickup_mobile", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("pickup_email", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("pickup_pincode", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("pickup_city", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("pickup_state", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("pickup_address", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("consignee_name", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("consignee_mobile", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("consignee_email", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("consignee_pincode", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("consignee_city", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("consignee_state", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("consignee_address", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("barcode_no", "LIKE", "%{$searchKey}%");
+            });
+
+            if (!empty($fromdate) || !empty($todate)) {
+                if (!empty($fromdate) && !empty($todate)) {
+                    $fromdate = Carbon::createFromFormat("d-m-Y", $fromdate)
+                        ->startOfDay()
+                        ->toDateString();
+                    $todate = Carbon::createFromFormat("d-m-Y", $todate)
+                        ->startOfDay()
+                        ->toDateString();
+                    $query->whereBetween("cancel_date", [$fromdate, $todate]);
+                } elseif (!empty($fromdate)) {
+                    $fromdate = Carbon::createFromFormat(
+                        "d-m-Y",
+                        $fromdate
+                    )->toDateString();
+                    $query->whereDate("cancel_date", $fromdate);
+                } elseif (!empty($todate)) {
+                    $todate = Carbon::createFromFormat(
+                        "d-m-Y",
+                        $todate
+                    )->toDateString();
+                    $query->whereDate("cancel_date", $todate);
+                }
+            }
+
+            $datas = $query->get();
+            $CodtotalAmount = (clone $query)->sum("cod_amount");
+            $totalAmount = (clone $query)->sum("payment_amount");
+            $totalParcels = (clone $query)->count();
+
+            return view(
+                "franchise.indiaPost-speedPost.cancelParcel",
+                compact(
+                    "datas",
+                    "type",
+                    "totalAmount",
+                    "totalParcels",
+                    "CodtotalAmount",
+                    "franchise"
+                )
+            );
+        }
+
+        if (!empty($fromdate) || !empty($todate)) {
+            if (!empty($fromdate) && !empty($todate)) {
+                $fromdate = Carbon::createFromFormat("d-m-Y", $fromdate)
+                    ->startOfDay()
+                    ->toDateString();
+                $todate = Carbon::createFromFormat("d-m-Y", $todate)
+                    ->startOfDay()
+                    ->toDateString();
+                $query->whereBetween("cancel_date", [$fromdate, $todate]);
+            } elseif (!empty($fromdate)) {
+                $fromdate = Carbon::createFromFormat(
+                    "d-m-Y",
+                    $fromdate
+                )->toDateString();
+                $query->whereDate("cancel_date", $fromdate);
+            } elseif (!empty($todate)) {
+                $todate = Carbon::createFromFormat(
+                    "d-m-Y",
+                    $todate
+                )->toDateString();
+                $query->whereDate("cancel_date", $todate);
+            }
+            $datas = $query->get();
+            $CodtotalAmount = (clone $query)->sum("cod_amount");
+            $totalAmount = (clone $query)->sum("payment_amount");
+            $totalParcels = (clone $query)->count();
+            return view(
+                "franchise.indiaPost-speedPost.cancelParcel",
+                compact(
+                    "datas",
+                    "type",
+                    "totalAmount",
+                    "totalParcels",
+                    "CodtotalAmount",
+                    "franchise"
+                )
+            );
+        } else {
+            $query->whereDate("cancel_date", Carbon::today());
+            $datas = $query->get();
+            $CodtotalAmount = (clone $query)->sum("cod_amount");
+            $totalAmount = (clone $query)->sum("payment_amount");
+            $totalParcels = (clone $query)->count();
+
+            return view(
+                "franchise.indiaPost-speedPost.cancelParcel",
+                compact(
+                    "datas",
+                    "type",
+                    "totalAmount",
+                    "totalParcels",
+                    "CodtotalAmount",
+                    "franchise"
+                )
+            );
+        }
+ }
+
+     public function shortPrintForCreatedParcelCancel(Request $request)
+    {
+
+    //   return $request->all();
+        $fromdate = $request->input("fromdate");
+        $todate = $request->input("todate");
+        $searchKey = $request->input("searchKey");
+        $type = $request->input("type");
+
+        if ($type === "cod") {
+            $view = "print.indiaPost.codPrint";
+        } else {
+            $view = "print.indiaPost.prepaidRecipt";
+            // $view = 'print.indiaPost.prepaidPrint';
+        }
+
+        $franchiseId = Franchise::getFranchiseId();
+        $franchise = Franchise::findOrFail($franchiseId);
+        $linkDetail = IndiaPostLink::where("franchise_no", $franchise->franchise_no)->first();
+        $query = IndiaPostSpeedPostParcel::where("franchise_id", $franchiseId)
+
+            // ->where("insert_type", $request->insert_type)
+             ->where("status", 2)
+            ->orderBy("cancel_date", "desc");
+        $selectedIds = array_map("intval", $request->input("ids", []));
+        if (!empty($selectedIds)) {
+            $query->whereIn("id", $selectedIds);
+        }
+        // Filter by payment method
+        if ($type === "cod") {
+            $query->where("payment_method", "cod");
+        } else {
+            $query->where("payment_method", "prepaid");
+        }
+
+        if ($searchKey) {
+            $query->where(function ($q) use ($searchKey) {
+                $q->where("pickup_name", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("pickup_mobile", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("pickup_email", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("pickup_pincode", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("pickup_city", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("pickup_state", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("pickup_address", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("consignee_name", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("consignee_mobile", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("consignee_email", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("consignee_pincode", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("consignee_city", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("consignee_state", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("consignee_address", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("barcode_no", "LIKE", "%{$searchKey}%");
+            });
+
+            if (!empty($fromdate) || !empty($todate)) {
+                if (!empty($fromdate) && !empty($todate)) {
+                    $fromdate = Carbon::createFromFormat("d-m-Y", $fromdate)
+                        ->startOfDay()
+                        ->toDateString();
+                    $todate = Carbon::createFromFormat("d-m-Y", $todate)
+                        ->startOfDay()
+                        ->toDateString();
+                    $query->whereBetween("cancel_date", [$fromdate, $todate]);
+                } elseif (!empty($fromdate)) {
+                    $fromdate = Carbon::createFromFormat(
+                        "d-m-Y",
+                        $fromdate
+                    )->toDateString();
+                    $query->whereDate("cancel_date", $fromdate);
+                } elseif (!empty($todate)) {
+                    $todate = Carbon::createFromFormat(
+                        "d-m-Y",
+                        $todate
+                    )->toDateString();
+                    $query->whereDate("cancel_date", $todate);
+                }
+            }
+             
+
+            $parcels = $query->get();
+
+            $title = \App\Models\Admin::INDIA_POST_SPEED;
+
+            $otherPageContent = View::make($view, [
+                "data" => $parcels,
+                "linkDetail" => $linkDetail,
+                "title" => $title,
+                "franchise" => $franchise,
+                "franchise_no" => $franchise->franchise_no,
+                "type" => 5,
+            ])->render();
+            return response()->json([
+                "otherPageContent" => $otherPageContent,
+            ]);
+        }
+
+        if (!empty($fromdate) || !empty($todate)) {
+            if (!empty($fromdate) && !empty($todate)) {
+                $fromdate = Carbon::createFromFormat("d-m-Y", $fromdate)
+                    ->startOfDay()
+                    ->toDateString();
+                $todate = Carbon::createFromFormat("d-m-Y", $todate)
+                    ->startOfDay()
+                    ->toDateString();
+                $query->whereBetween("cancel_date", [$fromdate, $todate]);
+            } elseif (!empty($fromdate)) {
+                $fromdate = Carbon::createFromFormat(
+                    "d-m-Y",
+                    $fromdate
+                )->toDateString();
+                $query->whereDate("cancel_date", $fromdate);
+            } elseif (!empty($todate)) {
+                $todate = Carbon::createFromFormat(
+                    "d-m-Y",
+                    $todate
+                )->toDateString();
+                $query->whereDate("cancel_date", $todate);
+            }
+            $parcels = $query->get();
+        } else {
+            $query->whereDate("cancel_date", Carbon::today());
+            $parcels = $query->get();
+        }
+
+        $title = \App\Models\Admin::INDIA_POST_SPEED;
+
+        $otherPageContent = View::make($view, [
+            "data" => $parcels,
+            "linkDetail" => $linkDetail,
+            "title" => $title,
+            "franchise" => $franchise,
+            "franchise_no" => $franchise->franchise_no,
+            "type" => 5,
+        ])->render();
+
+        return response()->json([
+            "otherPageContent" => $otherPageContent,
+        ]);
+    }
+
+    public function shortLabelForCreatedParcelCancel(Request $request)
+    {
+      
+        $fromdate = $request->input("fromdate");
+        $todate = $request->input("todate");
+        $searchKey = $request->input("searchKey");
+        $type = $request->input("type");
+
+        if ($type === "cod") {
+            $view = "print.indiaPost.codPrint";
+        } else {
+            $view = "print.indiaPost.prepaidLabel";
+            // $view = 'print.indiaPost.prepaidPrint';
+        }
+
+        $franchiseId = Franchise::getFranchiseId();
+        $franchise = Franchise::findOrFail($franchiseId);
+        $linkDetail = IndiaPostLink::where(
+            "franchise_no",
+            $franchise->franchise_no
+        )->first();
+        $query = IndiaPostSpeedPostParcel::where(
+            "franchise_id",
+            Franchise::getFranchiseId()
+        )
+
+            // ->where("insert_type", $request->insert_type)
+           ->where("status", 2)
+            ->orderBy("cancel_date", "desc");
+        $selectedIds = array_map("intval", $request->input("ids", []));
+        if (!empty($selectedIds)) {
+            $query->whereIn("id", $selectedIds);
+        }
+        // Filter by payment method
+        if ($type === "cod") {
+            $query->where("payment_method", "cod");
+        } else {
+            $query->where("payment_method", "prepaid");
+        }
+
+        if ($searchKey) {
+            $query->where(function ($q) use ($searchKey) {
+                $q->where("pickup_name", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("pickup_mobile", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("pickup_email", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("pickup_pincode", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("pickup_city", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("pickup_state", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("pickup_address", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("consignee_name", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("consignee_mobile", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("consignee_email", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("consignee_pincode", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("consignee_city", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("consignee_state", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("consignee_address", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("barcode_no", "LIKE", "%{$searchKey}%");
+            });
+
+            if (!empty($fromdate) || !empty($todate)) {
+                if (!empty($fromdate) && !empty($todate)) {
+                    $fromdate = Carbon::createFromFormat("d-m-Y", $fromdate)
+                        ->startOfDay()
+                        ->toDateString();
+                    $todate = Carbon::createFromFormat("d-m-Y", $todate)
+                        ->startOfDay()
+                        ->toDateString();
+                    $query->whereBetween("cancel_date", [$fromdate, $todate]);
+                } elseif (!empty($fromdate)) {
+                    $fromdate = Carbon::createFromFormat(
+                        "d-m-Y",
+                        $fromdate
+                    )->toDateString();
+                    $query->whereDate("cancel_date", $fromdate);
+                } elseif (!empty($todate)) {
+                    $todate = Carbon::createFromFormat(
+                        "d-m-Y",
+                        $todate
+                    )->toDateString();
+                    $query->whereDate("cancel_date", $todate);
+                }
+            }
+
+            $parcels = $query->get();
+
+            $title = \App\Models\Admin::INDIA_POST_SPEED;
+
+            $otherPageContent = View::make($view, [
+                "data" => $parcels,
+                "linkDetail" => $linkDetail,
+                "title" => $title,
+                "franchise" => $franchise,
+                "type" => 5,
+            ])->render();
+            return response()->json([
+                "otherPageContent" => $otherPageContent,
+            ]);
+        }
+
+        if (!empty($fromdate) || !empty($todate)) {
+            if (!empty($fromdate) && !empty($todate)) {
+                $fromdate = Carbon::createFromFormat("d-m-Y", $fromdate)
+                    ->startOfDay()
+                    ->toDateString();
+                $todate = Carbon::createFromFormat("d-m-Y", $todate)
+                    ->startOfDay()
+                    ->toDateString();
+                $query->whereBetween("cancel_date", [$fromdate, $todate]);
+            } elseif (!empty($fromdate)) {
+                $fromdate = Carbon::createFromFormat(
+                    "d-m-Y",
+                    $fromdate
+                )->toDateString();
+                $query->whereDate("cancel_date", $fromdate);
+            } elseif (!empty($todate)) {
+                $todate = Carbon::createFromFormat(
+                    "d-m-Y",
+                    $todate
+                )->toDateString();
+                $query->whereDate("cancel_date", $todate);
+            }
+
+            $parcels = $query->get();
+        } else {
+            $query->whereDate("cancel_date", Carbon::today());
+            $parcels = $query->get();
+        }
+
+        $title = \App\Models\Admin::INDIA_POST_SPEED;
+
+        $otherPageContent = View::make($view, [
+            "data" => $parcels,
+            "linkDetail" => $linkDetail,
+            "title" => $title,
+            "franchise" => $franchise,
+            "type" => 5,
+        ])->render();
+
+        return response()->json([
+            "otherPageContent" => $otherPageContent,
+        ]);
+    }
+
+    public function downloadTableForCreatedTableCancel(Request $request)
+    {
+        // Fetch data
+        $fromdate = $request->input("fromdate");
+        $todate = $request->input("todate");
+        $searchKey = $request->input("searchKey");
+
+        $type = $request->input("type");
+
+        $query = IndiaPostSpeedPostParcel::where(
+            "franchise_id",
+            Franchise::getFranchiseId()
+        )
+
+            // ->where("insert_type", $request->insert_type)
+           ->where("status", 2)
+            ->orderBy("cancel_date", "desc");
+            
+        if ($type === "cod") {
+            $query->where("payment_method", "cod");
+        } else {
+            $query->where("payment_method", "prepaid");
+        }
+
+        if ($searchKey) {
+            $query->where(function ($q) use ($searchKey) {
+                $q->where("pickup_name", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("pickup_mobile", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("pickup_email", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("pickup_pincode", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("pickup_city", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("pickup_state", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("pickup_address", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("consignee_name", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("consignee_mobile", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("consignee_email", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("consignee_pincode", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("consignee_city", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("consignee_state", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("consignee_address", "LIKE", "%{$searchKey}%")
+
+                    ->orWhere("barcode_no", "LIKE", "%{$searchKey}%");
+            });
+
+            if (!empty($fromdate) || !empty($todate)) {
+                if (!empty($fromdate) && !empty($todate)) {
+                    $fromdate = Carbon::createFromFormat("d-m-Y", $fromdate)
+                        ->startOfDay()
+                        ->toDateString();
+                    $todate = Carbon::createFromFormat("d-m-Y", $todate)
+                        ->startOfDay()
+                        ->toDateString();
+                    $query->whereBetween("cancel_date", [$fromdate, $todate]);
+                } elseif (!empty($fromdate)) {
+                    $fromdate = Carbon::createFromFormat(
+                        "d-m-Y",
+                        $fromdate
+                    )->toDateString();
+                    $query->whereDate("cancel_date", $fromdate);
+                } elseif (!empty($todate)) {
+                    $todate = Carbon::createFromFormat(
+                        "d-m-Y",
+                        $todate
+                    )->toDateString();
+                    $query->whereDate("cancel_date", $todate);
+                }
+            }
+            $parcels = $query->get();
+            return $this->getExcel($request, $parcels);
+        }
+
+        if (!empty($fromdate) || !empty($todate)) {
+            if (!empty($fromdate) && !empty($todate)) {
+                $fromdate = Carbon::createFromFormat("d-m-Y", $fromdate)
+                    ->startOfDay()
+                    ->toDateString();
+                $todate = Carbon::createFromFormat("d-m-Y", $todate)
+                    ->startOfDay()
+                    ->toDateString();
+                $query->whereBetween("cancel_date", [$fromdate, $todate]);
+            } elseif (!empty($fromdate)) {
+                $fromdate = Carbon::createFromFormat(
+                    "d-m-Y",
+                    $fromdate
+                )->toDateString();
+                $query->whereDate("cancel_date", $fromdate);
+            } elseif (!empty($todate)) {
+                $todate = Carbon::createFromFormat(
+                    "d-m-Y",
+                    $todate
+                )->toDateString();
+                $query->whereDate("cancel_date", $todate);
+            }
+            $parcels = $query->get();
+            return $this->getExcel($request, $parcels);
+        }
+
+        $query->whereDate("cancel_date", Carbon::today());
+        $parcels = $query->get();
+        return $this->getExcel($request, $parcels);
+    }
+
+    public function excel_import_index(){
+         $data['data'] =  Student::all();
+        return view('franchise.indiaPost-speedPost.excel_import',$data);
+    }
+
+public function excel_import_store(Request $req)
+{
+    if (!$req->hasFile('excel_file')) {
+        return back()->with('error', 'No file uploaded!');
+    }
+
+    $file = $req->file('excel_file');
+    $filename = time() . '_' . $file->getClientOriginalName();
+    $filePath = $file->storeAs('uploads', $filename, 'public');
+
+    // Load the Excel file
+    $spreadsheet = IOFactory::load(storage_path('app/public/' . $filePath));
+    $worksheet = $spreadsheet->getActiveSheet();
+    $rows = $worksheet->toArray();
+
+    // Loop through each row, skipping header
+    foreach ($rows as $index => $element) {
+        if ($index === 0) continue; // skip header
+
+        // Example: fetch related data if needed
+        $franchiseId = Auth::user()->franchise_id ?? null;
+        $franchise_role_user_id = Auth::id();
+
+        // Example placeholders тАУ replace with real calculations or lookups
+        $customers = null; // Replace with actual customer lookup
+        $customer = null;  // Replace with actual NoRegisterCustomer lookup
+        $managertype = 'prepaid'; // Example
+        $bookingType = 'online'; // Example
+        $fuel_charge = 0;
+        $pickup_charge = 0;
+        $other_service_charge = 0;
+        $payment_amount = 0;
+        $totalAmount = ["total" => 0];
+        $code = 'null'; // Generate barcode if needed
+        $barcode = 'null'; // Path to barcode image
+
+        // Create parcel record
+        $parcel = IndiaPostSpeedPostParcel::create([
+            "franchise_id" => $franchiseId,
+            "franchise_role_users_id" => $franchise_role_user_id,
+            "cod_customer_id" => $customers->id ?? null,
+            "no_r_customer_id" => $customer->id ?? null,
+            "booking_type" => $managertype,
+            "pickup_name" => $element[0] ?? null, // Adjust indexes according to your Excel
+            "pickup_mobile" => $element[1] ?? null,
+            "pickup_email" => $element[2] ?? null,
+            "pickup_pincode" => $element[3] ?? null,
+            "pickup_city" => $element[4] ?? null,
+            "pickup_state" => $element[5] ?? null,
+            "pickup_address" => $element[6] ?? null,
+            "consignee_name" => $element[7] ?? null,
+            "consignee_mobile" => $element[8] ?? null,
+            "consignee_email" => $element[9] ?? null,
+            "consignee_pincode" => $element[10] ?? null,
+            "consignee_city" => $element[11] ?? null,
+            "consignee_state" => $element[12] ?? null,
+            "consignee_address" => $element[13] ?? null,
+            "package_weight" => $element[14] ?? null,
+            "package_length" => $element[15] ?? null,
+            "package_width" => $element[16] ?? null,
+            "package_height" => $element[17] ?? null,
+            "payment_method" => $bookingType,
+            "cod_amount" => $element[18] ?? 0,
+            "fuel_charge" => $fuel_charge,
+            "pickup_charge" => $pickup_charge,
+            "other_service_charge" => $other_service_charge,
+            "payment_amount" => $payment_amount,
+            "totalOtherAmount" => $totalAmount["total"],
+            "barcode_no" => $code,
+            "barcode_image_src" => $barcode,
+            "insert_type" => IndiaPostSpeedPostParcel::INSERT_TYPE_BULK,
+        ]);
+    }
+
+    return view('franchise.indiaPost-speedPost.excel_import')->with('success', 'Excel imported successfully!');
+}
+
+
+}

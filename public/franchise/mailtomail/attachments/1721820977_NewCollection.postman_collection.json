@@ -1,0 +1,431 @@
+{
+	"info": {
+		"_postman_id": "f74d471f-8db2-4a13-aa7a-c43d35917b15",
+		"name": "New Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27899590"
+	},
+	"item": [
+		{
+			"name": "user profile",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "key",
+						"value": "367b6f59-1fc4-4b73-a702-9f60016d9031",
+						"type": "text"
+					},
+					{
+						"key": "id",
+						"value": "6631dc3cde6f250506f1710c",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://app.hiiiyou.com/user/userProfile?key=367b6f59-1fc4-4b73-a702-9f60016d9031&id=6631dc3cde6f250506f1710c",
+					"protocol": "https",
+					"host": [
+						"app",
+						"hiiiyou",
+						"com"
+					],
+					"path": [
+						"user",
+						"userProfile"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "367b6f59-1fc4-4b73-a702-9f60016d9031"
+						},
+						{
+							"key": "id",
+							"value": "6631dc3cde6f250506f1710c"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "hostlogin",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"loginType\":\"1\",\r\n    \"fcm_token\":\"fo_e0zPsSmi4yVXVhKBu5o:APA91bGMjrLRR07nm9DBgd1X2tDzTm1MYFz65c9dElLQsSh4Q9RC9AblYfFOGlHy6jc4GDNap7DReFRY6zBYNDvVHgdXH3hOcIyAhGfstALdjVthCPlwmbqfyCrGxbsgckOb4tPBYDJp\",\r\n    \"email\":\"test@gmail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://app.hiiiyou.com/host/login?key=367b6f59-1fc4-4b73-a702-9f60016d9031&email=test@gmail.com",
+					"protocol": "https",
+					"host": [
+						"app",
+						"hiiiyou",
+						"com"
+					],
+					"path": [
+						"host",
+						"login"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "367b6f59-1fc4-4b73-a702-9f60016d9031"
+						},
+						{
+							"key": "email",
+							"value": "test@gmail.com"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "hostlive",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "https://app.hiiiyou.com/host/isOnline?key=367b6f59-1fc4-4b73-a702-9f60016d9031&hostId=6548689d6fb770133f9d5b81",
+					"protocol": "https",
+					"host": [
+						"app",
+						"hiiiyou",
+						"com"
+					],
+					"path": [
+						"host",
+						"isOnline"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "367b6f59-1fc4-4b73-a702-9f60016d9031"
+						},
+						{
+							"key": "hostId",
+							"value": "6548689d6fb770133f9d5b81"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "hostprofile",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://app.hiiiyou.com/host/hostProfile?key=367b6f59-1fc4-4b73-a702-9f60016d9031&hostId=6548689d6fb770133f9d5b81",
+					"protocol": "https",
+					"host": [
+						"app",
+						"hiiiyou",
+						"com"
+					],
+					"path": [
+						"host",
+						"hostProfile"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "367b6f59-1fc4-4b73-a702-9f60016d9031"
+						},
+						{
+							"key": "hostId",
+							"value": "6548689d6fb770133f9d5b81"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updatehost",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"hostId\":\"6548689d6fb770133f9d5b81\",\r\n    \"name\":\"testhost\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://app.hiiiyou.com/host/updateProfile?key=367b6f59-1fc4-4b73-a702-9f60016d9031",
+					"protocol": "https",
+					"host": [
+						"app",
+						"hiiiyou",
+						"com"
+					],
+					"path": [
+						"host",
+						"updateProfile"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "367b6f59-1fc4-4b73-a702-9f60016d9031"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "isLive",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"hostId\":\"6548689d6fb770133f9d5b81\",\r\n    \"name\":\"testhost\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://app.hiiiyou.com/host/updateProfile?key=367b6f59-1fc4-4b73-a702-9f60016d9031",
+					"protocol": "https",
+					"host": [
+						"app",
+						"hiiiyou",
+						"com"
+					],
+					"path": [
+						"host",
+						"updateProfile"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "367b6f59-1fc4-4b73-a702-9f60016d9031"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user profile",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"loginType\":\"1\",\r\n    \"identity\":\"9897369455\",\r\n    \"fcm_token\":\"fo_e0zPsSmi4yVXVhKBu5o:APA91bGMjrLRR07nm9DBgd1X2tDzTm1MYFz65c9dElLQsSh4Q9RC9AblYfFOGlHy6jc4GDNap7DReFRY6zBYNDvVHgdXH3hOcIyAhGfstALdjVthCPlwmbqfyCrGxbsgckOb4tPBYDJp\",\r\n    \"email\":\"test2@gmail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://app.hiiiyou.com/user/userProfile?key=367b6f59-1fc4-4b73-a702-9f60016d9031",
+					"protocol": "https",
+					"host": [
+						"app",
+						"hiiiyou",
+						"com"
+					],
+					"path": [
+						"user",
+						"userProfile"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "367b6f59-1fc4-4b73-a702-9f60016d9031"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "use ragister",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"loginType\":\"1\",\"fcm_token\":\"dPf5CNcVTtGsfUhVvnOtKD:APA91bErBSG5LR4CsLg4NVQG62BligN_BxWfBOurCLQMcFFqHTSZMWqpQwbFo8TuGDfZRfjAFxoFbcVy1pmkXsoXLxGacJbD1JJzrbkgF3whfMuIvja1JMJMq0L9o5Xn1t-oogbSihSw\",\"identity\":\"67acf42976244622\",\"email\":\"dobariya14@gmail.com\",\"name\":\"cdd\",\"dob\":\"25-06-2024\",\"age\":\"22\",\"gender\":\"MALE\",\"password\":\"123456\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://app.hiiiyou.com/user/userRegister?key=367b6f59-1fc4-4b73-a702-9f60016d9031",
+					"protocol": "https",
+					"host": [
+						"app",
+						"hiiiyou",
+						"com"
+					],
+					"path": [
+						"user",
+						"userRegister"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "367b6f59-1fc4-4b73-a702-9f60016d9031"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "local use ragister Copy",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"loginType\":\"1\",\"fcm_token\":\"dPf5CNcVTtGsfUhVvnOtKD:APA91bErBSG5LR4CsLg4NVQG62BligN_BxWfBOurCLQMcFFqHTSZMWqpQwbFo8TuGDfZRfjAFxoFbcVy1pmkXsoXLxGacJbD1JJzrbkgF3whfMuIvja1JMJMq0L9o5Xn1t-oogbSihSw\",\"identity\":\"67acf42976244622\",\"email\":\"dobariya14@gmail.com\",\"name\":\"cdd\",\"dob\":\"25-06-2024\",\"age\":\"22\",\"gender\":\"MALE\",\"password\":\"123456\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://app.hiiiyou.com/user/userRegister?key=367b6f59-1fc4-4b73-a702-9f60016d9031",
+					"protocol": "https",
+					"host": [
+						"app",
+						"hiiiyou",
+						"com"
+					],
+					"path": [
+						"user",
+						"userRegister"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "367b6f59-1fc4-4b73-a702-9f60016d9031"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"loginType\":\"1\",\r\n    \"identity\":\"9897369455\",\r\n    \"fcm_token\":\"fo_e0zPsSmi4yVXVhKBu5o:APA91bGMjrLRR07nm9DBgd1X2tDzTm1MYFz65c9dElLQsSh4Q9RC9AblYfFOGlHy6jc4GDNap7DReFRY6zBYNDvVHgdXH3hOcIyAhGfstALdjVthCPlwmbqfyCrGxbsgckOb4tPBYDJp\",\r\n    \"email\":\"ram@gmail.co\",\r\n    \"password\":\"NKZOOPG\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/user/userLogin?key=367b6f59-1fc4-4b73-a702-9f60016d9031",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"user",
+						"userLogin"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "367b6f59-1fc4-4b73-a702-9f60016d9031"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "check user",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://app.hiiiyou.com/user/checkUser?key=367b6f59-1fc4-4b73-a702-9f60016d9031&email=test@gmail.com",
+					"protocol": "https",
+					"host": [
+						"app",
+						"hiiiyou",
+						"com"
+					],
+					"path": [
+						"user",
+						"checkUser"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "367b6f59-1fc4-4b73-a702-9f60016d9031"
+						},
+						{
+							"key": "email",
+							"value": "test@gmail.com"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "check user Copy",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://app.hiiiyou.com/user/checkUser?key=367b6f59-1fc4-4b73-a702-9f60016d9031&email=test@gmail.com",
+					"protocol": "https",
+					"host": [
+						"app",
+						"hiiiyou",
+						"com"
+					],
+					"path": [
+						"user",
+						"checkUser"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "367b6f59-1fc4-4b73-a702-9f60016d9031"
+						},
+						{
+							"key": "email",
+							"value": "test@gmail.com"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

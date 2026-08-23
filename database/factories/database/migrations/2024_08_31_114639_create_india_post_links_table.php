@@ -1,0 +1,32 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('india_post_links', function (Blueprint $table) {
+            $table->id();
+            $table->string('city');
+            $table->string('franchise_no');
+            $table->string('bnpl_no');
+            $table->string("customer_id");
+            $table->string('contract_id');
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('india_post_links');
+    }
+};

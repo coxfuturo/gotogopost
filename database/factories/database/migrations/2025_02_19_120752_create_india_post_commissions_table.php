@@ -1,0 +1,29 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('india_post_commissions', function (Blueprint $table) {
+            $table->id();
+            $table->string('india_post_commission')->nullable();
+            $table->string('india_post_monthly_revenue')->nullable();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('india_post_commissions');
+    }
+};

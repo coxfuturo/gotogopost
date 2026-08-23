@@ -1,0 +1,2256 @@
+@extends('franchise.layouts.master')
+@section('title'){{\App\Models\Admin::GOTOGO_POST_REGISTERED}} @endsection
+@section('header-right-part')
+<div class="col-lg-6" style="padding: 0">
+    <div class="get-price-details-upper d-flex" style="gap:10px">
+        <div class="">
+
+            <label for="FromPincode">From</label>
+
+            <div class="input-group">
+
+                <input type="number" class="@error('FromPincode') is-invalid @enderror" id="FromPincode" name="FromPincode" placeholder="Pincode" value="{{ old('FromPincode') }}" required>
+
+                <div class="invalid-feedback">
+
+                    Please provide pincode
+
+                </div>
+
+                <div class="invalid-feedback validerror-origin">
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="">
+
+            <label for="ToPincode">To</label>
+
+            <div class="input-group">
+
+                <input type="text" class="@error('ToPincode') is-invalid @enderror" id="ToPincode" name="ToPincode" maxlength="6" placeholder="Pincode" value="{{ old('ToPincode') }}" required>
+
+                <div class="invalid-feedback">
+
+                    Please provide pincode
+
+                </div>
+
+                <div class="invalid-feedback validerror-destination">
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="">
+
+            <label for="Weight">Weight </label>
+
+            <div class="input-group">
+
+                <input type="text" class="@error('Weight') is-invalid @enderror" id="Weight" name="Weight" placeholder="Weight" value="{{ old('Weight') }}" required>
+
+                <div class="invalid-feedback">
+
+                    Please provide weight
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="">
+
+            <label for="Length">Length </label>
+
+            <div class="input-group">
+
+                <input type="text" class="@error('package_length') is-invalid @enderror" id="length" name="length" placeholder="length" value="{{ old('length') }}">
+
+                <div class="invalid-feedback">
+
+                    Please provide length
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="">
+
+            <label for="width">width </label>
+
+            <div class="input-group">
+
+                <input type="text" class="@error('width') is-invalid @enderror" id="width" name="width" placeholder="width" value="{{ old('width') }}" required>
+
+                <div class="invalid-feedback">
+
+                    Please provide width
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="">
+
+            <label for="height">height</label>
+
+            <div class="input-group">
+
+                <input type="text" class="@error('height') is-invalid @enderror" id="height" name="height" placeholder="height" value="{{ old('height') }}" required>
+
+                <div class="invalid-feedback">
+
+                    Please provide height
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="col-lg-2 d-flex" style="min-height:50px;padding:0">
+
+    <div class="d-flex align-items-start" style="width: 100%;margin-top:10px;gap:10px;">
+
+        <h4 class="totalp" style="margin-top:8px "></h4>
+
+        <button class="btn-price  btn btn-primary" id="parcel-rate-submit" type="submit">Submit</button>
+
+    </div>
+
+
+
+</div>
+
+@endsection
+
+
+
+
+
+@section('content')
+
+
+
+
+
+<style>
+    input {
+
+        border: none;
+
+        outline: none;
+
+        box-shadow: 0px 1.5px 0px rgb(51 30 102 / 83%);
+
+        width: 100%;
+        color: darkred;
+
+    }
+
+
+
+    input:focus {
+
+        border: none;
+
+        outline: none;
+
+        box-shadow: 0px 1.5px 0px rgb(51 30 102 / 83%);
+
+    }
+
+
+
+    input::placeholder {
+
+        font-size: 14px;
+        color: #2e00ff;
+        /* color: darkred; */
+        color: #123e64;
+
+
+    }
+
+
+    .card {
+        border: 1px solid #ededed;
+        margin-bottom: 30px;
+        /* box-shadow: 0px 0px 0px 1.5px rgb(109, 133, 205); */
+        box-shadow: 0px 0px 0px 1.5px rgb(49 79 167);
+
+    }
+
+    .card-header {
+        border-bottom: 1.5px solid rgb(49 79 167);
+    }
+
+
+    .select2-container--default .select2-selection--single .select2-selection__placeholder {
+        color: #2e00ff !important;
+    }
+
+    .select2-container .select2-selection.select2-selection--single {
+        border: 1.5px solid #e07676;
+        height: 30px
+    }
+
+
+    .select2-container--default .select2-selection--single .select2-selection__clear {
+
+        cursor: pointer;
+
+        float: right;
+
+        font-weight: bold;
+
+        height: 26px;
+
+        margin-right: 20px;
+
+        padding-right: 0px;
+
+        display: none;
+
+    }
+
+
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+
+        height: 26px;
+
+        position: absolute;
+
+        top: -1px;
+
+        right: 1px;
+
+        width: 20px;
+
+    }
+
+
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+
+        color: #272b41;
+
+        line-height: 30px;
+
+    }
+
+
+
+
+    body>div.main-wrapper>div.page-wrapper>div>form>div:nth-child(3)>div:nth-child(1)>div>div.card-header.d-flex>div:nth-child(2)>span {
+
+        width: 100% !important;
+
+    }
+
+
+
+    .page-wrapper .content .page-header {
+
+        margin-bottom: 1rem !important;
+
+    }
+
+
+
+    .page-wrapper .content {
+
+        padding: 20px 25px;
+
+    }
+
+
+
+    .google-map-image {
+
+        position: absolute;
+
+        right: -6px;
+
+        top: -2px;
+
+        cursor: pointer;
+
+    }
+
+
+
+
+
+    .custom-modal .modal-content .modal-body {
+
+        padding: 20px;
+
+    }
+
+
+
+
+
+    .switch span {
+
+        position: relative;
+
+        width: 50px;
+
+        height: 25px;
+
+        background-color: #ef5c5c;
+
+        display: inline-block;
+
+        -webkit-transition: all 0.2s ease;
+
+        -ms-transition: all 0.2s ease;
+
+        transition: all 0.2s ease;
+
+        border-radius: 30px;
+
+    }
+
+
+
+    .switch span:after {
+
+        content: "";
+
+        background-color: #ffffff;
+
+        width: 16px;
+
+        height: 15px;
+
+        -webkit-box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.25);
+
+        -moz-box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.25);
+
+        box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.25);
+
+        position: absolute;
+
+        top: 4px;
+
+        bottom: 1px;
+
+        left: 6px;
+
+        border-radius: 30px;
+
+        -webkit-transition: all 0.2s ease;
+
+        -ms-transition: all 0.2s ease;
+
+        transition: all 0.2s ease;
+
+    }
+
+
+
+    .barcode-top {
+
+        display: flex;
+
+        align-items: center;
+
+        width: fit-content;
+
+        background: #55ce63;
+
+        color: white;
+
+        padding: 1px 7px;
+
+        border-radius: 3px;
+
+    }
+
+
+
+    .personal-info li {
+
+        margin-bottom: 5px;
+
+    }
+
+
+    .showpricedetails {
+        padding: 10px;
+    }
+
+
+
+    .showpricedetails .showpricedetails-left {
+        border-width: 1.5px 0px 0px 1.5px;
+        border-color: #544e80;
+        border-style: solid;
+        padding: 4px 8px;
+
+    }
+
+    .showpricedetails .showpricedetails-right {
+        border-width: 1.5px 1.5px 0px 1.5px;
+        border-color: #544e80;
+        border-style: solid;
+        padding: 4px 8px;
+
+    }
+
+    .showpricedetails .showpricedetails-total {
+        border: 2px solid #544e80;
+        padding: 4px 8px;
+
+    }
+
+    .showpricedetails p {
+        display: flex;
+        justify-content: space-between;
+        line-height: 18px;
+
+    }
+
+    .showpricedetails p span {
+        flex-grow: 1;
+        /* Expands the span to take remaining space */
+    }
+
+    .showpricedetails p span:first-child {
+        color: #333333;
+        font-weight: 500;
+        font-size: 13px;
+        margin-right: 10px;
+    }
+
+    .showpricedetails p span.float-right {
+        text-align: right;
+    }
+
+
+    @import url(https://fonts.googleapis.com/css?family=Open+Sans:700,300);
+
+
+
+
+
+    .center {
+
+        height: 200px;
+
+        border-radius: 3px;
+
+        box-shadow: 8px 10px 15px 0 rgba(0, 0, 0, 0.2);
+
+        background: #fff;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-evenly;
+
+        flex-direction: column;
+
+        font-family: "Open Sans", Helvetica, sans-serif;
+
+    }
+
+    h1 {
+
+        font-size: 16px;
+
+        font-weight: 300;
+
+        color: #666;
+
+    }
+
+
+
+    .dropzone {
+
+        width: 100px;
+
+        height: 80px;
+
+        border: 1px dashed #999;
+
+        border-radius: 3px;
+
+        text-align: center;
+
+    }
+
+
+
+    .upload-icon {
+
+        margin: 25px 2px 2px 2px;
+
+    }
+
+
+
+    .upload-input {
+
+        position: relative;
+
+        top: -62px;
+
+        left: 0;
+
+        width: 100%;
+
+        height: 100%;
+
+        opacity: 0;
+
+    }
+
+
+
+    .download-button {
+
+        background-color: #7b2cbf;
+
+        color: #f7fff7;
+
+        display: flex;
+
+        align-items: center;
+
+        font-size: 18px;
+
+        border: none;
+
+        border-radius: 20px;
+
+        margin: 10px;
+
+        padding: 7.5px 50px;
+
+        cursor: pointer;
+
+    }
+
+
+
+    .submit-section {
+
+        text-align: center;
+
+        margin-top: 10px;
+
+        float: left;
+
+        width: 100%;
+
+    }
+
+
+    .input-group .btn {
+
+        position: relative;
+
+        z-index: 2;
+
+        top: 25px;
+
+    }
+
+
+
+    .page-wrapper .content .page-header .page-title {
+
+        color: #1f1f1f;
+
+        font-size: 20px !important;
+
+        font-weight: 500;
+
+        margin-bottom: 5px;
+
+    }
+
+
+
+    .card .card-title {
+
+        color: #1f1f1f;
+
+        font-size: 16px !important;
+
+        font-weight: 500;
+
+        margin-bottom: 20px;
+
+    }
+
+
+
+    .btn-price {
+
+        --bs-btn-padding-x: 0.4rem !important;
+
+        --bs-btn-padding-y: 0.275rem !important;
+
+    }
+
+
+
+    @media screen and (max-width: 400px) {
+
+        .get-price-details-upper {
+
+            flex-direction: column;
+
+        }
+    }
+</style>
+
+
+
+{{-- new form start --}}
+
+
+
+<div class="row">
+
+    <div class="col-md-4 d-flex justify-content-between align-items-center">
+
+        @if(!empty($linkDetails))
+        <div class="">
+            <div class="">FO-CODE-{{$linkDetails->franchise_no}}-SP-{{$linkDetails->cms_no}}-CI-{{$linkDetails->pph_no}}</div>
+        </div>
+        @else
+        <div class="">
+
+        </div>
+        @endif
+
+    </div>
+
+
+
+    <div class="col-md-4 d-flex justify-content-between align-items-center">
+        <div class="d-flex flex-column">
+            <span>Credit Balance</span>
+            <span class="credit-balance">{{ number_format($franchise_details->credit_balance, 2) }}</span>
+        </div>
+        <div class="d-flex flex-column text-right">
+            <span>Account Amount</span>
+            <span class="gotogo-balance">{{ number_format($franchise_details->gotogo_balance, 2) }}</span>
+        </div>
+    </div>
+
+    <div class="col-md-4 d-flex justify-content-between align-items-center">
+
+        <div name="">Barcode Available: <span class="barcode-available">{{ $barcodeAvailable }}</span></div>
+
+        <label class="switch">
+
+            <input type="hidden" value="off" name="auto_backup_db">
+
+            <input type="checkbox" id="auto_backup_db" name="auto_backup_db">
+
+            <span></span>
+
+        </label>
+
+    </div>
+
+</div>
+
+
+
+<form id="parcel-form" action="{{route('franchise.go-registered.store')}}" enctype="multipart/form-data" method="POST" class="needs-validation" novalidate>
+
+    @csrf
+
+    <img style="display:block" id="barcodeImage" src="" alt="Barcode" style="height:50px;" hidden />
+    <div class="row mt-2">
+        <div class="col-md-4 d-flex">
+
+            <div class="card profile-box flex-fill pb-4">
+
+                <div class="card-header d-flex justify-content-between p-1">
+
+                    <div class="col-md-6">
+
+                        <select name="pickup-details" id="pickup-details" class="form-select">
+
+                            <option value="">Select an option</option>
+
+                            @foreach($pickupDetails as $user)
+
+                            <option value="{{$user->id}}">{{$user->name}} </option>
+
+                            @endforeach
+
+                        </select>
+
+                    </div>
+
+                    <div class="card-title mb-0">
+
+                        {{-- {{$code}} --}} Form Pickup Details
+
+                    </div>
+
+                </div>
+
+                <div class="card-body" style="padding-bottom:0px !important">
+
+                    <ul class="personal-info">
+
+                        <li>
+
+                            <div class="col-lg-3 title">Name:</div>
+
+                            <div class="col-lg-8">
+
+                                <input type="text" id="PickupName" name="PickupName" placeholder="Enter Name" class="@error('name') is-invalid @enderror" value="{{ old('PickupName') }}" required>
+
+                                <div class="invalid-feedback">
+
+                                    Please provide your name
+
+                                </div>
+
+                            </div>
+
+                        </li>
+
+                        <li>
+
+                            <div class="col-lg-3 title">Phone:</div>
+
+                            <div class="col-lg-8">
+
+                                <input type="text" id="PickupMobile" name="PickupMobile" placeholder="Enter Phone" class="NumberValidate @error('mobile') is-invalid @enderror" maxlength="10" value="{{ old('PickupMobile') }}" required>
+
+                                <div class="invalid-feedback">
+
+                                    Please provide mobile number
+
+                                </div>
+
+                            </div>
+
+                        </li>
+                        <li>
+
+                            <div class="col-lg-3 title">GST No:</div>
+
+                            <div class="col-lg-8">
+
+                                <input type="text" id="PickupGstNo" name="PickupGstNo" placeholder="Enter Gst no" class="NumberValidate @error('PickupGstNo') is-invalid @enderror" maxlength="10" value="{{$franchise_details->gst_number}}" required>
+                                <div class="invalid-feedback">
+                                    Please provide Gst number
+                                </div>
+
+                            </div>
+
+                        </li>
+
+                        <li>
+
+                            <div class="col-lg-3 title">Email:</div>
+
+                            <div class="col-lg-8">
+
+                                <input type="email" id="PickupEmail" name="PickupEmail" placeholder="Enter Email" class="@error('email') is-invalid @enderror" value="{{ old('PickupEmail') }}" required>
+
+                                <div class="invalid-feedback">
+
+                                    Please provide emailId
+
+                                </div>
+
+                            </div>
+
+                        </li>
+
+                        <li>
+
+                            <div class="col-lg-3 title">Pincode:</div>
+
+                            <div class="col-lg-8">
+
+                                <input type="text" class="pincode charge-input" id="PickupPincode" name="PickupPincode" placeholder="Enter Pincode" class="@error('name') is-invalid @enderror" value="{{ old('PickupPincode') }}" required>
+
+                                <div class="invalid-feedback">
+
+                                    Please provide Pickup pincode
+
+                                </div>
+
+                            </div>
+
+                        </li>
+
+                        <li>
+
+                            <div class="col-lg-3 title">City:</div>
+
+                            <div class="col-lg-8 d-flex" style="position: relative">
+
+                                <input type="text" id="PickupCity" name="PickupCity" placeholder="Enter City" class="@error('city') is-invalid @enderror" value="{{ old('PickupCity') }}" required>
+
+                                <div>
+
+                                    <img data-bs-toggle="modal" data-bs-target="#add_role" class="google-map-image" src="https://i.pinimg.com/736x/66/1e/98/661e98a8e38f681575da93d0a1c3f4fc.jpg" alt="" width="25">
+
+                                </div>
+
+                                <div class="invalid-feedback">
+
+                                    Please provide city
+
+                                </div>
+
+                            </div>
+
+                        </li>
+
+                        <li>
+
+                            <div class="col-lg-3 title">State:</div>
+
+                            <div class="col-lg-8">
+
+                                <input type="text" id="PickupState" name="PickupState" placeholder="Enter State" class="@error('state') is-invalid @enderror" value="{{ old('PickupState') }}" required>
+
+                                <div class="invalid-feedback">
+
+                                    Please provide state
+
+                                </div>
+
+                            </div>
+
+                        </li>
+
+                        <li>
+
+                            <div class="col-lg-3 title">Address:</div>
+
+                            <div class="col-lg-8">
+
+                                <input type="text" id="PickupAddress" name="PickupAddress" placeholder="Enter Address" class="@error('name') is-invalid @enderror" value="{{ old('PickupAddress') }}" required>
+
+                                <div class="invalid-feedback">
+
+                                    Please provide Pickup Address
+
+                                </div>
+
+                            </div>
+
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4 d-flex">
+
+            <div class="card profile-box flex-fill pb-4">
+
+                <div class="card-header d-flex justify-content-between">
+
+                    <div class="col-md-6">
+
+                        <h5 class="card-title mb-0">To Consignee Details</h5>
+
+                    </div>
+
+                    <div class="col-md-6 text-end d-flex justify-content-end align-items-center">
+
+                        <h5 class="card-title mb-0 from-submitted text-success" style="display: none">Form Submitted</h5>
+
+                    </div>
+
+                </div>
+
+                <div class="card-body" style="padding-bottom:0px !important">
+
+                    <ul class="personal-info">
+
+                        <li>
+
+                            <div class="col-lg-3 title">Name:</div>
+
+                            <div class="col-lg-8">
+
+                                <input type="text" id="ConsigneeName" name="ConsigneeName" placeholder="Enter Name" class="@error('name') is-invalid @enderror" value="{{ old('ConsigneeName') }}" required>
+
+                                <div class="invalid-feedback">
+
+                                    Please provide your name
+
+                                </div>
+
+                            </div>
+
+                        </li>
+
+                        <li>
+
+                            <div class="col-lg-3 title">Phone:</div>
+
+                            <div class="col-lg-8">
+
+                                <input type="text" id="ConsigneeMobile" name="ConsigneeMobile" placeholder="Enter Phone" class="@error('name') is-invalid @enderror" value="{{ old('ConsigneeMobile') }}" required>
+
+                                <div class="invalid-feedback">
+
+                                    Please provide consignee mobile
+
+                                </div>
+
+                            </div>
+
+                        </li>
+                        <li>
+
+                            <div class="col-lg-3 title">GST No:</div>
+
+                            <div class="col-lg-8">
+
+                                <input type="text" id="ConsigneeGstNo" name="ConsigneeGstNo" placeholder="Enter Gst no" class="@error('name') is-invalid @enderror" value="{{ old('ConsigneeGstNo') }}">
+
+                                <div class="invalid-feedback">
+
+                                    Please provide gst number
+
+                                </div>
+
+                            </div>
+
+                        </li>
+
+                        <li>
+
+                            <div class="col-lg-3 title">Email:</div>
+
+                            <div class="col-lg-8">
+
+                                <input type="text" id="ConsigneeEmail" name="ConsigneeEmail" placeholder="Enter Email" class="@error('name') is-invalid @enderror" value="{{ old('ConsigneeEmail') }}" required>
+
+                                <div class="invalid-feedback">
+
+                                    Please provide consingee email
+
+                                </div>
+
+                            </div>
+
+                        </li>
+
+                        <li>
+
+                            <div class="col-lg-3 title">Pincode:</div>
+
+                            <div class="col-lg-8">
+
+                                <input type="text" class="pincode charge-input" id="ConsigneePincode" name="ConsigneePincode" placeholder="Enter Pincode" class="@error('name') is-invalid @enderror" value="{{ old('ConsigneePincode') }}" required>
+
+                                <div class="invalid-feedback">
+
+                                    Please provide consignee pincode
+
+                                </div>
+
+                            </div>
+
+                        </li>
+
+                        <li>
+
+                            <div class="col-lg-3 title">City</div>
+
+                            <div class="col-lg-8" style="position: relative">
+
+                                <input type="text" id="ConsigneeCity" name="ConsigneeCity" placeholder="Enter City" class="@error('name') is-invalid @enderror" value="{{ old('ConsigneeCity') }}" required>
+
+                                <div>
+
+                                    <img data-bs-toggle="modal" data-bs-target="#add_role" class="google-map-image" src="https://i.pinimg.com/736x/66/1e/98/661e98a8e38f681575da93d0a1c3f4fc.jpg" alt="" width="25">
+
+                                </div>
+
+                                <div class="invalid-feedback">
+
+                                    Please provide Consignee City
+
+                                </div>
+
+                            </div>
+
+                        </li>
+
+                        <li>
+
+                            <div class="col-lg-3 title">State:</div>
+
+                            <div class="col-lg-8">
+
+                                <input type="text" id="ConsigneeState" name="ConsigneeState" placeholder="Enter State" class="@error('name') is-invalid @enderror" value="{{ old('ConsigneeState') }}" required>
+
+                                <div class="invalid-feedback">
+
+                                    Please provide consingnee state
+
+                                </div>
+
+                            </div>
+
+                        </li>
+
+                        <li>
+
+                            <div class="col-lg-3 title">Address:</div>
+
+                            <div class="col-lg-8">
+
+                                <input type="text" id="ConsigneeAddress" name="ConsigneeAddress" placeholder="Enter Address" class="@error('name') is-invalid @enderror" value="{{ old('ConsigneeAddress') }}" required>
+
+                                <div class="invalid-feedback">
+
+                                    Please provide consignee address
+
+                                </div>
+
+                            </div>
+
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="col-md-4 d-flex">
+
+            <div class="card profile-box flex-fill pb-4">
+
+                <div class="card-header d-flex justify-content-between align-items-center">
+
+                    <h5 class="card-title mb-0">Parcel Details</h5>
+
+                    <a href="#" style="min-width: 90px;font-size:14px;" class="btn-price btn add-btn" data-bs-toggle="modal" data-bs-target="#add_support_tickets"></i> Upload</a>
+
+                </div>
+
+                <div class="card-body" style="padding-bottom:0px !important">
+
+                    <ul class="personal-info">
+                        <li class="d-flex justify-content-between">
+                            <div class="col-lg-12">
+                                <input type="text" id="barcodeInput" name="scanned_barcode_no" placeholder="Scan Barcode" class="@error('barcode') is-invalid @enderror" value="{{ old('barcode') }}">
+                                <div class="invalid-feedback">
+                                    Please provide a valid Barcode
+                                </div>
+                            </div>
+                        </li>
+                        <li class="d-flex justify-content-between">
+                            <div class="col-lg-5">
+                                <input type="text" id="package_weight" name="package_weight" placeholder="Package Weight" class="charge-input @error('package_weight') is-invalid @enderror" value="{{ old('package_weight') }}" required>
+                                <div class="invalid-feedback">
+                                    Please provide Package Weight
+                                </div>
+                            </div>
+                            <div class="col-lg-5">
+                                <input type="text" id="package_length" name="package_length" placeholder="Package Length" class="@error('package_length') is-invalid @enderror" value="{{ old('package_length') }}">
+                                <div class="invalid-feedback">
+                                    Please provide Package Length
+                                </div>
+                            </div>
+                        </li>
+                        <li class="d-flex justify-content-between">
+                            <div class="col-lg-5">
+                                <input type="text" id="package_width" name="package_width" placeholder="Package Width" class="@error('package_width') is-invalid @enderror" value="{{ old('package_width') }}">
+                                <div class="invalid-feedback">
+                                    Please provide Package Width
+                                </div>
+                            </div>
+                            <div class="col-lg-5">
+                                <input type="text" id="package_height" name="package_height" placeholder="Package Height" class="@error('package_height') is-invalid @enderror" value="{{ old('package_height') }}">
+                                <div class="invalid-feedback">
+                                    Please provide Package Height
+                                </div>
+                            </div>
+                        </li>
+                        <li class="d-flex justify-content-between">
+                            <div class="col-lg-5">
+                                <input type="text" id="amount" name="amount" placeholder="Product Cost" class="@error('amount') is-invalid @enderror charge-input" value="{{ old('amount') }}">
+
+                            </div>
+                            <div class="col-lg-5">
+                                <input type="text" id="fuel_charge" name="fuel_charge" placeholder="Fuel Charge" class="@error('fuel_charge') is-invalid @enderror charge-input" value="{{ old('fuel_charge') }}">
+
+                            </div>
+                        </li>
+                        <li class="d-flex justify-content-between">
+                            <div class="col-lg-5">
+                                <input type="text" id="pickup_charge" name="pickup_charge" placeholder="Pickup Charge" class="@error('pickup_charge') is-invalid @enderror charge-input" value="{{ old('pickup_charge') }}">
+
+                            </div>
+                            <div class="col-lg-5">
+                                <input type="text" id="other_service_charge" name="other_service_charge" placeholder="Other Service Charge" class="@error('other_service_charge') is-invalid @enderror charge-input" value="{{ old('other_service_charge') }}">
+
+                            </div>
+                        </li>
+                    </ul>
+
+                    <div class="showpricedetails row" style="display:none">
+                        <div class="col-lg-6 showpricedetails-left" style="border-top-left-radius: 5px;">
+                            <p class="m-0"><span>Amount: </span>
+
+                                <span id="showamount" class="float-right">
+
+                                </span>
+                            </p>
+                        </div>
+                        <div class="col-lg-6 showpricedetails-right" style="border-top-right-radius: 5px;">
+                            <p class="m-0"><span>Fuel Charge:</span> <span id="showfuelcharge" class="float-right"></span></p>
+                        </div>
+                        <div class="col-lg-6 showpricedetails-left">
+                            <p class="m-0"><span>Pickup Charge:</span> <span id="showpickupcharge" class="float-right"></span></p>
+                        </div>
+                        <div class="col-lg-6 showpricedetails-right">
+                            <p class="m-0"><span>Other Charge:</span> <span id="showothercharge" class="float-right"></span></p>
+                        </div>
+                        <div class="col-lg-6 showpricedetails-left">
+                            <p class="m-0"><span>GST:</span> <span id="showgst" class="float-right"></span></p>
+                        </div>
+                        <div class="col-lg-6 showpricedetails-right">
+                            <!-- <p class="m-0"><span>GST:</span> <span id="showgst" class="float-right">100</span></p> -->
+                        </div>
+                        <div class="col-lg-12 showpricedetails-total" style="border-bottom-left-radius: 5px;border-bottom-right-radius: 5px;">
+                            <p class="m-0"><span>Total:</span> <span id="showtotal" class="float-right"></span></p>
+                        </div>
+                    </div>
+
+
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="card-body">
+
+        <div class="row">
+
+            <div class="col-sm">
+
+                <div class="text-center">
+
+                    <button class="btn btn-primary parcel-submit-btn printButton" type="submit" disabled>Print</button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</form>
+
+
+
+
+
+
+
+<!-- upload -->
+
+<div id="add_support_tickets" class="modal custom-modal fade" role="dialog">
+
+    <div class="modal-dialog modal-dialog-centered" role="document">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+
+                    <span aria-hidden="true">&times;</span>
+
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <form action="{{route('franchise.go-registered.storeByfile')}}" method="POST" enctype="multipart/form-data">
+
+                    @csrf
+
+                    <div class="upload-files-container">
+
+                        <div class="drag-file-area">
+
+                            <span class="material-icons-outlined upload-icon"> file_upload </span>
+
+                            <h3 class="dynamic-message">Drag & drop any file here</h3>
+
+                            <label style="width: 220px;" class="label">
+
+                                or <span class="browse-files">
+
+                                    <input type="file" class="default-file-input" name="file" />
+
+                                    <span class="browse-files-text">browse file</span>
+
+                                    <span>from device</span>
+
+                                </span>
+
+                            </label>
+
+                        </div>
+
+                        <div class="file-block">
+
+                            <div class="file-info">
+
+                                <span class="material-icons-outlined file-icon">description</span> <span class="file-name"> </span> | <span class="file-size"> </span>
+
+                                <span class="material-icons remove-file-icon">delete</span>
+
+                            </div>
+
+
+
+                        </div>
+
+                        <a href="{{route('franchise.go-registered.downloadForamt')}}">
+
+                            <button type="button" class="download-button">Download Format</button>
+
+                        </a>
+
+
+
+                    </div>
+
+
+
+                    <div class="d-flex justify-content-center">
+
+                        <div class="form-check form-check-inline">
+
+                            <input class="form-check-input" type="radio" name="barcode_option" id="barcode_auto" value="barcode_auto" checked>
+
+                            <label class="form-check-label" for="barcode_auto">Barcode Auto Generate</label>
+
+                        </div>
+
+                        <div class="form-check form-check-inline">
+
+                            <input class="form-check-input" type="radio" name="barcode_option" id="barcode_custom" value="barcode_custom">
+
+                            <label class="form-check-label" for="barcode_custom">Barcode Custom</label>
+
+                        </div>
+
+                    </div>
+
+
+
+
+
+                    <div class="submit-section">
+
+                        <button class="btn btn-primary submit-btn">Submit</button>
+
+                    </div>
+
+
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- /upload -->
+
+
+
+
+
+<!-- Add Role Modal -->
+
+<div id="add_role" class="modal custom-modal fade" role="dialog">
+
+    <div class="modal-dialog modal-dialog-centered" role="document">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+
+                    <span aria-hidden="true">&times;</span>
+
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <div id="map" style="height: 300px; width: 100%;"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+@push('page-javascript')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/8.11.8/sweetalert2.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+
+<script>
+    $('#ConsigneePincode').on('change', function () {
+    var pincode = $('#ConsigneePincode').val();
+
+    if (!pincode) {
+        $('.validerror').text('Please enter a pincode.');
+        return;
+    }
+
+    $.ajax({
+        type: 'GET',
+        // url: "{{ url('admin/city-state') }}/" + pincode,
+         url: "{{ route('admin.gotogo.city-state', ['pincode' => '__PINCODE__']) }}".replace('__PINCODE__', pincode),
+        success: function (data) {
+            if (data.success === true) {
+                $('.validerror').empty();
+                $('#ConsigneeCity').val(data.district);
+                $('#ConsigneeState').val(data.state);
+                $('.printButton').prop('disabled', false);
+            } else if (data.success === false) {
+                $('.printButton').prop('disabled', true);
+                $('.validerror').text('Please enter a valid pincode.');
+
+                Swal.fire({
+                    icon: "error",
+                    title: "Pincode Not Allowed",
+                    text: "The pincode you entered is currently not serviceable. Please try a different pincode or contact support for assistance.",
+                    confirmButtonText: "Okay",
+                });
+            }
+        },
+        error: function () {
+            $('.validerror').text('Something went wrong. Please try again later.');
+
+            Swal.fire({
+                icon: "error",
+                title: "Server Error",
+                text: "Unable to fetch location details at the moment. Please try again later.",
+                confirmButtonText: "Close",
+            });
+        }
+    });
+});
+
+
+
+
+
+
+    $('#PickupPincode').on('change', function() {
+
+        var pincode = $('#PickupPincode').val();
+
+        $.ajax({
+
+            type: 'GET',
+
+            url: "{{ route('admin.gotogo.city-state', ['pincode' => '__PINCODE__']) }}".replace('__PINCODE__', pincode),
+
+           
+            success: function(data) {
+
+                if (data.success === true) {
+
+                    $('.customer_error').empty();
+
+                    $('#PickupCity').empty().val(data.district);
+
+                    $('#PickupState').empty().val(data.state);
+                    $('.printButton').prop('disabled', false);
+
+                } else {
+                      $('.printButton').prop('disabled', true);
+                    $('.validerror').text('Please enter valid pincode');
+
+                     Swal.fire({
+                    icon: "error",
+                    title: "Pincode Not Allowed",
+                    text: "The pincode you entered is currently not serviceable. Please try a different pincode or contact support for assistance.",
+                    confirmButtonText: "Okay",
+                });
+
+                }
+
+            },
+            error: function () {
+            $('.validerror').text('Something went wrong. Please try again later.');
+
+            Swal.fire({
+                icon: "error",
+                title: "Server Error",
+                text: "Unable to fetch location details at the moment. Please try again later.",
+                confirmButtonText: "Close",
+            });
+        }
+
+        });
+
+    });
+
+
+
+
+    $('#pickup-details').on('change', function(e) {
+
+        var csrfToken = "{{ csrf_token() }}";
+
+        $.ajax({
+
+            type: 'POST',
+
+            url: "{{ route('franchise.pickup-details.details') }}",
+
+            headers: {
+
+                'X-CSRF-TOKEN': csrfToken
+
+            },
+
+            data: {
+
+                id: e.target.value
+
+            },
+
+            success: function(data) {
+
+                if (data) {
+
+                    $('#PickupName').val(data.name);
+
+                    $('#PickupMobile').val(data.phone);
+
+                    $('#PickupEmail').val(data.email);
+
+                    $('#PickupPincode').val(data.pincode);
+
+                    $('#PickupCity').val(data.city);
+
+                    $('#PickupState').val(data.state);
+
+                    $('#PickupAddress').val(data.address);
+
+                    // $('#PickupGstNo').val(data.gst_number);
+
+
+                } else {
+
+                    $('.validerror').text('Please enter a valid pincode');
+
+                }
+
+            }
+
+        });
+
+    });
+
+
+
+
+
+
+
+
+
+    function displayFile(id) {
+
+        const fileInput = document.getElementById(`fileInput${id}`);
+
+        const fileContainer = document.getElementById(`fileContainer${id}`);
+
+
+
+        // Clear any previous content
+
+        fileContainer.innerHTML = "";
+
+
+
+        // Check if a file is selected
+
+        if (fileInput.files.length === 0) {
+
+            fileContainer.innerHTML = "<p>No file selected.</p>";
+
+            return;
+
+        }
+
+        const file = fileInput.files[0];
+
+        const fileType = file.type;
+
+
+
+        if (fileType === "application/pdf") {
+
+            // Display PDF
+
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+
+                const pdfData = e.target.result;
+
+                const embed = document.createElement("embed");
+
+                embed.setAttribute("src", pdfData);
+
+                embed.setAttribute("type", "application/pdf");
+
+                embed.style.width = "285px";
+
+                embed.style.height = "130px";
+
+                fileContainer.appendChild(embed);
+
+            };
+
+            reader.readAsDataURL(file);
+
+        } else if (fileType.startsWith("image/")) {
+
+            // Display image
+
+            const img = document.createElement("img");
+
+            img.setAttribute("src", URL.createObjectURL(file));
+
+            img.style.width = "100%";
+
+            img.style.height = "100%";
+
+            fileContainer.appendChild(img);
+
+        } else {
+
+            fileContainer.innerHTML = "<p>Unsupported file type.</p>";
+
+        }
+
+    }
+
+
+
+    function forceUpper(strInput) {
+
+        strInput.value = strInput.value.toUpperCase();
+
+    }
+
+
+
+    var bankIfsc = $('#ifsc_code');
+
+    var bankIfscError = $('#bank_ifsc_error');
+
+    var bankName = $('#bank_name');
+
+    var bankBranch = $('#branch_name');
+
+
+
+    bankIfsc.on('input', function() {
+
+        var ifscCode = bankIfsc.val();
+
+        if (ifscCode.length === 11) {
+
+            $.ajax({
+
+                'url': 'https://ifsc.razorpay.com/' + ifscCode,
+
+                'success': function(res, status, xhr) {
+
+                    if (xhr.status === 200) {
+
+                        bankName.val(res.BANK);
+
+                        bankBranch.val(res.BRANCH);
+
+                        bankIfscError.html('');
+
+
+
+                    }
+
+                },
+
+                'error': function(xhr, status, error) {
+
+                    if (xhr.status === 404) {
+
+                        bankIfscError.siblings('.backendError').remove();
+
+                        bankIfscError.html('Please enter a valid IFSC Code');
+
+                    }
+
+                }
+
+            })
+
+        } else {
+
+            bankName.val('');
+
+            bankBranch.val('');
+
+            bankIfscError.html('');
+
+        }
+
+    });
+</script>
+
+
+<!-- Include Leaflet.js (Open Source) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+
+<script>
+    $(document).ready(function() {
+
+        // Function to get coordinates from Pincode using OpenStreetMap Nominatim API
+        function getCoordinates(pincode) {
+            var geocodingApiUrl = 'https://nominatim.openstreetmap.org/search?format=json&q=' + pincode;
+
+            $.get(geocodingApiUrl, function(data) {
+                if (data.length > 0) {
+                    var location = data[0];
+                    showMap(location.lat, location.lon);
+                } else {
+                    alert('Wrong pincode');
+                }
+            });
+        }
+
+        // Function to show the map using Leaflet.js
+        function showMap(lat, lng) {
+            // Remove existing map instance if exists
+            if (window.myMap) {
+                window.myMap.remove();
+            }
+
+            // Initialize Leaflet map
+            window.myMap = L.map('map').setView([lat, lng], 10);
+
+            // Add OpenStreetMap Tile Layer
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(window.myMap);
+
+            // Add marker at the location
+            L.marker([lat, lng]).addTo(window.myMap)
+                .bindPopup("Pincode Location")
+                .openPopup();
+        }
+
+        // Click event to fetch and display map
+        $('.google-map-image').on('click', function() {
+            let pincode = $(this).closest('ul').find('.pincode').val();
+            getCoordinates(pincode);
+        });
+
+    });
+</script>
+
+
+
+<script>
+    $(document).ready(function() {
+
+        $('#parcel-rate-submit').on('click', function() {
+
+            const from = $('#FromPincode').val();
+
+            const to = $('#ToPincode').val();
+
+            const weight = $('#Weight').val();
+
+            $('.validerror-destination').text('Please enter a valid pincode').hide()
+
+            $('.validerror-origin').text('Please enter a valid pincode').hide()
+
+
+
+            if (!from) {
+
+                $('#FromPincode').next('.invalid-feedback').show();
+
+                return;
+
+            } else {
+
+                $('#FromPincode').next('.invalid-feedback').hide();
+
+            }
+
+
+
+            if (!to) {
+
+                $('#ToPincode').next('.invalid-feedback').show();
+
+                return;
+
+            } else {
+
+                $('#ToPincode').next('.invalid-feedback').hide();
+
+            }
+
+
+
+            if (!weight) {
+
+                $('#Weight').next('.invalid-feedback').show();
+
+                return;
+
+            } else {
+
+                $('#Weight').next('.invalid-feedback').hide();
+
+            }
+            const data = {
+
+                from: from,
+
+                to: to,
+
+                weight: weight
+
+            };
+
+            var csrfToken = "{{ csrf_token() }}";
+
+            $.ajax({
+
+                type: 'POST',
+
+                url: "{{ route('franchise.go-registered.showPrice') }}",
+
+                headers: {
+
+                    'X-CSRF-TOKEN': csrfToken
+
+                },
+
+                data: data,
+
+                success: function(response) {
+
+                    if (response.status === 'success') {
+
+                        $(".total-text").text('Total :')
+
+                        $('.totalp').text(`₹ ${response.data.total}`);
+
+                    } else {
+
+                        if (response.message === 'fill valid distination pincode') {
+
+                            console.log("reached here inside else")
+
+                            $('.validerror-destination').text('Please enter a valid pincode').show();
+
+                        }
+
+                        if (response.message === 'fill valid origin pincode') {
+
+                            $('.validerror-origin').text('Please enter a valid pincode').show();
+
+                        }
+
+                    }
+
+                },
+
+                error: function(jqXHR, textStatus, errorThrown) {
+
+                    console.error('AJAX error:', textStatus, errorThrown);
+
+                    $('.error-message').text("An error occurred. Please try again.").show();
+
+                }
+
+            });
+
+        });
+
+    });
+</script>
+
+
+<script>
+    $(document).ready(function() {
+        $("#parcel-form").submit(function(event) {
+            console.log("Form Submitted");
+            event.preventDefault();
+
+            var form = $(this);
+            var formData = form.serializeArray();
+            var keepPickupDetails = false; // Default: Form reset hoga
+
+            // Check if #auto_backup_db is checked
+            if ($("#auto_backup_db").is(":checked")) {
+                formData.push({
+                    name: "static",
+                    value: 1
+                });
+                keepPickupDetails = true; // Pickup details ko preserve karna hai
+            }
+
+            var csrfToken = "{{ csrf_token() }}";
+
+            $.ajax({
+                type: "POST",
+                url: "{{ route('franchise.go-registered.store') }}",
+                headers: {
+                    "X-CSRF-TOKEN": csrfToken,
+                },
+                data: formData,
+
+                beforeSend: function() {
+                    $(".parcel-submit-btn").text("Processing...");
+                    $(".parcel-submit-btn").prop("disabled", true);
+                },
+                success: function(response) {
+                    if (response.status == 200) {
+                        form[0].reset();
+
+                        console.log('response.message', response.message)
+                        $(".parcel-submit-btn").text("Print");
+                        $(".parcel-submit-btn").prop("disabled", false);
+                        $(".invalid-feedback").hide();
+                        $(".barcode-top").text(response.code);
+                        $("#barcodeCode").val(response.code);
+                        $("#barcodeImageSrc").val(response.barcodeImageSrc);
+
+                        // Set Barcode Image
+                        let barcodeImg = $("#barcodeImage");
+                        barcodeImg.attr("src", `data:image/png;base64,${response.barcodeImageSrc}`);
+
+                        $("#paymentMethod").val(response.data.payment_method);
+                        $(".from-submitted").text(response.message).css("display", "block");
+                        $(".showpricedetails").css("display", "none");
+                        $(".gotogo-balance").text(parseFloat(response.franchiseDetails.gotogo_balance).toFixed(2));
+                        $(".credit-balance").text(parseFloat(response.franchiseDetails.credit_balance).toFixed(2));
+                        $(".barcode-available").text(parseFloat(response.barcode_available));
+
+                        // Pickup Details Fill Only If Static = 1
+                        if (keepPickupDetails) {
+                            $("#PickupName").val(response.data.PickupName);
+                            $("#PickupMobile").val(response.data.PickupMobile);
+                            $("#PickupEmail").val(response.data.PickupEmail);
+                            $("#PickupPincode").val(response.data.PickupPincode);
+                            $("#PickupState").val(response.data.PickupState);
+                            $("#PickupCity").val(response.data.PickupCity);
+                            $("#PickupAddress").val(response.data.PickupAddress);
+                            $("#package_weight").val(response.data.package_weight);
+                            $("#package_length").val(response.data.package_length);
+                            $("#package_width").val(response.data.package_width);
+                            $("#package_height").val(response.data.package_height);
+                        }
+
+                        // ========================================
+                        // Ensure Barcode Image is Loaded Before Printing
+                        barcodeImg.on("load", function() {
+                            var iframe = document.createElement("iframe");
+                            iframe.style.position = "absolute";
+                            iframe.style.width = "0";
+                            iframe.style.height = "0";
+                            iframe.style.border = "none";
+                            document.body.appendChild(iframe);
+
+                            iframe.contentDocument.open();
+                            iframe.contentDocument.write(response.otherPageContent);
+                            iframe.contentDocument.close();
+
+                            iframe.contentWindow.focus();
+                            iframe.contentWindow.print();
+
+                            // Call tutoPrint after printing
+                            iframe.contentWindow.onafterprint = function() {
+                                document.body.removeChild(iframe);
+                                // Ensure action button clicks **AFTER** print completes
+                                setTimeout(() => {
+                                    document.querySelector(".action-button").click(); // Class ke liye fix
+                                }, 1000);
+                            };
+                        });
+
+                        // ========================================
+                    } else if (response.status == 400) {
+                        $(".parcel-submit-btn").text("Print");
+                        $(".parcel-submit-btn").prop("disabled", false);
+
+                        if (response.message == "fill valid origin pincode") {
+                            $("#PickupPincode").siblings(".invalid-feedback").text("Fill valid origin pincode").show();
+                        }
+                        if (response.message == "fill valid destination pincode") {
+                            $("#ConsigneePincode").siblings(".invalid-feedback").text("Fill valid destination pincode").show();
+                        }
+                        if (response.message == "Barcode Already Exist") {
+                            $("#barcodeInput").siblings(".invalid-feedback").text(response.message).show();
+                        }
+                        if (response.showMessage == "1") {
+                            $(".from-submitted").text(response.message).css("display", "block");
+                        }
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    $(".parcel-submit-btn").text("Print");
+                    $(".parcel-submit-btn").prop("disabled", false);
+                    if (jqXHR.responseJSON && jqXHR.responseJSON.errors) {
+                        var errors = jqXHR.responseJSON.errors;
+                        $.each(errors, function(key, messages) {
+                            var input = $(`#${key}`);
+                            var errorMessage = messages[0];
+                            if (input.length) {
+                                input.siblings(".invalid-feedback").text(errorMessage).show();
+                            }
+                        });
+                    }
+                    console.error("AJAX error:", textStatus, errorThrown);
+                    $(".error-message").text("An error occurred. Please try again.").show();
+                },
+            });
+
+            return false; // Prevent the form from submitting normally
+        });
+    });
+</script>
+
+
+
+
+<script type="text/javascript">
+    function delete_modal(id) {
+
+        const deleteUrl = "{{ route('franchise.softCopyParcel.delete', ['id' => ':id']) }}".replace(':id', id);
+
+        $('#delete_button').attr('href', deleteUrl);
+
+        $('#delete_modal').modal('show');
+
+    }
+
+    var isAdvancedUpload = function() {
+
+        var div = document.createElement('div');
+
+        return (('draggable' in div) || ('ondragstart' in div && 'ondrop' in div)) && 'FormData' in window && 'FileReader' in window;
+
+    }();
+
+
+
+    let draggableFileArea = document.querySelector(".drag-file-area");
+
+    let browseFileText = document.querySelector(".browse-files");
+
+    let uploadIcon = document.querySelector(".upload-icon");
+
+    let dragDropText = document.querySelector(".dynamic-message");
+
+    let fileInput = document.querySelector(".default-file-input");
+
+    let cannotUploadMessage = document.querySelector(".cannot-upload-message");
+
+    let cancelAlertButton = document.querySelector(".cancel-alert-button");
+
+    let uploadedFile = document.querySelector(".file-block");
+
+    let fileName = document.querySelector(".file-name");
+
+    let fileSize = document.querySelector(".file-size");
+
+
+
+    let removeFileButton = document.querySelector(".remove-file-icon");
+
+    let fileFlag = 0;
+
+
+
+    fileInput.addEventListener("click", () => {
+
+        fileInput.value = '';
+
+        console.log(fileInput.value);
+
+    });
+
+
+
+    fileInput.addEventListener("change", e => {
+
+        uploadIcon.innerHTML = 'check_circle';
+
+        dragDropText.innerHTML = 'File Dropped Successfully!';
+
+        fileName.innerText = fileInput.files[0].name;
+
+        fileSize.innerText = (fileInput.files[0].size / 1024).toFixed(1) + " KB";
+
+        uploadedFile.style.display = "block";
+
+        fileFlag = 0;
+
+    });
+
+
+
+    if (isAdvancedUpload) {
+
+        ["drag", "dragstart", "dragend", "dragover", "dragenter", "dragleave", "drop"].forEach(evt =>
+
+            draggableFileArea.addEventListener(evt, e => {
+
+                e.preventDefault();
+
+                e.stopPropagation();
+
+            })
+
+        );
+
+
+
+        ["dragover", "dragenter"].forEach(evt => {
+
+            draggableFileArea.addEventListener(evt, e => {
+
+                e.preventDefault();
+
+                e.stopPropagation();
+
+                uploadIcon.innerHTML = 'file_download';
+
+                dragDropText.innerHTML = 'Drop your file here!';
+
+            });
+
+        });
+
+
+
+        draggableFileArea.addEventListener("drop", e => {
+
+            uploadIcon.innerHTML = 'check_circle';
+
+            dragDropText.innerHTML = 'File Dropped Successfully!';
+
+            let files = e.dataTransfer.files;
+
+            fileInput.files = files;
+
+            console.log(document.querySelector(".default-file-input").value);
+
+            fileName.innerHTML = files[0].name;
+
+            fileSize.innerHTML = (files[0].size / 1024).toFixed(1) + " KB";
+
+            uploadedFile.style.cssText = "display: flex;";
+
+            fileFlag = 0;
+
+        });
+
+    }
+
+
+
+    removeFileButton.addEventListener("click", () => {
+
+        uploadedFile.style.cssText = "display: none;";
+
+        fileInput.value = '';
+
+        uploadIcon.innerHTML = 'file_upload';
+
+        dragDropText.innerHTML = 'Drag & drop any file here';
+
+    });
+</script>
+
+
+<script>
+    $(document).ready(function() {
+        let debounceTimer;
+
+        $('.charge-input').on('input', function() {
+            clearTimeout(debounceTimer);
+
+            debounceTimer = setTimeout(function() {
+                const from = $('#PickupPincode').val();
+                const to = $('#ConsigneePincode').val();
+                const weight = $('#package_weight').val();
+                const amount = $('#amount').val();
+                const fuel_charge = $('#fuel_charge').val();
+                const pickup_charge = $('#pickup_charge').val();
+                const other_service_charge = $('#other_service_charge').val();
+
+                $.ajax({
+                    url: "{{ route('franchise.go-registered.showPrice') }}",
+                    type: 'POST',
+                    data: {
+                        amount: amount,
+                        from: from,
+                        to: to,
+                        weight: weight,
+                        fuel_charge: fuel_charge,
+                        pickup_charge: pickup_charge,
+                        other_service_charge: other_service_charge,
+                        _token: '{{ csrf_token() }}',
+                    },
+                    success: function(response) {
+                        if (response.status === "success") {
+                            $('#showamount').text(response.data.price ? '₹ ' + response.data.price : '');
+                            $('#showfuelcharge').text(response.data.fuel_charge ? '₹ ' + response.data.fuel_charge : '');
+                            $('#showpickupcharge').text(response.data.pickup_charge ? '₹ ' + response.data.pickup_charge : '');
+                            $('#showothercharge').text(response.data.other_service_charge ? '₹ ' + response.data.other_service_charge : '');
+                            $('#showgst').text(response.data.gst ? '₹ ' + response.data.gst : '');
+                            $('#showtotal').text(response.data.total ? '₹ ' + response.data.total : '');
+                            $('.showpricedetails').css('display', 'flex');
+                        } else {
+                            $('#message').text(response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('Error:', error);
+                    }
+                });
+            }, 2000); // 3 seconds debounce
+        });
+    });
+</script>
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let barcodeInput = document.getElementById("barcodeInput");
+        let lastInputTime = 0; // Track karega input aane ka time
+
+        barcodeInput.addEventListener("input", function(event) {
+            let barcodeValue = event.target.value.trim();
+            lastInputTime = Date.now(); // Har input pe time update karo
+
+            clearTimeout(window.barcodeTimeout);
+            window.barcodeTimeout = setTimeout(() => {
+                if (barcodeValue.length > 0) {
+                    event.target.value = barcodeValue; // Input box me set karo
+                    // ✅ Barcode input ka error hatao
+                    barcodeInput.classList.remove("is-invalid");
+                    let errorMessage = barcodeInput.nextElementSibling;
+                    if (errorMessage && errorMessage.classList.contains("invalid-feedback")) {
+                        errorMessage.style.display = "none"; // Hide error message
+                    }
+                }
+            }, 300); // 300ms debounce taaki scanner ke complete hone ka wait kare
+        });
+
+        // ✅ Enter key filter: Scanner ki automatic Enter ignore kare, manual allow kare
+        barcodeInput.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                let timeDiff = Date.now() - lastInputTime;
+
+                if (timeDiff < 100) {
+                    // Scanner ne Enter press kiya, ignore karo
+                    event.preventDefault();
+                    console.log("Scanner Enter ignored.");
+                } else {
+                    // Manual Enter press hua, allow karo
+                    console.log("Manual Enter detected.");
+                    // Yahan API call ya form submission kar sakte ho
+                }
+            }
+        });
+    });
+</script>
+
+
+@endpush
+
+@endsection
