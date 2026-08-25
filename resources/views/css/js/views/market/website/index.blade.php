@@ -698,7 +698,7 @@
     <div class="slick-slider">
         <div class="slick-slide"><img src="{{ url('website/images/bg/go2go1.jpeg') }}" alt="Slide 1"></div>
         <div class="slick-slide"><img src="{{ url('website/images/bg/go2go2.jpeg') }}" alt="Slide 2"></div>
-c        <div class="slick-slide"><img src="{{ url('website/images/bg/go2go4.jpeg') }}" alt="Slide 4"></div>
+       <div class="slick-slide"><img src="{{ url('website/images/bg/go2go4.jpeg') }}" alt="Slide 4"></div>
         <div class="slick-slide"><img src="{{ url('website/images/bg/go2go5.jpeg') }}" alt="Slide 5"></div>
     </div>
 

@@ -11,210 +11,625 @@
 
 
 <style>
-.track-upper{
-    /*position: absolute; */
-    bottom: 0px;
-    padding: 0px 20px;
-    width: 100%;
+/* ==========================================================================
+   GOTOGO POST - MASTER HOME PAGE DESIGN SYSTEM
+   ========================================================================== */
+
+:root {
+    --primary-red: #d9251d;
+    --primary-red-hover: #b91c1c;
+    --dark-navy: #0b132b;
+    --slate-dark: #0f172a;
+    --charcoal: #1e293b;
+    --slate-muted: #64748b;
+    --slate-light: #94a3b8;
+    --bg-light: #f8fafc;
 }
 
-.sliderformshow {
-    width: 350px; /* Increase width */
-    padding: 20px;
-    background: white;
-    border-radius: 15px;
-    text-align: center;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Soft shadow */
+body {
+    font-family: 'Montserrat', sans-serif !important;
+    color: var(--charcoal);
+    background-color: #ffffff;
+    overflow-x: hidden !important;
+}
+
+/* Hero Banner & Slider Container */
+.track-order-top {
     position: relative;
-}
-
-/* Close button styling */
-.custom-close {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 18px;
-    background: red;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 25px;
-    height: 25px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-}
-
-/* Label styling */
-.sliderformshow label {
-    font-size: 16px;
-    font-weight: bold;
-    display: block;
-    margin-bottom: 5px;
-    color: #333;
-}
-
-/* Input field styling */
-.sliderformshow input {
     width: 100%;
-    height: 40px;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-    text-align: left;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    background-color: var(--dark-navy);
 }
-
-/* Submit button styling */
-.sliderformshow .btn {
-    width: 100%;
-    margin-top: 15px;
-    padding: 10px;
-    font-size: 16px;
-    font-weight: bold;
-    border-radius: 10px;
-    background: #1a2674; /* Dark blue */
-    color: white;
-    border: none;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.sliderformshow .btn:hover {
-    background: #12205a; /* Slightly darker blue */
-}
-
-
 
 .slick-slider {
     width: 100%;
-    /* height: 100vh;  */
+    margin: 0 auto;
+    position: relative;
     overflow: hidden;
 }
 
 .slick-slide img {
     width: 100%;
-    height: 100%; /* Full Screen */
+    height: 540px;
     object-fit: cover;
-    padding-top: 92px;
+    object-position: center;
+    padding-top: 75px;
+    filter: brightness(0.95) contrast(1.03);
+    transition: filter 0.5s ease;
 }
 
+@media (max-width: 991px) {
+    .slick-slide img {
+        height: 400px;
+        padding-top: 60px;
+    }
+}
 
+@media (max-width: 576px) {
+    .slick-slide img {
+        height: 260px;
+        padding-top: 50px;
+    }
+}
 
-    .track-order-top {
-        background-color: transparent;
-        background-position: 100%;
-        background-size: cover;
-        color: #fff;
-        min-height: 500px;
+/* Hero Floating Action Buttons */
+.new-track-top {
+    position: absolute;
+    bottom: 25px;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    padding: 0 40px;
+}
+
+@media (max-width: 768px) {
+    .new-track-top {
         position: relative;
+        bottom: 0;
+        padding: 15px;
+        background: var(--dark-navy);
     }
+}
 
-    .shipNowButton {
-        width: 165px;
-        height: 44px;
-        border: none;
-        border-radius: 10px;
-        background-size: 250%;
-        background-position: left;
-        color: #2a2417;
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition-duration: 1s;
-        overflow: hidden;
-        margin-top: 30px;
-    }
+.button-upper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
 
-    .shipNowButton::before {
-        position: absolute;
-        content: "PICKUP ENQUIRY";
-        color: #ffffff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 97%;
-        height: 90%;
-        border-radius: 8px;
-        transition-duration: .3s;
-        background-color: #112D82;
-        background-size: 200%;
-        font-size: 14px;
-    }
+.shipNowButton {
+    min-width: 175px;
+    height: 48px;
+    border: none !important;
+    border-radius: 10px !important;
+    background-color: var(--primary-red) !important;
+    background-image: linear-gradient(135deg, #e31837 0%, #c8102e 100%) !important;
+    color: #ffffff !important;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(217, 37, 29, 0.35) !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    overflow: hidden;
+}
 
-    .shipNowButton:hover::before {
-        background-color: #112D82;
-    }
+.shipNowButton::before {
+    content: "PICKUP ENQUIRY";
+    color: #ffffff;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
 
+.shipNowButton:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 12px 28px rgba(217, 37, 29, 0.45) !important;
+    background-color: var(--primary-red-hover) !important;
+}
 
-    .header-sticky.header-v1 .site-header.minimized,
-    .header-sticky.header-v2 .site-header.minimized {
-        top: 0;
-        left: 50%;
-        -webkit-transform: translate(-50%, 0);
-        -ms-transform: translate(-50%, 0);
-        transform: translate(-50%, 0);
-        width: 100%;
-        position: fixed;
-        z-index: 99;
-        background-color: #fff;
-    }
+.sliderBtn {
+    min-width: 165px;
+    height: 48px;
+    border-radius: 10px !important;
+    background-color: var(--charcoal) !important;
+    color: #ffffff !important;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 1.5px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25) !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
 
-    .content-upper .nav {
-        line-height: 25px;
-    }
+.sliderBtn:hover {
+    background-color: var(--slate-dark) !important;
+    color: #ffffff !important;
+    transform: translateY(-3px) !important;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35) !important;
+    border-color: rgba(255, 255, 255, 0.4) !important;
+}
 
-    @media screen and (max-width: 992px) {
-        .content-upper {
-            margin-top: 50px;
-        }
+/* Track Order Popup Form Card */
+.sliderformshow {
+    width: 360px;
+    padding: 24px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.22);
+    position: relative;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    transform: translateY(300px) rotateX(200deg);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
-        .content {
-            padding: 45px 14px;
-        }
+.custom-close {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    font-size: 16px;
+    background: var(--primary-red) !important;
+    color: white !important;
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+    z-index: 10;
+}
 
+.custom-close:hover {
+    transform: scale(1.1);
+    background: var(--primary-red-hover) !important;
+}
 
-        /* .track-order-top {
-            padding: 15px;
-            padding-bottom: 50px;
-        } */
+.sliderformshow label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--charcoal);
+    margin-bottom: 8px;
+    display: block;
+    text-align: left;
+}
 
-
-        .heading-title {
-            padding-top: 0px;
-            margin-top: 65px;
-        }
-
-        .mobile-app-img{
-            display:flex;
-            flex-wrap:wrap;
-            justify-content:center;
-            align-items:center
-
-        }
-
-    }
-
-    .details-container {
-    margin-top: 20px;
-    padding: 15px;
-    background: #fff;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+.sliderformshow input {
+    width: 100%;
+    height: 46px;
+    padding: 10px 16px;
+    border: 1.5px solid #cbd5e1;
     border-radius: 8px;
+    font-size: 15px;
+    color: var(--charcoal);
+    transition: all 0.2s ease;
+    box-shadow: none;
 }
 
-/* price detils style */
-.price-details-container h3 {
+.sliderformshow input:focus {
+    border-color: var(--primary-red);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(217, 37, 29, 0.12);
+}
+
+.sliderformshow .btn-primary {
+    width: 100%;
+    height: 46px;
+    margin-top: 18px;
+    font-size: 15px;
+    font-weight: 700;
+    border-radius: 8px;
+    background-color: var(--primary-red) !important;
+    color: #ffffff !important;
+    border: none !important;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(217, 37, 29, 0.25);
+    transition: all 0.25s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.sliderformshow .btn-primary:hover {
+    background-color: var(--primary-red-hover) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(217, 37, 29, 0.35);
+}
+
+/* Welcome Section (.welcomesec) */
+.welcomesec {
+    padding: 80px 0;
+    background-color: var(--bg-light);
+}
+
+.welcomesec .fh-section-title h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 34px;
+    font-weight: 800;
+    color: var(--slate-dark);
+    letter-spacing: -0.5px;
+}
+
+.main-color {
+    color: var(--primary-red) !important;
+}
+
+.haeadingpara {
     font-size: 17px;
-    font-weight: bold;
-    border-bottom: 2px solid red;
-    padding-bottom: 5px;
-    margin-bottom: 15px;
-    color: #333;
+    color: var(--slate-muted);
+    max-width: 750px;
+    margin: 0 auto 50px auto;
+    line-height: 1.65;
+}
+
+.welcomesec .fh-icon-box {
+    background: #ffffff;
+    padding: 34px 28px;
+    border-radius: 16px;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 100%;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+}
+
+.welcomesec .fh-icon-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: transparent;
+    transition: background 0.3s ease;
+}
+
+.welcomesec .fh-icon-box:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 38px rgba(0, 0, 0, 0.08);
+    border-color: rgba(217, 37, 29, 0.2);
+}
+
+.welcomesec .fh-icon-box:hover::before {
+    background: var(--primary-red);
+}
+
+.welcomesec .fh-icon-box .fh-icon img {
+    height: 85px !important;
+    width: auto;
+    object-fit: contain;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease;
+}
+
+.welcomesec .fh-icon-box:hover .fh-icon img {
+    transform: scale(1.05);
+}
+
+.welcomesec .fh-icon-box .box-title a {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    color: var(--slate-dark) !important;
+    text-decoration: none !important;
+    transition: color 0.25s ease;
+}
+
+.welcomesec .fh-icon-box:hover .box-title a {
+    color: var(--primary-red) !important;
+}
+
+.welcomesec .fh-icon-box .desc p {
+    font-size: 14px;
+    color: var(--slate-muted);
+    line-height: 1.65;
+    margin-top: 12px;
+}
+
+/* Mobile App Compact Horizontal Banner Section (.homecounts) */
+.homecounts.compact-app-banner {
+    background: transparent !important;
+    padding: 30px 0 !important;
+    position: relative;
+}
+
+.app-banner-card {
+    background: linear-gradient(135deg, #0b132b 0%, #0f172a 60%, #1c2541 100%) !important;
+    border-radius: 16px !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-left: 5px solid #ff0000 !important;
+    padding: 28px 36px !important;
+    box-shadow: 0 14px 40px rgba(11, 19, 43, 0.22) !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.app-banner-title {
+    font-family: 'Montserrat', sans-serif !important;
+    font-size: 21px !important;
+    font-weight: 800 !important;
+    color: #ffffff !important;
+    margin: 0 0 8px 0 !important;
+    line-height: 1.35 !important;
+    letter-spacing: 0.3px !important;
+}
+
+.app-banner-desc {
+    font-size: 14.5px !important;
+    color: #cbd5e1 !important;
+    margin: 0 0 18px 0 !important;
+    line-height: 1.5 !important;
+}
+
+.download-buttons {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    margin: 0 !important;
+}
+
+.download-buttons a {
+    display: inline-block !important;
+    margin: 0 !important;
+    transition: transform 0.25s ease, filter 0.25s ease !important;
+}
+
+.download-buttons a:hover {
+    transform: translateY(-2px) scale(1.03) !important;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4)) !important;
+}
+
+.download-buttons img {
+    height: 40px !important;
+    width: auto !important;
+}
+
+.app-banner-img-wrap {
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    height: 100% !important;
+}
+
+.app-banner-img {
+    max-height: 145px !important;
+    width: auto !important;
+    max-width: 100% !important;
+    object-fit: cover !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4) !important;
+    border: 2px solid rgba(255, 255, 255, 0.18) !important;
+    transition: transform 0.3s ease !important;
+}
+
+.app-banner-img:hover {
+    transform: scale(1.03) !important;
+}
+
+@media (max-width: 991px) {
+    .app-banner-card {
+        padding: 22px 26px !important;
+    }
+    .app-banner-title {
+        font-size: 19px !important;
+    }
+    .app-banner-img {
+        max-height: 125px !important;
+    }
+}
+
+@media (max-width: 767px) {
+    .app-banner-card {
+        padding: 20px 20px !important;
+    }
+    .app-banner-content {
+        text-align: center !important;
+    }
+    .app-banner-title {
+        font-size: 17px !important;
+        text-align: center !important;
+    }
+    .app-banner-desc {
+        font-size: 13.5px !important;
+        text-align: center !important;
+    }
+    .download-buttons {
+        justify-content: center !important;
+    }
+    .app-banner-img-wrap {
+        justify-content: center !important;
+        margin-top: 18px !important;
+    }
+    .app-banner-img {
+        max-height: 130px !important;
+    }
+}
+
+/* Why Choose Us & Price Inquiry Section (.whychoose-1) */
+.whychoose-1 {
+    padding: 85px 0;
+    background-color: #ffffff;
+}
+
+.whychoose-1 .fh-section-title h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 30px;
+    font-weight: 800;
+    color: var(--slate-dark);
+    margin-bottom: 30px;
+}
+
+.whychoose-1 .fh-icon-box.style-2 {
+    margin-bottom: 24px;
+    padding-left: 20px;
+    position: relative;
+}
+
+.whychoose-1 .fh-icon-box.style-2 .box-title span {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--slate-dark);
+}
+
+.whychoose-1 .fh-icon-box.style-2 .desc p {
+    font-size: 14px;
+    color: var(--slate-muted);
+    line-height: 1.6;
+}
+
+/* Price Inquiry Rate Calculator Widget (.quofrm1 & #price-upper-div) */
+.whychoose-1 .quofrm1 {
+    padding: 0 !important;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.price-inquiry-div {
+    background: var(--primary-red) !important;
+    padding: 20px 24px !important;
+    margin: 0 !important;
+}
+
+.price-inquiry-div h2 {
+    color: #ffffff !important;
+    font-family: 'Montserrat', sans-serif !important;
+    font-size: 22px !important;
+    font-weight: 800 !important;
+    letter-spacing: 1px;
+    margin: 0 !important;
+    text-transform: uppercase;
+}
+
+#price-upper-div {
+    background: #ffffff !important;
+    padding: 30px 28px !important;
+}
+
+#price-form .field {
+    margin-bottom: 16px;
+}
+
+#price-form select,
+#services.custom-dropdown {
+    width: 100% !important;
+    height: 44px !important;
+    background-color: #ffffff !important;
+    color: #333333 !important;
+    border: 1px solid #d9d9d9 !important;
+    border-radius: 4px !important;
+    font-size: 14px !important;
+    padding: 10px 12px !important;
+    font-family: 'Montserrat', sans-serif !important;
+    box-shadow: none !important;
+    outline: none !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+    cursor: pointer !important;
+}
+
+#price-form select:focus,
+#services.custom-dropdown:focus {
+    border-color: var(--primary-red, #ff0000) !important;
+    background-color: #ffffff !important;
+    outline: none !important;
+    box-shadow: 0 0 0 2px rgba(217, 37, 29, 0.15) !important;
+}
+
+#price-form select optgroup,
+#services.custom-dropdown optgroup {
+    background-color: #ffffff !important;
+    color: #333333 !important;
+    font-weight: 700 !important;
+    font-size: 13.5px !important;
+}
+
+#price-form select option,
+#services.custom-dropdown option {
+    background-color: #ffffff !important;
+    color: #333333 !important;
+    font-weight: 500 !important;
+    font-size: 14px !important;
+    padding: 8px 10px !important;
+}
+
+#price-form .form-control:not(select),
+#price-form input[type="text"] {
+    width: 100%;
+    height: 46px;
+    padding: 10px 16px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 14px;
+    color: var(--charcoal);
+    background-color: var(--bg-light);
+    transition: all 0.2s ease;
+}
+
+#price-form .form-control:not(select):focus,
+#price-form input[type="text"]:focus {
+    border-color: var(--primary-red);
+    background-color: #ffffff;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(217, 37, 29, 0.12);
+}
+
+#price-form input[type="submit"],
+#parcel-rate-submit {
+    background: var(--primary-red) !important;
+    color: #ffffff !important;
+    font-family: 'Montserrat', sans-serif !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    height: 48px !important;
+    padding: 0 36px !important;
+    border-radius: 8px !important;
+    border: none !important;
+    box-shadow: 0 4px 14px rgba(217, 37, 29, 0.25) !important;
+    transition: all 0.25s ease !important;
+    cursor: pointer;
+    margin-top: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+#parcel-rate-submit:hover {
+    background: var(--primary-red-hover) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(217, 37, 29, 0.35) !important;
+}
+
+/* Price Details Result Container */
+.price-details-container {
+    margin-top: 24px;
+    padding: 20px;
+    background: var(--bg-light);
+    border-radius: 12px;
+    border: 1.5px solid #e2e8f0;
+}
+
+.price-details-container h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--slate-dark) !important;
+    border-bottom: 2px solid var(--primary-red);
+    padding-bottom: 8px;
+    margin-bottom: 16px;
 }
 
 .price-details-table {
@@ -223,629 +638,542 @@
 }
 
 .price-details-table td {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-    font-size: 16px;
+    padding: 10px 14px;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 15px;
+    color: #334155;
 }
 
 .price-details-table td:first-child {
-    font-weight: bold;
-    background: #f8f8f8;
-    width: 40%;
+    font-weight: 600;
+    color: var(--slate-muted);
+    width: 45%;
 }
 
 .price-details-table td:last-child {
     text-align: right;
-    font-weight: bold;
-    color: #333;
+    font-weight: 700;
+    color: var(--slate-dark);
 }
 
 .price-details-table tr:last-child td {
     border-bottom: none;
-    font-size: 17px;
-    font-weight: bold;
-    color: #d32f2f;
-}
-
-.whychoose-1 .quofrm1 {
-    padding: 80px 0px 121px;
-    background: white !important;
-    padding-bottom: 60px;
-
-}
-
-
-#price-upper-div{
-    background: #f7f7f7;
-    padding: 40px 30px;
-}
-
-/* price detils style */
-
-</style>
-
-<style>
-    .custom-close {
-        padding: 5px;
-        border-radius: 18px;
-        background: #ff0000 !important;
-        width: 23px;
-        height: 23px;
-        position: relative;
-        top: -20px;
-    }
-
-    .close {
-        float: right;
-        font-size: 16px;
-        font-weight: 400;
-        line-height: 1;
-        color: white;
-        border: 2px solid black;
-
-        opacity: 1;
-    }
-
-    .modal-footer {
-        padding: 15px;
-        text-align: right;
-        border-top: none;
-    }
-
-
-    .select {
-        position: relative;
-    }
-
-    .selectLabel {
-        display: block;
-        font-weight: bold;
-        margin-bottom: 0.4rem;
-    }
-
-    .selectWrapper {
-        position: relative;
-    }
-
-    .selectCustom {
-        position: relative;
-        width: 26rem;
-        height: 3.5rem;
-    }
-
-    .selectCustom-trigger {
-        font-size: 1.6rem;
-        background-color: #fff;
-        border: 1px solid #6f6f6f;
-        border-radius: 0.4rem;
-        cursor: pointer;
-    }
-
-    .selectCustom-trigger {
-        position: relative;
-        width: 100%;
-        height: 100%;
-        background-color: #fff;
-        padding: 0.5rem 0.7rem;
-        font-size: 14px;
-    }
-
-    .selectCustom-trigger::after {
-        content: "▾";
-        position: absolute;
-        top: 0;
-        line-height: 3.8rem;
-        right: 0.8rem;
-    }
-
-
-
-    .selectCustom-options {
-        position: absolute;
-        top: calc(3.8rem + 0.8rem);
-        left: 0;
-        width: 100%;
-        border: 1px solid #6f6f6f;
-        border-radius: 0.4rem;
-        background-color: #fff;
-        box-shadow: 0 0 4px #e9e1f8;
-        z-index: 1;
-        padding: 0.8rem 0;
-        display: none;
-    }
-
-    .selectCustom.isActive .selectCustom-options {
-        display: block;
-    }
-
-    .selectCustom-option {
-        position: relative;
-        padding: 0.4rem;
-        font-size: 14px;
-    }
-
-    .selectCustom-option:hover {
-        background-color: #f7ecff;
-    }
-
-    .selectCustom-option:not(:last-of-type)::after {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        left: 0.8rem;
-        width: calc(100% - 1.6rem);
-        border-bottom: 1px solid #d3d3d3;
-    }
-    strong {
-        font-weight: 600;
-    }
-
-    .title {
-        font-size: 2rem;
-        font-weight: 600;
-        margin: 1.6rem;
-        line-height: 1.2;
-        text-align: center;
-    }
-
-    .card {
-        margin: 1.5rem auto;
-    }
-
-    .footer {
-        position: relative;
-        width: 100%;
-        margin-top: 60px;
-        padding: 24px 16px;
-        text-align: center;
-        font-size: 1.4rem;
-        background: white;
-
-    }
-
-    .header-transparent .navbar-icon .navbars-line,
-    .header-transparent .navbar-icon .navbars-line:before,
-    .header-transparent .navbar-icon .navbars-line:after {
-        background-color: #000;
-    }
-
-    .homecounts {
-        padding: 150px 0;
-    }
-
-    .track-top {
-        display: flex;
-        justify-content: end;
-        align-items: end;
-
-    }
-</style>
-
-
-<style>
-    .sliderBtn {
-        width: 165px;
-        height: 44px;
-        border: none;
-        border-radius: 10px;
-        background-size: 250%;
-        background-position: left;
-        color: #fff;
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition-duration: .5s;
-        overflow: hidden;
-        margin-top: 30px;
-        /* background: #0c1239; */
-        border: 3px solid #fff;
-        outline: none;
-        /* padding: 10px 10px 10px 10px; */
-    }
-
-    .sliderBtn:hover {
-        color: #fff;
-        /* background-color: #262b90; */
-    }
-
-    .sliderbutton {
-        display: flex;
-        width: 100%;
-    }
-
-    .tab-content-ss button {
-        border-radius: 30px;
-        width: 100px;
-        margin: 0 auto;
-        float: right;
-        font-size: 15px;
-        margin-bottom: 13px;
-    }
-
-    .tab-content-ss input {
-        padding: 17px;
-    }
-
-    .tab-content-ss input::placeholder {
-        font-size: 15px;
-    }
-
-    .m-11 {
-        margin-top: 11px;
-        margin-bottom: 11px;
-    }
-
-    .sliderformremove {
-        top: 8px;
-        left: -10px;
-    }
-
-    .close:focus,
-    .close:hover {
-        cursor: pointer;
-        color: #fff;
-        opacity: .5;
-    }
-
-    .sliderformshow {
-        padding: 0px;
-        display: block;
-        transform: translateY(300px) rotateX(200deg);
-        transition: .4s ease-in-out;
-    }
-
-    .button-upper {
-        display: flex;
-        justify-content: space-between;
-        align-items: end;
-        padding: 0px 60px;
-    }
-
-    .topcontainerto {
-        display: none;
-    }
-
-    @media (max-width: 576px) {
-        .topcontainerto {
-            width: 100%;
-        }
-
-        .price-inquiry-div{
-            padding-left:15px;
-        }
-    }
-
-
-
-    .homecounts {
-    background: #0c1239; /* Dark Blue Background */
-    color: white;
-    text-align: center;
-    padding: 50px 20px;
-}
-
-.count-title {
-    font-size: 25px;
-    margin-bottom: 30px;
-}
-
-.homecounts {
-    background: #0c1239; /* Dark Blue Background */
-    color: white;
-    text-align: center;
-    padding: 50px 20px;
-}
-
-.count-title {
-    font-size: 24px;
-    margin-bottom: 30px;
-}
-
-.homecounts {
-    background: #0c1239; /* Dark Blue Background */
-    color: white;
-    text-align: center;
-    padding: 60px 20px;
-}
-
-.count-title {
-    font-size: 26px;
-    font-weight: bold;
-    margin-bottom: 40px;
-    text-transform: uppercase;
-}
-
-.main-color {
-    color: #ff3333; /* Red Highlight */
-}
-
-.download-info {
-    text-align: left;
-}
-
-.download-text {
     font-size: 18px;
-    margin-bottom: 20px;
-    color: #d1d1d1;
+    font-weight: 800;
+    color: var(--primary-red);
 }
 
-.download-buttons a {
-    display: inline-block;
-    margin-right: 10px;
+/* Pickup Details Modal Styling (#exampleModalCenter) */
+.modal-content {
+    border-radius: 16px !important;
+    border: none !important;
+    box-shadow: 0 24px 50px rgba(0, 0, 0, 0.25) !important;
+    overflow: hidden;
 }
 
-.download-buttons img {
-    width: 160px;
-    transition: 0.3s;
+.modal-header {
+    background: var(--primary-red);
+    color: #ffffff;
+    padding: 18px 24px;
+    border-bottom: none;
 }
 
-.download-buttons img:hover {
-    transform: scale(1.1);
+.modal-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #ffffff;
 }
 
-.app-image {
-    width: 100px;
-    max-width: 100%;
-    border-radius: 6px;
-    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+.modal-header .custom-close {
+    top: 16px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: #ffffff !important;
 }
 
-.new-track-top{
-    position: absolute;
-    bottom: -100px;
-    z-index: 5;
+.modal-header .custom-close:hover {
+    background: rgba(255, 255, 255, 0.35) !important;
 }
 
-/* Responsive Fix */
-@media (max-width: 768px) {
-    .download-info {
-        text-align: center;
-    }
-
-    .download-buttons a {
-        display: block;
-        margin: 10px auto;
-    }
-
-    .track-order-top {
-        min-height: 0px;
-        padding: 0px;
-        display: flex;
-        justify-content: center;
-    }
-
-    .secpadd {
-        margin-top: 50px;
-    }
-
-    .button-upper{
-        padding: 0px 10px;
-    }
-
-    .main-color{
-        font-size: 35px;
-    }
-    .secpaddlf{
-        padding-bottom: 0px;
-    }
+.modal-body {
+    padding: 24px;
+    background-color: #ffffff;
 }
 
-/* .custom-dropdown {
+.input-block label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 6px;
+}
+
+.input-block .form-control {
+    height: 44px;
+    padding: 8px 14px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 14px;
+    color: var(--charcoal);
+    transition: all 0.2s ease;
+}
+
+.input-block .form-control:focus {
+    border-color: var(--primary-red);
+    box-shadow: 0 0 0 3px rgba(217, 37, 29, 0.12);
+}
+
+.modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid #f1f5f9;
+}
+
+.pickup-submit-btn,
+.modal-footer button[type="submit"] {
+    background: var(--primary-red) !important;
+    color: #ffffff !important;
+    font-family: 'Montserrat', sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    padding: 10px 28px !important;
+    border-radius: 8px !important;
+    border: none !important;
+    box-shadow: 0 4px 12px rgba(217, 37, 29, 0.25) !important;
+    transition: all 0.25s ease !important;
+}
+
+.pickup-submit-btn:hover,
+.modal-footer button[type="submit"]:hover {
+    background: var(--primary-red-hover) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(217, 37, 29, 0.35) !important;
+}
+
+/* Custom Select Dropdown inside Modal */
+.select-card {
+    border: 1.5px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    padding: 10px 14px !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    background: var(--bg-light);
+}
+
+.selectLabel {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.selectCustom {
+    position: relative;
     width: 100%;
-    padding: 12px;
-    border: 2px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-    font-weight: bold;
-    background-color: white;
-    transition: 0.3s;
-} */
+}
 
-/* .custom-dropdown optgroup {
-    font-weight: bold;
-    font-size: 18px;
-    padding: 5px;
-} */
-
-/* .gotogo-group {
-    color:rgb(4, 0, 0); 
+.selectCustom-trigger {
     font-size: 14px;
-} */
+    font-weight: 500;
+    color: var(--charcoal);
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 8px 12px;
+    cursor: pointer;
+}
 
-/* .india-post-group {
-    color:rgb(4, 0, 0); 
-    font-size: 14px;
-} */
+.selectCustom-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    z-index: 100;
+    display: none;
+    max-height: 200px;
+    overflow-y: auto;
+}
 
-/* .custom-dropdown option {
-    font-weight: bold;
-    padding: 8px;
-} */
+.selectCustom.isActive .selectCustom-options {
+    display: block;
+}
 
+.selectCustom-option {
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--charcoal);
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
 
-</style>
+.selectCustom-option:hover {
+    background-color: #f1f5f9;
+    color: var(--primary-red);
+}
 
-{{-- <div class="container-fluid track-order-top p-5">
-    <div class="row " style="margin-top:70px; display:flex;align-items: end;flex-wrap: wrap;height: 300px;">
-        <div class="col-md-4" style="position:relative;overflow:hidden;">
-            <div class="content content-upper sliderformshow">
-                <button type="button" class="close custom-close sliderformremove" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-                <div class="tab-content-ss">
-                    <div id="1" class="container-fluid tab-pane">
-                        <form action="{{route('website.trackOrder')}}">
-                            <div class="form-group m-11">
-                                <label for="exampleFormControlInput1"><strong>Enter Article No.</strong></label>
-                                <input type="text" class="form-control is-valid" id="trackOrder" name="trackOrder" placeholder="Enter Article No.">
-                            </div>
-                            <button type="submit" style="background: #1a2674;" class="btn btn-primary font-20 mt-5">submit</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="button-upper ">
-        <button data-toggle="modal" data-target="#exampleModalCenter" class="shipNowButton">
-        </button>
-        <button type="button" class="sliderBtn fh-btn btn">Track Order</button>
-    </div>
-</div>  --}}
-<!-- End Card -->
-
-<style>
-.app-link{
-        margin-left: 90px;
-    }
-    .fh-icon-box.style-2.icon-left .fh-icon, .fh-icon-box.style-2.icon-left .img-icon{
-        margin-top: 10px;
-    margin-left: 10px;
-    }
-
-    #price-upper-div{
-        padding: 1px 20px;
-    }
-
-    .field_submit{
-        padding-bottom: 20px;
-  }
-
-.slick-slider {
-    width: 90%;
-    margin: 50px auto;
+/* Testimonials Carousel Section (.testmonial-2) */
+.testmonial-2 {
+    padding: 85px 0 !important;
+    background: linear-gradient(135deg, #0b132b 0%, #1c2541 50%, #0f172a 100%) !important;
     position: relative;
     overflow: hidden;
-    border-radius: 15px;
-    box-shadow: 0 0 30px rgba(255,255,255,0.1);
 }
 
-.slick-slide {
-    transition: transform 1s ease-in-out, opacity 1s ease-in-out;
+.testi-wrapper {
+    background: transparent !important;
+    padding: 20px 0 !important;
+    position: relative;
 }
 
-.slick-slide img {
-    width: 100%;
-    height: 500px;
-    object-fit: cover;
-    border-radius: 15px;
-    opacity: 0;
-    transform: perspective(1000px) rotateY(90deg) scale(0.8);
-    filter: brightness(0.7) blur(1px);
-    transition: all 1.2s cubic-bezier(0.77, 0, 0.175, 1);
+.testi-wrapper::before {
+    display: none !important;
 }
 
-/* Active Slide Animation */
-.slick-slide.slick-active img {
-    opacity: 1;
-    transform: perspective(1000px) rotateY(0deg) scale(1);
-    filter: brightness(1) blur(0);
-    box-shadow: 0 0 40px rgba(0,255,255,0.3);
-    animation: glowPulse 2s ease-in-out infinite alternate;
+.testi-item {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 42px 36px !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: blur(12px) !important;
+    border-radius: 18px !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    color: #ffffff !important;
 }
 
-/* Glow pulse effect */
-@keyframes glowPulse {
-    from { box-shadow: 0 0 30px rgba(0,255,255,0.2); }
-    to   { box-shadow: 0 0 60px rgba(0,255,255,0.6); }
+.testi-item:hover {
+    transform: translateY(-4px) !important;
+    border-color: rgba(217, 37, 29, 0.4) !important;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45) !important;
 }
 
-/* Dots styling */
-.slick-dots li button:before {
-    font-size: 12px;
-    color: cyan;
-    opacity: 0.5;
-}
-.slick-dots li.slick-active button:before {
-    color: #00ffff;
-    opacity: 1;
+.testi-icon i {
+    font-size: 36px !important;
+    color: var(--primary-red) !important;
+    margin-bottom: 20px !important;
+    display: inline-block;
 }
 
-/* ========================= */
-/* 📱 MOBILE RESPONSIVE STYLES */
-/* ========================= */
+.testi-star i {
+    color: #f59e0b !important;
+    font-size: 18px !important;
+    margin: 0 3px 20px !important;
+}
 
-/* For tablets and smaller laptops */
-@media (max-width: 1024px) {
-    .slick-slider {
-        width: 95%;
-        margin: 30px auto;
+.testi-des {
+    font-family: 'Montserrat', sans-serif !important;
+    font-size: 18px !important;
+    line-height: 1.75 !important;
+    font-style: italic !important;
+    color: #f8fafc !important;
+    margin-bottom: 28px !important;
+}
+
+.testi-name {
+    font-family: 'Montserrat', sans-serif !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    color: #ffffff !important;
+    letter-spacing: 0.5px !important;
+    display: block !important;
+}
+
+.testi-job {
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    color: var(--slate-light) !important;
+    display: block !important;
+    margin-top: 4px !important;
+}
+
+/* Premium Corporate Footer Section */
+.footer-widgets.widgets-area {
+    background: linear-gradient(180deg, #0f172a 0%, #0b132b 100%) !important;
+    color: var(--slate-light) !important;
+    padding-top: 0 !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+    position: relative;
+}
+
+.contact-widget {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    padding: 36px 0 !important;
+}
+
+.contact-widget .row {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+}
+
+.contact-widget .contact {
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 16px !important;
+    margin-bottom: 0 !important;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+}
+
+.contact-widget .contact > i {
+    color: var(--primary-red) !important;
+    font-size: 22px !important;
+    min-width: 46px !important;
+    width: 46px !important;
+    height: 46px !important;
+    border-radius: 12px !important;
+    background: rgba(217, 37, 29, 0.12) !important;
+    border: 1px solid rgba(217, 37, 29, 0.2) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    flex-shrink: 0 !important;
+    margin-top: 2px !important;
+}
+
+.contact-widget .contact:hover > i {
+    background: var(--primary-red) !important;
+    color: #ffffff !important;
+    transform: translateY(-2px) scale(1.05) !important;
+    box-shadow: 0 6px 16px rgba(217, 37, 29, 0.35) !important;
+}
+
+.contact-widget .contact p {
+    color: var(--slate-light) !important;
+    font-family: 'Montserrat', sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    margin: 0 0 4px 0 !important;
+    line-height: 1.4 !important;
+}
+
+.contact-widget .contact h4 {
+    color: #ffffff !important;
+    font-family: 'Montserrat', sans-serif !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    margin: 0 !important;
+    line-height: 1.5 !important;
+    letter-spacing: 0.3px !important;
+}
+
+@media (max-width: 767px) {
+    .contact-widget {
+        padding: 24px 0 !important;
+    }
+    
+    .contact-widget .contact {
+        margin-bottom: 20px !important;
     }
 
-    .slick-slide img {
-        height: 400px;
+    .contact-widget .contact:last-child {
+        margin-bottom: 0 !important;
     }
 }
 
-/* For mobile devices */
-@media (max-width: 768px) {
-    .slick-slider {
-        width: 100%;
-        margin: 20px auto;
-        border-radius: 10px;
-        box-shadow: 0 0 20px rgba(0,255,255,0.1);
-    }
-
-    .slick-slide img {
-        height: 300px;
-        border-radius: 10px;
-    }
-
-    .slick-dots li button:before {
-        font-size: 10px;
-    }
-
-    .count-title{
-        font-size: 22px !important;
-    }
-    .app-link{
-        margin-left: 0px !important;
-    }
-    .fh-icon-box.style-2.icon-left .fh-icon, .fh-icon-box.style-2.icon-left .img-icon{
-        margin-top: 30px !important;
-    margin-left: 10px !important;
-    }
-    #price-upper-div{
-        padding: 1px 20px;
-    }
-
-    .price-inquiry-div h2{
-        text-align: center;
-    }
-
-    .paddbtm40 {
-    padding-bottom: 0px !important;
-}
-  .field_submit{
-        padding-bottom: 20px;
-  }
+.footer-logo {
+    display: inline-block !important;
+    padding: 6px 0 !important;
 }
 
-/* For very small phones */
-@media (max-width: 480px) {
-    .slick-slider {
-        margin: 10px auto;
-    }
-
-    .slick-slide img {
-        height: 220px;
-        border-radius: 8px;
-    }
-
-    .slick-dots li button:before {
-        font-size: 9px;
-    }
-    .track-order-top, .slick-slider{
-        margin-bottom: 0px;
-    }
-    .new-track-top{
-        bottom: 0;
-    }
+.footer-logo img {
+    max-height: 55px !important;
+    width: auto !important;
+    object-fit: contain !important;
+    background: transparent !important;
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3)) !important;
+    transition: transform 0.25s ease !important;
 }
 
+.footer-logo:hover img {
+    transform: scale(1.04) !important;
+}
+
+.footer-sidebars {
+    padding: 60px 0 40px !important;
+}
+
+.footer-sidebar .widget-title {
+    font-family: 'Montserrat', sans-serif !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    color: #ffffff !important;
+    margin-bottom: 24px !important;
+    position: relative !important;
+    padding-bottom: 10px !important;
+    letter-spacing: 0.5px !important;
+}
+
+.footer-sidebar .widget-title::after {
+    content: '' !important;
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 36px !important;
+    height: 3px !important;
+    background-color: var(--primary-red) !important;
+    border-radius: 2px !important;
+}
+
+.footer-sidebar .textwidget p,
+.footer-sidebar .footform p {
+    color: var(--slate-light) !important;
+    font-size: 14px !important;
+    line-height: 1.7 !important;
+}
+
+.footer-sidebar .widget_nav_menu ul.menu {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.footer-sidebar .widget_nav_menu ul.menu li {
+    margin-bottom: 12px !important;
+}
+
+.footer-sidebar .widget_nav_menu ul.menu li a {
+    color: #cbd5e1 !important;
+    font-family: 'Montserrat', sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    transition: all 0.25s ease !important;
+}
+
+.footer-sidebar .widget_nav_menu ul.menu li a::before {
+    content: '\f105' !important;
+    font-family: 'FontAwesome' !important;
+    margin-right: 10px !important;
+    color: var(--primary-red) !important;
+    font-size: 13px !important;
+    transition: transform 0.2s ease !important;
+}
+
+.footer-sidebar .widget_nav_menu ul.menu li a:hover {
+    color: var(--primary-red) !important;
+    transform: translateX(6px) !important;
+}
+
+.footer-sidebar .widget_nav_menu ul.menu li a:hover::before {
+    transform: translateX(3px) !important;
+}
+
+.fh-contact-box.type-social ul {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 16px 0 0 0 !important;
+    display: flex !important;
+    gap: 10px !important;
+}
+
+.fh-contact-box.type-social ul li {
+    margin: 0 !important;
+}
+
+.fh-contact-box.type-social ul li a {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #ffffff !important;
+    font-size: 16px !important;
+    text-decoration: none !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.fh-contact-box.type-social ul li a:hover {
+    background: var(--primary-red) !important;
+    border-color: var(--primary-red) !important;
+    color: #ffffff !important;
+    transform: translateY(-3px) !important;
+    box-shadow: 0 6px 18px rgba(217, 37, 29, 0.4) !important;
+}
+
+.widget_mc4wp_form_widget .subscribe {
+    display: flex !important;
+    align-items: center !important;
+    margin-top: 16px !important;
+}
+
+.widget_mc4wp_form_widget input[type="email"] {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 8px 0 0 8px !important;
+    color: #ffffff !important;
+    height: 46px !important;
+    padding: 0 16px !important;
+    font-size: 14px !important;
+    flex: 1 !important;
+    outline: none !important;
+    transition: border-color 0.2s ease !important;
+}
+
+.widget_mc4wp_form_widget input[type="email"]:focus {
+    border-color: var(--primary-red) !important;
+    background: rgba(255, 255, 255, 0.12) !important;
+}
+
+.widget_mc4wp_form_widget input[type="submit"] {
+    background: var(--primary-red) !important;
+    border: none !important;
+    border-radius: 0 8px 8px 0 !important;
+    color: #ffffff !important;
+    font-family: 'Montserrat', sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    height: 46px !important;
+    padding: 0 22px !important;
+    cursor: pointer !important;
+    transition: background 0.25s ease !important;
+}
+
+.widget_mc4wp_form_widget input[type="submit"]:hover {
+    background: var(--primary-red-hover) !important;
+}
+
+.site-footer {
+    background: #070c1b !important;
+    padding: 22px 0 !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.site-footer .site-info {
+    color: var(--slate-light) !important;
+    font-family: 'Montserrat', sans-serif !important;
+    font-size: 14px !important;
+}
+
+.site-footer .site-info a {
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    transition: color 0.2s ease !important;
+}
+
+.site-footer .site-info a:hover {
+    color: var(--primary-red) !important;
+}
 </style>
 
 
@@ -853,10 +1181,10 @@
 <div class="track-order-top">
    
     <div class="slick-slider">
-        <div class="slick-slide"><img src="{{ url('website/images/bg/go2go1.jpeg') }}" alt="Slide 1"></div>
-        <div class="slick-slide"><img src="{{ url('website/images/bg/go2go2.jpeg') }}" alt="Slide 2"></div>
-c        <div class="slick-slide"><img src="{{ url('website/images/bg/go2go4.jpeg') }}" alt="Slide 4"></div>
-        <div class="slick-slide"><img src="{{ url('website/images/bg/go2go5.jpeg') }}" alt="Slide 5"></div>
+        <div class="slick-slide"><img src="{{ url('website/images/bg/cargo3.jpg') }}" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=2400&q=90';" alt="Global Logistics Shipping"></div>
+        <div class="slick-slide"><img src="{{ url('website/images/bg/go2go1.jpeg') }}" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=2400&q=90';" alt="Transport & Delivery Services"></div>
+        <div class="slick-slide"><img src="{{ url('website/images/bg/go2go2.jpeg') }}" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1616401784845-180882ba9ba8?auto=format&fit=crop&w=2400&q=90';" alt="Courier Logistics"></div>
+        <div class="slick-slide"><img src="{{ url('website/images/bg/go2go4.jpeg') }}" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1580674684081-7617fbf3d745?auto=format&fit=crop&w=2400&q=90';" alt="Seamless Logistics Solutions"></div>
     </div>
 
     <div class="new-track-top col-lg-12">
@@ -1366,18 +1694,17 @@ $(document).ready(function(){
         <h2 class="count-title"><span class="main-color">GOTOGOPOST</span> is a Global Supplier of Transport and logistics Solutions.</h2>
     </div>
 </section> --}}
-<section class="homecounts">
+<section class="homecounts compact-app-banner">
     <div class="container">
-        <h2 class="count-title">
-            <span class="main-color">GOTOGOPOST</span> - Download Our Mobile App for Seamless Services!
-        </h2>
-
-        <div class="row align-items-center mobile-app-img" style="display:flex">
-            <!-- Left Section: Download Info -->
-            <div class="col-lg-6 col-md-6 app-link" style="">
-                <div class="download-info">
-                    <p class="download-text">
-                        Experience the best courier & logistics services with our mobile app.
+        <div class="app-banner-card">
+            <div class="row align-items-center">
+                <!-- Left Section: Download Info -->
+                <div class="col-lg-7 col-md-7 col-sm-12 app-banner-content">
+                    <h3 class="app-banner-title">
+                        <span class="main-color">GOTOGOPOST</span> &ndash; Download Our Mobile App for Seamless Services!
+                    </h3>
+                    <p class="app-banner-desc">
+                        Experience the best courier &amp; logistics services with our mobile app.
                     </p>
                     <div class="download-buttons">
                         <a href="https://play.google.com/store/apps/details?id=com.gotogopost.customer&pcampaignid=web_share" target="_blank" class="download-btn">
@@ -1388,11 +1715,13 @@ $(document).ready(function(){
                         </a>
                     </div>
                 </div>
-            </div>
 
-            <!-- Right Section: App Image -->
-            <div class="col-lg-6 col-md-6 text-center">
-                <img src="{{ asset('website/images/app-img.jpg') }}" alt="App Preview" class="app-image">
+                <!-- Right Section: App Image -->
+                <div class="col-lg-5 col-md-5 col-sm-12 text-right app-banner-img-col">
+                    <div class="app-banner-img-wrap">
+                        <img src="https://plus.unsplash.com/premium_photo-1681760173535-5c82d39ce645?q=80&w=784&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='{{ asset('website/images/app-img.jpg') }}';" alt="GOTOGOPOST Mobile App" class="app-banner-img">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1460,16 +1789,15 @@ $(document).ready(function(){
                                 <div class="col-md-6 col-xs-12 col-sm-12">
                                     <p class="field">
                                         <!-- <select id="services" placeholder="Service*" name=""> -->
-                                        <select id="services" name="service" class="form-control custom-dropdown" style="color:#000;border:none">
-                                            <!-- <option value="" style="color:#fff;" disabled selected>Select Service</option> -->
-                                            <optgroup label="GOTOGO POST BOOKING SERVICES" class="gotogo-group" style="color:#000;background:#fff;">
-                                                <option value="1" style="color:#fff;background:#ff0000; text-justify: inter-word;text-align: justify;">Gotogo Super Speed Packet</option>
-                                                <option value="3" style="color:#fff;background:#ff0000;">Gotogo Express Parcel</option>
-                                                <option value="4" style="color:#fff;background:#ff0000;">Gotogo Secure Parcel</option>
+                                        <select id="services" name="service" class="form-control custom-dropdown">
+                                            <optgroup label="GOTOGO POST BOOKING SERVICES" class="gotogo-group">
+                                                <option value="1">Gotogo Super Speed Packet</option>
+                                                <option value="3">Gotogo Express Parcel</option>
+                                                <option value="4">Gotogo Secure Parcel</option>
                                             </optgroup>
-                                            <optgroup label="ALL INDIA-POST SERVICES" class="india-post-group" style="color:#000;background:#fff">
-                                                <option value="5" style="color:#fff;background:#ff0000;">Speed Post-Inland Document</option>
-                                                <option value="6" style="color:#fff;background:#ff0000;">Speed Post-Parcel Domestic</option>
+                                            <optgroup label="ALL INDIA-POST SERVICES" class="india-post-group">
+                                                <option value="5">Speed Post-Inland Document</option>
+                                                <option value="6">Speed Post-Parcel Domestic</option>
                                             </optgroup>
                                         </select>
                                     </p>

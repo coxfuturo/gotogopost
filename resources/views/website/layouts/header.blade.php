@@ -100,15 +100,9 @@
     left: 0;
 
     width: 100%;
-
     z-index: 999;
-
     border-bottom: 1px solid rgba(35, 41, 81, 0.1);
-
 }
-
-
-
 .site-header {
 
     background-color: #fff;
@@ -117,6 +111,85 @@
 
     padding: 12px 0;
 
+}
+
+/* ==========================================================================
+   TOP BAR HEADER INFO SECTION
+   ========================================================================== */
+.top-bar-header-info {
+    background-color: #0b132b;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    font-family: 'Montserrat', sans-serif;
+}
+
+.top-bar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    width: 100%;
+}
+
+.top-info-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Clean outline/stroke red icon without background square/box wrappers */
+.top-info-icon {
+    color: #ff0033 !important;
+    font-size: 22px !important;
+    background: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    min-width: unset !important;
+    line-height: 1 !important;
+    flex-shrink: 0 !important;
+}
+
+.top-info-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.top-info-text .address-text {
+    color: #ffffff;
+    font-size: 13.5px;
+    font-style: italic;
+    font-weight: 500;
+    margin: 0;
+    line-height: 1.4;
+    white-space: nowrap;
+}
+
+.top-info-title {
+    color: #94a3b8;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    line-height: 1.2;
+    margin-bottom: 2px;
+}
+
+.top-info-value {
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+    line-height: 1.2;
+}
+
+@media (max-width: 991px) {
+    .top-bar-header-info {
+        display: none;
+    }
 }
 
 .fh-btn {
@@ -265,7 +338,73 @@
 
 .sub-menu a {
     background: none !important;
-    color: #fff !important;
+    color: #000000 !important;
+}
+
+/* --- Login Main Button Styling --- */
+.header-v1 .nav .fh-btn.btn {
+    background: linear-gradient(135deg, #0d6efd, #0b5ed7) !important;
+    color: #ffffff !important;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: normal;
+    padding: 9px 22px;
+    border-radius: 30px; /* Rounded pill design */
+    border: none;
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.25);
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: capitalize;
+}
+
+/* Hover on Login Button */
+.header-v1 .nav .fh-btn.btn:hover {
+    background: linear-gradient(135deg, #0b5ed7, #0a58ca) !important;
+    box-shadow: 0 6px 16px rgba(13, 110, 253, 0.35);
+    transform: translateY(-1px);
+}
+
+/* --- Dropdown Menu Container --- */
+.header-v1 .nav li.has-children .sub-menu {
+    background: #ffffff !important;
+    min-width: 250px;
+    padding: 8px;
+    border-radius: 12px;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+    top: 100%;
+    margin-top: 8px;
+}
+
+/* --- Dropdown Links List --- */
+.header-v1 .nav li.has-children .sub-menu li {
+    padding: 0 !important;
+    margin: 2px 0;
+    background: transparent !important;
+}
+
+/* Link Items */
+.header-v1 .nav li.has-children .sub-menu a,
+.header-v1 .nav li .sub-menu a,
+.nav .sub-menu li a {
+    color: #000000 !important;
+    background: transparent !important;
+    font-size: 15.5px;
+    font-weight: 500;
+    padding: 10px 14px;
+    border-radius: 6px;
+    border: none !important;
+    display: block;
+    transition: all 0.2s ease-in-out;
+}
+
+/* Link Hover Effect */
+.header-v1 .nav li.has-children .sub-menu a:hover {
+    background: #f1f5f9 !important;
+    color: #0d6efd !important;
+    padding-left: 18px; /* Smooth slide effect */
 }
 </style>
 
@@ -281,9 +420,40 @@
 
 
 
-        <!-- masthead -->
+        <!-- top bar info section -->
+        <div class="top-bar-header-info hidden-xs hidden-sm">
+            <div class="container">
+                <div class="top-bar-inner">
+                    
+                    <!-- Address Item -->
+                    <div class="top-info-item">
+                        <i class="flaticon-signs top-info-icon"></i>
+                        <div class="top-info-text">
+                            <p class="address-text">Gaur City Mall Office Space - Sector 4, Greater Noida Uttar Pradesh 201318</p>
+                        </div>
+                    </div>
 
-        {{-- web view--}}
+                    <!-- Toll Free Item -->
+                    <div class="top-info-item">
+                        <i class="flaticon-phone-call top-info-icon"></i>
+                        <div class="top-info-text">
+                            <span class="top-info-title">Toll Free Number :</span>
+                            <span class="top-info-value">1800 123 1617</span>
+                        </div>
+                    </div>
+
+                    <!-- Opening Hours Item -->
+                    <div class="top-info-item">
+                        <i class="flaticon-clock-1 top-info-icon"></i>
+                        <div class="top-info-text">
+                            <span class="top-info-title">Opening Hours :</span>
+                            <span class="top-info-value">MON – FRI: 10AM – 7PM</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
 
         <header id="masthead" class="site-header clearfix">
 
@@ -426,15 +596,15 @@
                                     <li class="has-children"><a href="#" class="dropdown-toggle fh-btn btn" style="color:white">Login</a>
 
                                         <ul class="sub-menu">  
-                                            <li><a href="{{route('franchise.login')}}">Franchise</a></li>
+                                            <li><a href="{{route('franchise.login')}}">Bussiness Associate</a></li>
                                             
-                                            <li><a href="{{route('cms.login')}}">CPH</a></li>
+                                            <li><a href="{{route('cms.login')}}">City Process Hub</a></li>
                                             
-                                            <li><a href="{{route('pph.login')}}">PPH</a></li>
+                                            <li><a href="{{route('pph.login')}}">Prime Process Hub</a></li>
                                             
                                             <li><a href="{{route('deliveryBoy.login')}}">Delivery | Pickup Boy</a></li>
-                                            <li><a href="{{route('customer.login')}}">Premium E-Customer Services</a></li>
-                                            <li><a href="{{route('market.login')}}">Marketing Manager</a></li>
+                                            <li><a href="{{route('customer.login')}}">Bussiness Customer Services</a></li>
+                                            <li><a href="{{route('market.login')}}">Sales Marketing Manager</a></li>
                                         </ul>
 
                                     </li>
@@ -443,17 +613,17 @@
 
                                         <ul class="sub-menu">
 
-                                            <li><a href="{{route('franchise.register')}}">Franchise</a>
+                                            <li><a href="{{route('franchise.register')}}">Bussiness Associate</a>
                                            
                                             </li>
 
-                                            <li><a href="{{route('cms.register')}}">CPH</a></li>
+                                            <li><a href="{{route('cms.register')}}">City Process Hub</a></li>
 
-                                            <li><a href="{{route('pph.register')}}">PPH </a></li>
+                                            <li><a href="{{route('pph.register')}}">Prime Process Hub</a></li>
                                                <li><a href="{{route('deliveryBoy.register')}}">Delivery | Pickup Boy</a></li>
                                                <li><a href="{{route('franchise.combo.index')}}">Hub Center</a></li>
-                                               <li><a href="{{route('customer.register')}}">Premium E-Customer Services</a></li>
-                                               <li><a href="{{route('market.register')}}">Marketing Manager</a></li>
+                                               <li><a href="{{route('customer.register')}}">Bussiness Customer Services</a></li>
+                                               <li><a href="{{route('market.register')}}">Sales Marketing Manager</a></li>
 
                                         </ul>
 
