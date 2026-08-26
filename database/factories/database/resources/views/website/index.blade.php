@@ -90,27 +90,28 @@
 
 .slick-slider {
     width: 100%;
-    /* height: 100vh;  */
+    height: 100vh; 
     overflow: hidden;
 }
 
 .slick-slide img {
     width: 100%;
-    height: 100%; /* Full Screen */
+    height: 500px; /* Full Screen */
     object-fit: cover;
     padding-top: 92px;
 }
 
 
-
-    .track-order-top {
+ .track-order-top {
         background-color: transparent;
         background-position: 100%;
         background-size: cover;
         color: #fff;
         min-height: 500px;
         position: relative;
-    }
+    } 
+
+    
 
     .shipNowButton {
         width: 165px;
@@ -696,11 +697,11 @@
 <div class="track-order-top">
    
     <div class="slick-slider">
-        <div class="slick-slide"><img src="{{ url('website/images/bg/go2go1.jpeg') }}" alt="Slide 1"></div>
-        <div class="slick-slide"><img src="{{ url('website/images/bg/go2go2.jpeg') }}" alt="Slide 2"></div>
-        <div class="slick-slide"><img src="{{ url('website/images/bg/go2go3.jpeg') }}" alt="Slide 3"></div>
-        <div class="slick-slide"><img src="{{ url('website/images/bg/go2go4.jpeg') }}" alt="Slide 4"></div>
-        <div class="slick-slide"><img src="{{ url('website/images/bg/go2go5.jpeg') }}" alt="Slide 5"></div>
+        <div class="slick-slide"><img src="https://static.readdy.ai/image/09ca09ab6ce0124387da585a1862b89e/ed27d3bcd4b2d4b3266b30ea4bca303e.jpeg" alt="Slide 1"></div>
+        <div class="slick-slide"><img src="https://plus.unsplash.com/premium_photo-1682090266701-63bfcebd1281?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Slide 2"></div>
+        <div class="slick-slide"><img src="https://plus.unsplash.com/premium_photo-1661418318126-6988bacf870f?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Slide 3"></div>
+        <div class="slick-slide"><img src="https://plus.unsplash.com/premium_photo-1661698596668-cd95950d794c?q=80&w=1171&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Slide 4"></div>
+        <div class="slick-slide"><img src="https://plus.unsplash.com/premium_photo-1683147625874-fbcbea60107c?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Slide 5"></div>
     </div>
 
     <div class="new-track-top col-lg-12">
