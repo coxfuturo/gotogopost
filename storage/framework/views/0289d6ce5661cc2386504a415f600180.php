@@ -34,44 +34,97 @@ body {
 }
 
 /* Hero Banner & Slider Container */
+/* =========================================
+   TRACK ORDER IMAGE BANNER
+   ========================================= */
+
 .track-order-top {
     position: relative;
     width: 100%;
+    height: 450px;
+
     overflow: hidden;
-    background-color: var(--dark-navy);
+
+    background: #ffffff;
 }
 
-.slick-slider {
+.track-order-top .slick-slider {
     width: 100%;
+    height: 100%;
+
     margin: 0 auto;
     position: relative;
+
     overflow: hidden;
 }
 
-.slick-slide img {
+.track-order-top .slick-slide {
     width: 100%;
-    height: 540px;
-    object-fit: cover;
-    object-position: center;
-    padding-top: 75px;
+    height: 450px !important;
+    margin: 0;
+    padding: 0;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: #ffffff;
+}
+
+.track-order-top .slick-slide img {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100%;
+    max-height: 100%;
+    display: block !important;
+    object-fit: cover !important;
+    object-position: center center !important;
+    padding: 0 !important;
+    margin: 0 !important;
     filter: brightness(0.95) contrast(1.03);
     transition: filter 0.5s ease;
 }
 
+
+/* =========================================
+   TABLET
+   ========================================= */
+
 @media (max-width: 991px) {
-    .slick-slide img {
-        height: 400px;
-        padding-top: 60px;
+
+    .track-order-top {
+        height: 380px;
+    }
+
+    .track-order-top .slick-slide {
+        height: 380px !important;
+    }
+
+    .track-order-top .slick-slide img {
+        width: 100% !important;
+        height: 100% !important;
     }
 }
+
+
+/* =========================================
+   MOBILE
+   ========================================= */
 
 @media (max-width: 576px) {
-    .slick-slide img {
-        height: 260px;
-        padding-top: 50px;
+
+    .track-order-top {
+        height: 320px;
+    }
+
+    .track-order-top .slick-slide {
+        height: 320px !important;
+    }
+
+    .track-order-top .slick-slide img {
+        width: 100% !important;
+        height: 100% !important;
     }
 }
-
 /* Hero Floating Action Buttons */
 .new-track-top {
     position: absolute;
@@ -80,14 +133,27 @@ body {
     right: 0;
     z-index: 10;
     padding: 0 40px;
+    pointer-events: none;
+}
+
+.new-track-top * {
+    pointer-events: auto;
 }
 
 @media (max-width: 768px) {
     .new-track-top {
-        position: relative;
-        bottom: 0;
-        padding: 15px;
-        background: var(--dark-navy);
+        position: absolute;
+        bottom: 15px;
+        padding: 0 15px;
+        background: transparent;
+    }
+}
+
+@media (max-width: 576px) {
+    .sliderformshow {
+        width: calc(100vw - 30px) !important;
+        max-width: 340px !important;
+        padding: 16px !important;
     }
 }
 
@@ -500,6 +566,12 @@ body {
     border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
+@media (min-width: 768px) {
+    .whychoose-1 .quofrm1 {
+        transform: translateY(20px);
+    }
+}
+
 .price-inquiry-div {
     background: var(--primary-red) !important;
     padding: 20px 24px !important;
@@ -818,82 +890,135 @@ body {
 }
 
 /* Testimonials Carousel Section (.testmonial-2) */
+/* =========================================
+   TESTIMONIAL - WHITE & BLACK THEME
+   Existing classes only
+   ========================================= */
+
 .testmonial-2 {
-    padding: 85px 0 !important;
-    background: linear-gradient(135deg, #0b132b 0%, #1c2541 50%, #0f172a 100%) !important;
-    position: relative;
-    overflow: hidden;
+    background: #ffffff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
 }
 
-.testi-wrapper {
-    background: transparent !important;
-    padding: 20px 0 !important;
-    position: relative;
+/* Main testimonial background */
+.testmonial-2 .testi-wrapper {
+    height: 300px !important;
+    min-height: 300px !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+    display: flex !important;
+    align-items: center !important;
+    position: relative !important;
 }
 
-.testi-wrapper::before {
+/* Remove dark overlay */
+.testmonial-2 .testi-wrapper::before {
     display: none !important;
+    content: none !important;
 }
 
-.testi-item {
-    position: relative;
-    z-index: 2;
-    text-align: center;
-    max-width: 820px;
-    margin: 0 auto;
-    padding: 42px 36px !important;
-    background: rgba(255, 255, 255, 0.05) !important;
-    backdrop-filter: blur(12px) !important;
+/* Content */
+.testmonial-2 .testi-item {
+    max-width: 1000px !important;
+    margin: 0 auto !important;
+    padding: 25px 35px !important;
+    background: #f5f9ff !important;
+    border: 1px solid #dbe7f5 !important;
     border-radius: 18px !important;
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35) !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow:
+        0 10px 25px rgba(30, 80, 130, 0.10),
+        0 4px 10px rgba(0, 0, 0, 0.05) !important;
+
+    text-align: center !important;
+}
+
+/* Quote icon */
+.testmonial-2 .testi-icon {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 38px !important;
+    height: 38px !important;
+    background: #000000 !important;
     color: #ffffff !important;
+    border-radius: 50% !important;
+    font-size: 16px !important;
+    margin-bottom: 10px !important;
 }
 
-.testi-item:hover {
-    transform: translateY(-4px) !important;
-    border-color: rgba(217, 37, 29, 0.4) !important;
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45) !important;
+/* Stars */
+.testmonial-2 .testi-star {
+    margin-bottom: 10px !important;
 }
 
-.testi-icon i {
-    font-size: 36px !important;
-    color: var(--primary-red) !important;
-    margin-bottom: 20px !important;
-    display: inline-block;
-}
-
-.testi-star i {
-    color: #f59e0b !important;
-    font-size: 18px !important;
-    margin: 0 3px 20px !important;
-}
-
-.testi-des {
-    font-family: 'Montserrat', sans-serif !important;
-    font-size: 18px !important;
-    line-height: 1.75 !important;
-    font-style: italic !important;
-    color: #f8fafc !important;
-    margin-bottom: 28px !important;
-}
-
-.testi-name {
-    font-family: 'Montserrat', sans-serif !important;
-    font-size: 18px !important;
-    font-weight: 700 !important;
-    color: #ffffff !important;
-    letter-spacing: 0.5px !important;
-    display: block !important;
-}
-
-.testi-job {
+.testmonial-2 .testi-star i {
+    color: #000000 !important;
     font-size: 14px !important;
-    font-weight: 500 !important;
-    color: var(--slate-light) !important;
+    margin-right: 2px !important;
+}
+
+/* Review text */
+.testmonial-2 .testi-des {
+    color: black !important;
+    font-size: 18px !important;
+    line-height: 1.6 !important;
+    max-width: 760px !important;
+    margin: 0 0 15px !important;
+}
+
+/* Client name */
+.testmonial-2 .info .testi-name {
     display: block !important;
-    margin-top: 4px !important;
+
+    color: #000000 !important;
+
+    font-size: 17px !important;
+    font-weight: 700 !important;
+
+    margin-bottom: 3px !important;
+}
+
+/* Client designation */
+.testmonial-2 .info .testi-job {
+    display: block !important;
+
+    color: #555555 !important;
+
+    font-size: 13px !important;
+}
+
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 767px) {
+
+    .testmonial-2 .testi-wrapper {
+        height: 350px !important;
+        min-height: 350px !important;
+    }
+
+    .testmonial-2 .testi-item {
+        margin: 0 15px !important;
+        padding: 20px !important;
+        border-radius: 14px !important;
+    }
+
+    .testmonial-2 .testi-des {
+        font-size: 14px !important;
+        line-height: 1.5 !important;
+    }
+
+    .testmonial-2 .info .testi-name {
+        font-size: 15px !important;
+    }
+
+    .testmonial-2 .info .testi-job {
+        font-size: 12px !important;
+    }
 }
 
 /* Premium Corporate Footer Section */
@@ -1179,17 +1304,31 @@ body {
 
 
 <div class="track-order-top">
-   
     <div class="slick-slider">
-        <div class="slick-slide"><img src="<?php echo e(url('website/images/bg/cargo3.jpg')); ?>" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=2400&q=90';" alt="Global Logistics Shipping"></div>
-        <div class="slick-slide"><img src="<?php echo e(url('website/images/bg/go2go1.jpeg')); ?>" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=2400&q=90';" alt="Transport & Delivery Services"></div>
-        <div class="slick-slide"><img src="<?php echo e(url('website/images/bg/go2go2.jpeg')); ?>" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1616401784845-180882ba9ba8?auto=format&fit=crop&w=2400&q=90';" alt="Courier Logistics"></div>
-        <div class="slick-slide"><img src="<?php echo e(url('website/images/bg/go2go4.jpeg')); ?>" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1580674684081-7617fbf3d745?auto=format&fit=crop&w=2400&q=90';" alt="Seamless Logistics Solutions"></div>
+        <div class="slick-slide">
+            <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=2400&q=90"
+                 alt="Global Logistics Shipping">
+        </div>
+
+        <div class="slick-slide">
+            <img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=2400&q=90"
+                 alt="Transport & Delivery Services">
+        </div>
+
+        <div class="slick-slide">
+            <img src="https://images.unsplash.com/photo-1616401784845-180882ba9ba8?auto=format&fit=crop&w=2400&q=90"
+                 alt="Courier Logistics">
+        </div>
+
+        <div class="slick-slide">
+            <img src="https://content.jdmagicbox.com/v2/comp/mumbai/y4/022pxx22.xx22.110530154445.m7y4/catalogue/maruti-cargo-and-courier-andheri-east-mumbai-courier-services-lq3iwntxlf.jpg"
+                 alt="Seamless Logistics Solutions">
+        </div>
     </div>
 
     <div class="new-track-top col-lg-12">
         <div class="row" style="display: flex; justify-content: end;">
-            <div class="col-md-4" style="position:relative;overflow: hidden;">
+            <div class="col-md-4" style="position:relative;">
                 <div class="content content-upper sliderformshow">
                     <button type="button" class="close custom-close sliderformremove" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
@@ -1215,7 +1354,6 @@ body {
             <button type="button" class="sliderBtn fh-btn btn">Track Order</button>
         </div>
     </div>
-
 </div> 
 
 
@@ -1690,38 +1828,6 @@ $(document).ready(function(){
 </script>
 <!--home counters -->
 
-<section class="homecounts compact-app-banner">
-    <div class="container">
-        <div class="app-banner-card">
-            <div class="row align-items-center">
-                <!-- Left Section: Download Info -->
-                <div class="col-lg-7 col-md-7 col-sm-12 app-banner-content">
-                    <h3 class="app-banner-title">
-                        <span class="main-color">GOTOGOPOST</span> &ndash; Download Our Mobile App for Seamless Services!
-                    </h3>
-                    <p class="app-banner-desc">
-                        Experience the best courier &amp; logistics services with our mobile app.
-                    </p>
-                    <div class="download-buttons">
-                        <a href="https://play.google.com/store/apps/details?id=com.gotogopost.customer&pcampaignid=web_share" target="_blank" class="download-btn">
-                            <img src="<?php echo e(asset('website/images/google-play.svg')); ?>" alt="Google Play">
-                        </a>
-                        <a href="#" class="download-btn">
-                            <img src="<?php echo e(asset('website/images/apple-store.svg')); ?>" alt="App Store">
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Right Section: App Image -->
-                <div class="col-lg-5 col-md-5 col-sm-12 text-right app-banner-img-col">
-                    <div class="app-banner-img-wrap">
-                        <img src="https://plus.unsplash.com/premium_photo-1681760173535-5c82d39ce645?q=80&w=784&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='<?php echo e(asset('website/images/app-img.jpg')); ?>';" alt="GOTOGOPOST Mobile App" class="app-banner-img">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
 
 
 
@@ -1879,6 +1985,40 @@ $(document).ready(function(){
         </div>
     </div>
 </section>
+
+
+<section class="homecounts compact-app-banner">
+    <div class="container">
+        <div class="app-banner-card">
+            <div class="row align-items-center">
+                <!-- Left Section: Download Info -->
+                <div class="col-lg-7 col-md-7 col-sm-12 app-banner-content">
+                    <h3 class="app-banner-title">
+                        <span class="main-color">GOTOGOPOST</span> &ndash; Download Our Mobile App for Seamless Services!
+                    </h3>
+                    <p class="app-banner-desc">
+                        Experience the best courier &amp; logistics services with our mobile app.
+                    </p>
+                    <div class="download-buttons">
+                        <a href="https://play.google.com/store/apps/details?id=com.gotogopost.customer&pcampaignid=web_share" target="_blank" class="download-btn">
+                            <img src="<?php echo e(asset('website/images/google-play.svg')); ?>" alt="Google Play">
+                        </a>
+                        <a href="#" class="download-btn">
+                            <img src="<?php echo e(asset('website/images/apple-store.svg')); ?>" alt="App Store">
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Right Section: App Image -->
+                <div class="col-lg-5 col-md-5 col-sm-12 text-right app-banner-img-col">
+                    <div class="app-banner-img-wrap">
+                        <img src="https://plus.unsplash.com/premium_photo-1681760173535-5c82d39ce645?q=80&w=784&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='<?php echo e(asset('website/images/app-img.jpg')); ?>';" alt="GOTOGOPOST Mobile App" class="app-banner-img">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 <!--why choose us end -->
 
 <!--partener -->
@@ -1928,7 +2068,7 @@ $(document).ready(function(){
             <div class="testi-wrapper" style="background-image:url(images/main-slider/testi-1.jpg)">
                 <div class="container">
                     <div class="testi-item">
-                        <span class="testi-icon"><i class="flaticon-quotations"></i></span>
+                       
                         <div class="testi-content">
                             <div class="testi-star">
                                 <i class="fa fa-star fa-md"></i>
@@ -1947,7 +2087,7 @@ $(document).ready(function(){
             <div class="testi-wrapper" style="background-image:url(images/main-slider/testi-3.jpg)">
                 <div class="container">
                     <div class="testi-item">
-                        <span class="testi-icon"><i class="flaticon-quotations "></i></span>
+                        
                         <div class="testi-content">
                             <div class="testi-star">
                                 <i class="fa fa-star fa-md"></i>
@@ -1966,7 +2106,7 @@ $(document).ready(function(){
             <div class="testi-wrapper" style="background-image:url(images/main-slider/testi-2.jpg)">
                 <div class="container">
                     <div class="testi-item">
-                        <span class="testi-icon"><i class="flaticon-quotations "></i></span>
+                       
                         <div class="testi-content">
                             <div class="testi-star">
                                 <i class="fa fa-star fa-md"></i>
@@ -2208,23 +2348,21 @@ $(document).ready(function(){
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
 <script>
-    
-
-    
-
     $(document).ready(function(){
         $('.slick-slider').slick({
             infinite: true,
             slidesToShow: 1,
             slidesToScroll: 1,
             autoplay: true,
-            autoplaySpeed: 3000,
-            dots: true,
+            autoplaySpeed: 2000,
+            speed: 800,
+            fade: true,
             arrows: false,
-            fade: true
+            dots: false,
+            pauseOnHover: false
         });
     });
-    </script>
+</script>
 
 
 

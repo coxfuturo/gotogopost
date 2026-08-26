@@ -603,7 +603,7 @@
                                             <li><a href="{{route('pph.login')}}">Prime Process Hub</a></li>
                                             
                                             <li><a href="{{route('deliveryBoy.login')}}">Delivery | Pickup Boy</a></li>
-                                            <li><a href="{{route('customer.login')}}">Bussiness Customer Services</a></li>
+                                            <li><a href="{{route('customer.login')}}">Bussiness Bulk Customer Services</a></li>
                                             <li><a href="{{route('market.login')}}">Sales Marketing Manager</a></li>
                                         </ul>
 
@@ -622,7 +622,7 @@
                                             <li><a href="{{route('pph.register')}}">Prime Process Hub</a></li>
                                                <li><a href="{{route('deliveryBoy.register')}}">Delivery | Pickup Boy</a></li>
                                                <li><a href="{{route('franchise.combo.index')}}">Hub Center</a></li>
-                                               <li><a href="{{route('customer.register')}}">Bussiness Customer Services</a></li>
+                                               <li><a href="{{route('customer.register')}}">Bussiness Bulk Customer Services</a></li>
                                                <li><a href="{{route('market.register')}}">Sales Marketing Manager</a></li>
 
                                         </ul>

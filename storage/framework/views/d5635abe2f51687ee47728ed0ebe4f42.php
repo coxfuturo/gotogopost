@@ -562,7 +562,7 @@
                                             <li><a href="<?php echo e(route('pph.login')); ?>">Prime Process Hub</a></li>
                                             
                                             <li><a href="<?php echo e(route('deliveryBoy.login')); ?>">Delivery | Pickup Boy</a></li>
-                                            <li><a href="<?php echo e(route('customer.login')); ?>">Bussiness Customer Services</a></li>
+                                            <li><a href="<?php echo e(route('customer.login')); ?>">Bussiness Bulk Customer Services</a></li>
                                             <li><a href="<?php echo e(route('market.login')); ?>">Sales Marketing Manager</a></li>
                                         </ul>
 
@@ -581,7 +581,7 @@
                                             <li><a href="<?php echo e(route('pph.register')); ?>">Prime Process Hub</a></li>
                                                <li><a href="<?php echo e(route('deliveryBoy.register')); ?>">Delivery | Pickup Boy</a></li>
                                                <li><a href="<?php echo e(route('franchise.combo.index')); ?>">Hub Center</a></li>
-                                               <li><a href="<?php echo e(route('customer.register')); ?>">Bussiness Customer Services</a></li>
+                                               <li><a href="<?php echo e(route('customer.register')); ?>">Bussiness Bulk Customer Services</a></li>
                                                <li><a href="<?php echo e(route('market.register')); ?>">Sales Marketing Manager</a></li>
 
                                         </ul>
