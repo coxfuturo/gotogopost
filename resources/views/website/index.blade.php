@@ -125,44 +125,33 @@ body {
         height: 100% !important;
     }
 }
-/* Hero Floating Action Buttons */
-.new-track-top {
-    position: absolute;
-    bottom: 25px;
-    left: 0;
-    right: 0;
-    z-index: 10;
-    padding: 0 40px;
-    pointer-events: none;
-}
-
-.new-track-top * {
-    pointer-events: auto;
-}
-
-@media (max-width: 768px) {
-    .new-track-top {
-        position: absolute;
-        bottom: 15px;
-        padding: 0 15px;
-        background: transparent;
-    }
-}
-
-@media (max-width: 576px) {
-    .sliderformshow {
-        width: calc(100vw - 30px) !important;
-        max-width: 340px !important;
-        padding: 16px !important;
-    }
-}
-
-.button-upper {
+/* Welcome Header & Floating Action Buttons */
+.welcome-header-wrapper {
     display: flex;
+    align-items: flex-start;
     justify-content: space-between;
-    align-items: center;
+    gap: 20px;
+    position: relative;
     max-width: 1200px;
     margin: 0 auto;
+}
+
+.welcome-header-wrapper .fh-section-title {
+    flex: 1;
+    text-align: center;
+    margin: 0;
+}
+
+.welcome-header-wrapper .fh-section-title h2 {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-bottom: 20px;
+}
+
+.welcome-header-wrapper .track-order-btn-wrap {
+    position: relative;
+    flex-shrink: 0;
+    margin-top: -3px;
 }
 
 .shipNowButton {
@@ -181,6 +170,8 @@ body {
     box-shadow: 0 8px 24px rgba(217, 37, 29, 0.35) !important;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
     overflow: hidden;
+    flex-shrink: 0;
+    margin-top: -3px;
 }
 
 .shipNowButton::before {
@@ -199,30 +190,32 @@ body {
 }
 
 .sliderBtn {
-    min-width: 165px;
+    min-width: 175px;
     height: 48px;
     border-radius: 10px !important;
-    background-color: var(--charcoal) !important;
+    background-color: var(--primary-red) !important;
+    background-image: linear-gradient(135deg, #e31837 0%, #c8102e 100%) !important;
     color: #ffffff !important;
     font-family: 'Montserrat', sans-serif;
     font-size: 14px !important;
     font-weight: 700 !important;
     letter-spacing: 0.5px;
+    text-transform: uppercase;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    border: 1.5px solid rgba(255, 255, 255, 0.2) !important;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25) !important;
+    border: none !important;
+    box-shadow: 0 8px 24px rgba(217, 37, 29, 0.35) !important;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    padding: 0 20px !important;
 }
 
 .sliderBtn:hover {
-    background-color: var(--slate-dark) !important;
+    background-color: var(--primary-red-hover) !important;
     color: #ffffff !important;
     transform: translateY(-3px) !important;
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35) !important;
-    border-color: rgba(255, 255, 255, 0.4) !important;
+    box-shadow: 0 12px 28px rgba(217, 37, 29, 0.45) !important;
 }
 
 /* Track Order Popup Form Card */
@@ -232,10 +225,101 @@ body {
     background: #ffffff;
     border-radius: 16px;
     box-shadow: 0 20px 45px rgba(0, 0, 0, 0.22);
-    position: relative;
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 12px);
     border: 1px solid rgba(0, 0, 0, 0.08);
-    transform: translateY(300px) rotateX(200deg);
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateY(20px) scale(0.95);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1050;
+}
+
+.sliderformshow.show-popup,
+.sliderformshow.active,
+.sliderformshow[style*="rotateX(0deg)"] {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0px) scale(1) !important;
+}
+
+@media (max-width: 1199px) {
+    .welcomesec .fh-section-title h2 {
+        font-size: 28px !important;
+    }
+    .welcome-header-wrapper .shipNowButton,
+    .welcome-header-wrapper .sliderBtn {
+        min-width: 160px;
+        height: 46px;
+        font-size: 13px !important;
+    }
+    .welcome-header-wrapper .shipNowButton::before {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 991px) {
+    .welcomesec .fh-section-title h2 {
+        font-size: 24px !important;
+    }
+    .welcome-header-wrapper {
+        gap: 12px;
+    }
+    .welcome-header-wrapper .shipNowButton,
+    .welcome-header-wrapper .sliderBtn {
+        min-width: 145px;
+        height: 44px;
+        font-size: 12px !important;
+        padding: 0 10px !important;
+    }
+    .welcome-header-wrapper .shipNowButton::before {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 767px) {
+    .welcome-header-wrapper {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 14px;
+    }
+    .welcome-header-wrapper .fh-section-title {
+        width: 100%;
+        order: 1;
+        margin-bottom: 5px;
+    }
+    .welcome-header-wrapper .shipNowButton {
+        order: 2;
+        min-width: 145px;
+        height: 44px;
+        margin-top: 0;
+    }
+    .welcome-header-wrapper .track-order-btn-wrap {
+        order: 3;
+        margin-top: 0;
+    }
+    .welcome-header-wrapper .sliderBtn {
+        min-width: 145px;
+        height: 44px;
+    }
+    .sliderformshow {
+        width: calc(100vw - 30px) !important;
+        max-width: 340px !important;
+        left: 50% !important;
+        right: auto !important;
+        bottom: calc(100% + 10px) !important;
+        transform: translateX(-50%) translateY(20px) scale(0.95);
+    }
+    .sliderformshow.show-popup,
+    .sliderformshow.active,
+    .sliderformshow[style*="rotateX(0deg)"] {
+        transform: translateX(-50%) translateY(0px) scale(1) !important;
+    }
 }
 
 .custom-close {
@@ -1326,34 +1410,6 @@ body {
         </div>
     </div>
 
-    <div class="new-track-top col-lg-12">
-        <div class="row" style="display: flex; justify-content: end;">
-            <div class="col-md-4" style="position:relative;">
-                <div class="content content-upper sliderformshow">
-                    <button type="button" class="close custom-close sliderformremove" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                    <div class="tab-content-ss">
-                        <div id="1" class="container-fluid tab-pane">
-                            <form action="{{route('website.trackholder')}}">
-                                <div class="form-group m-11">
-                                    <label for="exampleFormControlInput1"><strong>Enter Article No.</strong></label>
-                                    <input type="text" class="form-control is-valid" id="trackOrder" name="trackOrder" placeholder="Enter Article No.">
-                                </div>
-                                <button type="submit" style=" backgrond:     class #1a2674;" class="btn btn-primary font-20 mt-5">submit</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    
-        <div class="button-upper ">
-            <button data-toggle="modal" data-target="#exampleModalCenter" class="shipNowButton">
-            </button>
-            <button type="button" class="sliderBtn fh-btn btn">Track Order</button>
-        </div>
-    </div>
 </div> 
 
 
@@ -1363,14 +1419,27 @@ body {
 @push('script')
 <script>
     $(document).ready(function() {
-        $('.sliderBtn').click(function() {
-            $('.sliderformshow').css('transform', 'translateY(0px) rotateX(0deg)');
-            $('.topcontainerto').css('display', 'block');
+        $('.sliderBtn').click(function(e) {
+            e.stopPropagation();
+            $('.sliderformshow').toggleClass('show-popup');
+            if ($('.sliderformshow').hasClass('show-popup')) {
+                $('.sliderformshow').css('transform', 'translateY(0px) rotateX(0deg)');
+            } else {
+                $('.sliderformshow').css('transform', 'translateY(300px) rotateX(200deg)');
+            }
         });
 
-        $('.sliderformremove').click(function() {
+        $('.sliderformremove').click(function(e) {
+            e.stopPropagation();
+            $('.sliderformshow').removeClass('show-popup');
             $('.sliderformshow').css('transform', 'translateY(300px) rotateX(200deg)');
-            $('.topcontainerto').css('display', 'none');
+        });
+
+        $(document).click(function(e) {
+            if (!$(e.target).closest('.track-order-btn-wrap').length) {
+                $('.sliderformshow').removeClass('show-popup');
+                $('.sliderformshow').css('transform', 'translateY(300px) rotateX(200deg)');
+            }
         });
     });
 </script>
@@ -1687,8 +1756,33 @@ body {
 <!-- Welcome sec -->
 <div class="welcomesec secpadd">
     <div class="container">
-        <div class="fh-section-title clearfix  text-center version-dark paddbtm20">
-            <h2>Welcome to GOTOGO <span class="main-color">POST</span></h2>
+        <div class="welcome-header-wrapper">
+            <button data-toggle="modal" data-target="#exampleModalCenter" class="shipNowButton" type="button">
+            </button>
+            
+            <div class="fh-section-title clearfix text-center version-dark paddbtm20">
+                <h2>Welcome to GOTOGO <span class="main-color">POST</span></h2>
+            </div>
+            
+            <div class="track-order-btn-wrap">
+                <button type="button" class="sliderBtn fh-btn btn">Track Order</button>
+                <div class="content content-upper sliderformshow">
+                    <button type="button" class="close custom-close sliderformremove" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <div class="tab-content-ss">
+                        <div id="1" class="container-fluid tab-pane">
+                            <form action="{{route('website.trackholder')}}">
+                                <div class="form-group m-11">
+                                    <label for="exampleFormControlInput1"><strong>Enter Article No.</strong></label>
+                                    <input type="text" class="form-control is-valid" id="trackOrder" name="trackOrder" placeholder="Enter Article No.">
+                                </div>
+                                <button type="submit" class="btn btn-primary font-20 mt-5">submit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <p class="haeadingpara text-center paddbtm40">GOTOGO POST is more than logistics.
 <br /> We help optimize your packaging, manage material sourcing, and offer much more to support your business.
@@ -1902,8 +1996,9 @@ $(document).ready(function(){
                                                 <option value="4">Gotogo Secure Parcel</option>
                                             </optgroup>
                                             <optgroup label="ALL INDIA-POST SERVICES" class="india-post-group">
-                                                <option value="5">Speed Post-Inland Document</option>
-                                                <option value="6">Speed Post-Parcel Domestic</option>
+                                                <option value="5">SP Inland Domestic</option>
+                                                <option value="6">SP Parcel Domestic</option>
+                                                <option value="6">SP Parcel Business</option>
                                             </optgroup>
                                         </select>
                                     </p>

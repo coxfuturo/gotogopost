@@ -507,7 +507,7 @@
                                     
                                            
                                             <li class="has-children">
-                                                <a href="#">GoToGo Digital Courier Services</a>
+                                                <a href="#">GOTOGO Digital Courier Services</a>
                                                 <ul class="sub-menu">
                                                     <li class="has-children">
                                                         <a href="#">E2E</a>
@@ -625,9 +625,6 @@
         <ul class="menu">
 
             <li class=""><a href="<?php echo e(route('website.index')); ?>">Home</a>
-
-                
-
             </li>
 
             <li class="menu-item-has-children"><a href="#" class="dropdown-toggle">Services</a>
