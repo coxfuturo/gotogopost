@@ -175,7 +175,7 @@ body {
 }
 
 .shipNowButton::before {
-    content: "PICKUP ENQUIRY";
+    content: "PICKUP INQUIRY";
     color: #ffffff;
     font-family: 'Montserrat', sans-serif;
     font-size: 14px;
@@ -492,119 +492,161 @@ body {
 /* Mobile App Compact Horizontal Banner Section (.homecounts) */
 .homecounts.compact-app-banner {
     background: transparent !important;
-    padding: 30px 0 !important;
+    padding: 35px 0 !important;
     position: relative;
 }
 
 .app-banner-card {
-    background: linear-gradient(135deg, #0b132b 0%, #0f172a 60%, #1c2541 100%) !important;
-    border-radius: 16px !important;
+    background: linear-gradient(135deg, #091124 0%, #0d1b3e 50%, #152554 100%) !important;
+    border-radius: 18px !important;
     border: 1px solid rgba(255, 255, 255, 0.12) !important;
-    border-left: 5px solid #ff0000 !important;
-    padding: 28px 36px !important;
-    box-shadow: 0 14px 40px rgba(11, 19, 43, 0.22) !important;
+    border-left: 5px solid var(--primary-red) !important;
+    padding: 32px 40px !important;
+    box-shadow: 0 20px 50px rgba(9, 17, 36, 0.35) !important;
     position: relative !important;
     overflow: hidden !important;
 }
 
+.app-banner-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(227, 24, 55, 0.12) 0%, rgba(16, 44, 128, 0.15) 50%, transparent 70%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.app-banner-content {
+    position: relative;
+    z-index: 2;
+}
+
 .app-banner-title {
     font-family: 'Montserrat', sans-serif !important;
-    font-size: 21px !important;
+    font-size: 23px !important;
     font-weight: 800 !important;
     color: #ffffff !important;
-    margin: 0 0 8px 0 !important;
+    margin: 0 0 10px 0 !important;
     line-height: 1.35 !important;
     letter-spacing: 0.3px !important;
 }
 
+.app-banner-title .main-color {
+    color: var(--primary-red) !important;
+}
+
 .app-banner-desc {
-    font-size: 14.5px !important;
+    font-size: 15px !important;
     color: #cbd5e1 !important;
-    margin: 0 0 18px 0 !important;
-    line-height: 1.5 !important;
+    margin: 0 0 22px 0 !important;
+    line-height: 1.6 !important;
 }
 
 .download-buttons {
     display: flex !important;
     align-items: center !important;
-    gap: 12px !important;
+    gap: 14px !important;
     margin: 0 !important;
 }
 
 .download-buttons a {
-    display: inline-block !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 5px 8px !important;
+    background: rgba(255, 255, 255, 0.07) !important;
+    border: 1px solid rgba(255, 255, 255, 0.16) !important;
+    border-radius: 10px !important;
     margin: 0 !important;
-    transition: transform 0.25s ease, filter 0.25s ease !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
 .download-buttons a:hover {
-    transform: translateY(-2px) scale(1.03) !important;
-    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4)) !important;
+    background: rgba(255, 255, 255, 0.16) !important;
+    border-color: rgba(255, 255, 255, 0.32) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35) !important;
 }
 
 .download-buttons img {
     height: 40px !important;
     width: auto !important;
+    display: block !important;
+}
+
+.app-banner-img-col {
+    position: relative;
+    z-index: 2;
 }
 
 .app-banner-img-wrap {
     display: flex !important;
     justify-content: flex-end !important;
     align-items: center !important;
-    height: 100% !important;
+    width: 100% !important;
 }
 
 .app-banner-img {
-    max-height: 145px !important;
-    width: auto !important;
-    max-width: 100% !important;
+    width: 100% !important;
+    max-width: 420px !important;
+    height: 200px !important;
     object-fit: cover !important;
-    border-radius: 12px !important;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4) !important;
-    border: 2px solid rgba(255, 255, 255, 0.18) !important;
-    transition: transform 0.3s ease !important;
+    object-position: center !important;
+    border-radius: 14px !important;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45) !important;
+    border: 2px solid rgba(255, 255, 255, 0.16) !important;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease !important;
 }
 
 .app-banner-img:hover {
-    transform: scale(1.03) !important;
+    transform: translateY(-3px) scale(1.02) !important;
+    box-shadow: 0 20px 42px rgba(0, 0, 0, 0.55), 0 0 24px rgba(227, 24, 55, 0.25) !important;
 }
 
 @media (max-width: 991px) {
     .app-banner-card {
-        padding: 22px 26px !important;
+        padding: 26px 30px !important;
     }
     .app-banner-title {
-        font-size: 19px !important;
+        font-size: 20px !important;
     }
     .app-banner-img {
-        max-height: 125px !important;
+        height: 180px !important;
+        max-width: 100% !important;
     }
 }
 
 @media (max-width: 767px) {
     .app-banner-card {
-        padding: 20px 20px !important;
+        padding: 24px 20px !important;
     }
     .app-banner-content {
         text-align: center !important;
     }
     .app-banner-title {
-        font-size: 17px !important;
+        font-size: 18px !important;
         text-align: center !important;
     }
     .app-banner-desc {
-        font-size: 13.5px !important;
+        font-size: 14px !important;
         text-align: center !important;
+        margin-bottom: 18px !important;
     }
     .download-buttons {
         justify-content: center !important;
+        flex-wrap: wrap !important;
+        gap: 10px !important;
     }
     .app-banner-img-wrap {
         justify-content: center !important;
-        margin-top: 18px !important;
+        margin-top: 20px !important;
     }
     .app-banner-img {
-        max-height: 130px !important;
+        height: 190px !important;
+        max-width: 100% !important;
     }
 }
 
@@ -820,157 +862,334 @@ body {
 }
 
 /* Pickup Details Modal Styling (#exampleModalCenter) */
-.modal-content {
+#exampleModalCenter.modal {
+    text-align: center;
+    padding: 16px !important;
+    overflow-y: auto !important;
+    z-index: 99999 !important;
+}
+
+#exampleModalCenter.modal::before {
+    content: '';
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+    margin-right: -4px;
+}
+
+#exampleModalCenter .modal-dialog {
+    display: inline-block;
+    text-align: left;
+    vertical-align: middle;
+    width: 100%;
+    max-width: 650px;
+    margin: 20px auto;
+    position: relative;
+    transform: none;
+}
+
+#exampleModalCenter.fade .modal-dialog {
+    opacity: 0;
+    transform: scale(0.96);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease-out;
+}
+
+#exampleModalCenter.fade.in .modal-dialog {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.modal-backdrop {
+    z-index: 99990 !important;
+}
+
+.modal-backdrop.in {
+    opacity: 0.65 !important;
+    background-color: #0b132b !important;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+body.modal-open {
+    overflow: hidden !important;
+    padding-right: 0 !important;
+}
+
+#exampleModalCenter .modal-content {
+    background: #ffffff !important;
     border-radius: 16px !important;
     border: none !important;
-    box-shadow: 0 24px 50px rgba(0, 0, 0, 0.25) !important;
-    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(0, 0, 0, 0.05) !important;
+    overflow: hidden !important;
+    position: relative;
 }
 
-.modal-header {
-    background: var(--primary-red);
-    color: #ffffff;
-    padding: 18px 24px;
-    border-bottom: none;
+#exampleModalCenter .modal-header {
+    background: linear-gradient(135deg, var(--primary-red) 0%, #b91c1c 100%) !important;
+    color: #ffffff !important;
+    padding: 18px 24px !important;
+    border-bottom: none !important;
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
 }
 
-.modal-title {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 18px;
-    font-weight: 700;
-    color: #ffffff;
+#exampleModalCenter .modal-title {
+    font-family: 'Montserrat', sans-serif !important;
+    font-size: 19px !important;
+    font-weight: 700 !important;
+    color: #ffffff !important;
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    letter-spacing: 0.3px !important;
 }
 
-.modal-header .custom-close {
-    top: 16px;
-    right: 20px;
+#exampleModalCenter .pickup-modal-close {
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 50% !important;
     background: rgba(255, 255, 255, 0.2) !important;
     color: #ffffff !important;
+    border: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 22px !important;
+    font-weight: 300 !important;
+    line-height: 1 !important;
+    opacity: 0.9 !important;
+    cursor: pointer !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    outline: none !important;
+    text-shadow: none !important;
 }
 
-.modal-header .custom-close:hover {
-    background: rgba(255, 255, 255, 0.35) !important;
+#exampleModalCenter .pickup-modal-close:hover,
+#exampleModalCenter .pickup-modal-close:focus {
+    background: rgba(255, 255, 255, 0.38) !important;
+    color: #ffffff !important;
+    opacity: 1 !important;
+    transform: scale(1.1) !important;
 }
 
-.modal-body {
-    padding: 24px;
-    background-color: #ffffff;
+#exampleModalCenter .modal-body {
+    padding: 24px 28px !important;
+    background-color: #ffffff !important;
+    max-height: calc(100vh - 180px) !important;
+    overflow-y: auto !important;
+    text-align: left !important;
 }
 
-.input-block label {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    color: #334155;
-    margin-bottom: 6px;
+#exampleModalCenter .input-block {
+    margin-bottom: 16px !important;
+    text-align: left !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    width: 100% !important;
 }
 
-.input-block .form-control {
-    height: 44px;
-    padding: 8px 14px;
-    border: 1.5px solid #cbd5e1;
-    border-radius: 8px;
-    font-size: 14px;
-    color: var(--charcoal);
-    transition: all 0.2s ease;
+#exampleModalCenter .input-block label {
+    font-family: 'Montserrat', sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: #334155 !important;
+    margin: 0 0 6px 0 !important;
+    padding: 0 !important;
+    display: block !important;
+    text-align: left !important;
+    align-self: flex-start !important;
+    width: 100% !important;
+    float: none !important;
 }
 
-.input-block .form-control:focus {
-    border-color: var(--primary-red);
-    box-shadow: 0 0 0 3px rgba(217, 37, 29, 0.12);
+#exampleModalCenter .input-block label .text-danger {
+    color: var(--primary-red) !important;
+    font-weight: 700 !important;
+    margin-left: 2px !important;
 }
 
-.modal-footer {
-    padding: 16px 24px;
-    border-top: 1px solid #f1f5f9;
+#exampleModalCenter .input-block .form-control {
+    height: 44px !important;
+    padding: 8px 14px !important;
+    border: 1.5px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    color: var(--charcoal) !important;
+    background-color: #f8fafc !important;
+    transition: all 0.2s ease !important;
+    box-shadow: none !important;
+    width: 100% !important;
 }
 
-.pickup-submit-btn,
-.modal-footer button[type="submit"] {
-    background: var(--primary-red) !important;
+#exampleModalCenter .input-block .form-control:focus {
+    border-color: var(--primary-red) !important;
+    background-color: #ffffff !important;
+    box-shadow: 0 0 0 3.5px rgba(217, 37, 29, 0.12) !important;
+    outline: none !important;
+}
+
+#exampleModalCenter .input-block .form-control::placeholder {
+    color: #94a3b8 !important;
+    font-size: 13.5px !important;
+}
+
+#exampleModalCenter .modal-footer {
+    padding: 16px 28px !important;
+    background-color: #f8fafc !important;
+    border-top: 1px solid #f1f5f9 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    margin: 0 !important;
+}
+
+#exampleModalCenter .pickup-submit-btn {
+    min-width: 140px !important;
+    height: 44px !important;
+    background: linear-gradient(135deg, var(--primary-red) 0%, #b91c1c 100%) !important;
     color: #ffffff !important;
     font-family: 'Montserrat', sans-serif !important;
     font-size: 14px !important;
     font-weight: 700 !important;
-    padding: 10px 28px !important;
+    letter-spacing: 0.5px !important;
+    text-transform: uppercase !important;
+    padding: 0 24px !important;
     border-radius: 8px !important;
     border: none !important;
-    box-shadow: 0 4px 12px rgba(217, 37, 29, 0.25) !important;
-    transition: all 0.25s ease !important;
+    box-shadow: 0 4px 14px rgba(217, 37, 29, 0.35) !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-.pickup-submit-btn:hover,
-.modal-footer button[type="submit"]:hover {
-    background: var(--primary-red-hover) !important;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(217, 37, 29, 0.35) !important;
+#exampleModalCenter .pickup-submit-btn:hover {
+    background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(217, 37, 29, 0.45) !important;
+}
+
+#exampleModalCenter .pickup-submit-btn:active {
+    transform: translateY(0) !important;
 }
 
 /* Custom Select Dropdown inside Modal */
-.select-card {
-    border: 1.5px solid #cbd5e1 !important;
-    border-radius: 8px !important;
-    padding: 10px 14px !important;
-    box-shadow: none !important;
-    margin: 0 !important;
-    background: var(--bg-light);
-}
-
-.selectLabel {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    color: #334155;
-    margin-bottom: 6px;
-    display: block;
-}
-
-.selectCustom {
+#exampleModalCenter .selectCustom {
     position: relative;
     width: 100%;
 }
 
-.selectCustom-trigger {
+#exampleModalCenter .selectCustom-trigger {
+    height: 44px;
     font-size: 14px;
     font-weight: 500;
     color: var(--charcoal);
-    background-color: #ffffff;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
-    padding: 8px 12px;
+    background-color: #f8fafc;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 10px 14px;
     cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    user-select: none;
 }
 
-.selectCustom-options {
+#exampleModalCenter .selectCustom-trigger::after {
+    content: '\f107';
+    font-family: 'FontAwesome';
+    font-size: 14px;
+    color: #64748b;
+    transition: transform 0.2s ease;
+}
+
+#exampleModalCenter .selectCustom.isActive .selectCustom-trigger {
+    border-color: var(--primary-red);
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3.5px rgba(217, 37, 29, 0.12);
+}
+
+#exampleModalCenter .selectCustom.isActive .selectCustom-trigger::after {
+    transform: rotate(180deg);
+}
+
+#exampleModalCenter .selectCustom-options {
     position: absolute;
-    top: 100%;
+    top: calc(100% + 4px);
     left: 0;
     width: 100%;
     background-color: #ffffff;
-    border: 1px solid #cbd5e1;
+    border: 1.5px solid #e2e8f0;
     border-radius: 8px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-    z-index: 100;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    z-index: 1050;
     display: none;
     max-height: 200px;
     overflow-y: auto;
+    padding: 4px;
 }
 
-.selectCustom.isActive .selectCustom-options {
+#exampleModalCenter .selectCustom.isActive .selectCustom-options {
     display: block;
 }
 
-.selectCustom-option {
-    padding: 10px 14px;
-    font-size: 13px;
+#exampleModalCenter .selectCustom-option {
+    padding: 10px 12px;
+    font-size: 13.5px;
     color: var(--charcoal);
+    border-radius: 6px;
     cursor: pointer;
-    transition: background 0.15s ease;
+    transition: background 0.15s ease, color 0.15s ease;
 }
 
-.selectCustom-option:hover {
-    background-color: #f1f5f9;
+#exampleModalCenter .selectCustom-option:hover {
+    background-color: #fef2f2;
     color: var(--primary-red);
+}
+
+@media (max-width: 767px) {
+    #exampleModalCenter.modal {
+        padding: 12px !important;
+    }
+    #exampleModalCenter .modal-dialog {
+        width: 100%;
+        margin: 10px auto;
+    }
+    #exampleModalCenter .modal-header {
+        padding: 14px 18px !important;
+    }
+    #exampleModalCenter .modal-title {
+        font-size: 17px !important;
+    }
+    #exampleModalCenter .modal-body {
+        padding: 16px 18px !important;
+        max-height: calc(100vh - 140px) !important;
+        text-align: left !important;
+    }
+    #exampleModalCenter .modal-footer {
+        padding: 12px 18px !important;
+    }
+    #exampleModalCenter .pickup-submit-btn {
+        width: 100% !important;
+    }
+    #exampleModalCenter .input-block {
+        margin-bottom: 12px !important;
+        text-align: left !important;
+        align-items: flex-start !important;
+    }
+    #exampleModalCenter .input-block label {
+        text-align: left !important;
+        align-self: flex-start !important;
+    }
 }
 
 /* Testimonials Carousel Section (.testmonial-2) */
@@ -1542,80 +1761,76 @@ body {
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Add Pickup Details</h5>
-                <button type="button" class="close custom-close" data-dismiss="modal" aria-label="Close">
+                <h5 class="modal-title" id="exampleModalLongTitle">
+                    <i class="fa fa-truck" aria-hidden="true"></i> Pickup Inquiry
+                </h5>
+                <button type="button" class="close pickup-modal-close" data-dismiss="modal" aria-label="Close" title="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <div class="modal-body">
-                    <form action="{{route('website.pickupDetailsStore')}}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="input-block mb-3">
-                                    <label class="col-form-label">Name <span class="text-danger">*</span></label>
-                                    <input class="form-control" name="name" placeholder="Enter name" type="text" value="{{old('name')}}" required>
-                                </div>
+                <form action="{{route('website.pickupDetailsStore')}}" method="POST" enctype="multipart/form-data" id="pickupInquiryForm">
+                    @csrf
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <div class="input-block">
+                                <label for="pickup_name">Name <span class="text-danger">*</span></label>
+                                <input class="form-control" id="pickup_name" name="name" placeholder="Enter full name" type="text" value="{{old('name')}}" required>
                             </div>
-                            <div class="col-md-6">
-                                <div class="input-block mb-3">
-                                    <label class="col-form-label">Email <span class="text-danger">*</span></label>
-                                    <input class="form-control" name="email" placeholder="Enter email" type="text" value="{{old('email')}}" required>
-                                </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <div class="input-block">
+                                <label for="pickup_email">Email <span class="text-danger">*</span></label>
+                                <input class="form-control" id="pickup_email" name="email" placeholder="Enter email address" type="email" value="{{old('email')}}" required>
                             </div>
-                            <div class="col-md-6">
-                                <div class="input-block mb-3">
-                                    <label class="col-form-label">Phone <span class="text-danger">*</span></label>
-                                    <input class="form-control" name="phone" placeholder="Enter phone" type="text" value="{{old('phone')}}" required>
-                                </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <div class="input-block">
+                                <label for="pickup_phone">Phone <span class="text-danger">*</span></label>
+                                <input class="form-control" id="pickup_phone" name="phone" placeholder="Enter phone number" type="tel" value="{{old('phone')}}" required>
                             </div>
-                            <div class="col-md-6">
-                                <div class="input-block mb-3">
-                                    <label class="col-form-label">City <span class="text-danger">*</span></label>
-                                    <input class="form-control" id="city" name="city" placeholder="Enter city" type="text" value="{{old('city')}}" required>
-                                </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <div class="input-block">
+                                <label for="city">City <span class="text-danger">*</span></label>
+                                <input class="form-control" id="city" name="city" placeholder="Enter city" type="text" value="{{old('city')}}" required>
                             </div>
-                            <div class="col-md-6">
-                                <div class="input-block mb-3">
-                                    <label class="col-form-label">State <span class="text-danger">*</span></label>
-                                    <input class="form-control" id="state" name="state" placeholder="Enter City" type="text" value="{{old('city')}}" required>
-                                </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <div class="input-block">
+                                <label for="state">State <span class="text-danger">*</span></label>
+                                <input class="form-control" id="state" name="state" placeholder="Enter state" type="text" value="{{old('state')}}" required>
                             </div>
-                            <div class="col-md-6">
-                                <div class="input-block mb-3">
-                                    <label class="col-form-label">Pincode <span class="text-danger">*</span></label>
-                                    <input class="form-control" id="pincode" name="pincode" placeholder="Enter Pincode" type="text" value="{{old('pincode')}}" required>
-                                </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <div class="input-block">
+                                <label for="pincode">Pincode <span class="text-danger">*</span></label>
+                                <input class="form-control" id="pincode" name="pincode" placeholder="Enter 6-digit pincode" type="text" maxlength="6" value="{{old('pincode')}}" required>
                             </div>
-                            <div class="col-md-6">
-                                <div class  align mb-3">
-                                    <label class="col-form-label">Address <span class="text-danger">*</span></label>
-                                    <input class="form-control" name="address" placeholder="Enter Address" type="text" value="{{old('address')}}" required>
-                                </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <div class="input-block">
+                                <label for="pickup_address">Address <span class="text-danger">*</span></label>
+                                <input class="form-control" id="pickup_address" name="address" placeholder="Enter complete address" type="text" value="{{old('address')}}" required>
                             </div>
-                            <div class="col-md-6">
-                                <div class="card">
-                                    <div class="select">
-                                        <span class="selectLabel">Nearest Service Available</span>
-                                        <div class="selectWrapper">
-                                            <div class="selectCustom js-selectCustom">
-                                                <div class="selectCustom-trigger">Select Service Location</div>
-                                                <div class="selectCustom-options">
-
-                                                </div>
-                                            </div>
-                                            <input type="hidden" name="franchiseID" id="serviceLocation">
-                                        </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <div class="input-block">
+                                <label>Nearest Service Available</label>
+                                <div class="selectCustom js-selectCustom">
+                                    <div class="selectCustom-trigger">Select Service Location</div>
+                                    <div class="selectCustom-options">
+                                        <div class="selectCustom-option text-muted" style="pointer-events:none; color:#94a3b8;">Enter pincode to find nearest service</div>
                                     </div>
                                 </div>
+                                <input type="hidden" name="franchiseID" id="serviceLocation">
                             </div>
                         </div>
-                        <div class="modal- footer                           <button style="background: #ff0000;
-                        border: none;" type="submit" class="btn btn-primary">Submit</button>
-                        </div>
-                    </form>
-                </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="pickup-submit-btn">Submit</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -1646,84 +1861,68 @@ body {
                 confirmButtonText: "OK"
             });
         @endif
-    });
-</script>
 
+        // Pincode AJAX lookup
+        $('#pincode').on('input change keyup', function() {
+            var pincode = $(this).val().trim();
+            var city = $('#city').val();
+            var state = $('#state').val();
 
-
-<script>
-    const elSelectCustom = document.getElementsByClassName("js-selectCustom")[0];
-    const elSelectCustomValue = elSelectCustom.children[0];
-    const elSelectCustomOptions = elSelectCustom.children[1];
-    const defaultLabel = elSelectCustomValue.getAttribute("data-value");
-
-    // Listen for each custom option click
-    Array.from(elSelectCustomOptions.children).forEach(function(elOption) {
-        elOption.addEventListener("click", (e) => {
-            // Update custom select text too
-            elSelectCustomValue.textContent = e.target.textContent;
-            // Close select
-            elSelectCustom.classList.remove("isActive");
+            if (pincode.length === 6) {
+                $('.selectCustom-trigger').text('Searching locations...');
+                $.ajax({
+                    url: "{{ route('website.getPinCodes') }}",
+                    type: 'POST',
+                    data: {
+                        pincode: pincode,
+                        city: city,
+                        state: state,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        if (response && response.length > 0) {
+                            let data = response.map((element) => {
+                                let label = element.franchiseInfo.address || element.franchiseInfo.name || 'Branch';
+                                return `<div class="selectCustom-option" data-value="${element.franchiseInfo.id}">${label}</div>`;
+                            }).join('');
+                            $('.selectCustom-options').html(data);
+                            $('.selectCustom-trigger').text('Select Service Location (' + response.length + ' available)');
+                        } else {
+                            $('.selectCustom-options').html('<div class="selectCustom-option text-muted" style="pointer-events:none; color:#94a3b8;">No service location found</div>');
+                            $('.selectCustom-trigger').text('No service location found');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error:", error);
+                        $('.selectCustom-trigger').text('Select Service Location');
+                    }
+                });
+            }
         });
-    });
 
-    // Toggle select on label click
-    elSelectCustomValue.addEventListener("click", (e) => {
-        elSelectCustom.classList.toggle("isActive");
-    });
+        // Custom Select Dropdown Toggle
+        $(document).on('click', '.selectCustom-trigger', function(e) {
+            e.stopPropagation();
+            $('.js-selectCustom').toggleClass('isActive');
+        });
 
-    // close the custom select when clicking outside.
-    document.addEventListener("click", (e) => {
-        const didClickedOutside = !elSelectCustom.contains(event.target);
-        if (didClickedOutside) {
-            elSelectCustom.classList.remove("isActive");
-        }
-    });
-</script>
-<script>
-    $('#pincode').on('change', function() {
-        var pincode = $(this).val();
-        var city = $('#city').val();
-        var state = $('#state').val();
-
-        if (pincode.length === 6) {
-            $.ajax({
-                url: "{{ route('website.getPinCodes') }}",
-                type: 'Post',
-                data: {
-                    pincode: pincode,
-                    city: city,
-                    state: state,
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function(response) {
-                    let data = response.map((element) => {
-                        return `<div class="selectCustom-option" data-value="${element.franchiseInfo.id}">${element.franchiseInfo.address}</div>`;
-                    }).join('');
-                    $('.selectCustom-options').html(data);
-                },
-                error: function(xhr, status, error) {
-                
-                    console.error("Error:", error);
-                }
-            });
-        }
-
-    });
-</script>
-
-<script>
-    $(document).ready(function() {
-        $('.selectCustom').on('click', '.selectCustom-option', function() {
+        // Select Option Click
+        $(document).on('click', '.selectCustom-option', function(e) {
+            e.stopPropagation();
             var selectedValue = $(this).attr('data-value');
-            var selectedText = $(this).text();
-            $('.selectCustom-trigger').text(selectedText);
-            $('#serviceLocation').val(selectedValue);
-            $('.js-selectCustom').removeClass('isActive');
+            if (selectedValue) {
+                var selectedText = $(this).text();
+                $('.selectCustom-trigger').text(selectedText);
+                $('#serviceLocation').val(selectedValue);
+                $('.js-selectCustom').removeClass('isActive');
+            }
         });
 
-        $('.selectCustom-trigger').click(function() {
-            $('.selectCustom-options').toggleClass('isActive');
+        // Close dropdown when clicking outside
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('.js-selectCustom').length) {
+                $('.js-selectCustom').removeClass('isActive');
+            }
         });
     });
 </script>
@@ -2111,7 +2310,7 @@ $(document).ready(function(){
                 <!-- Right Section: App Image -->
                 <div class="col-lg-5 col-md-5 col-sm-12 text-right app-banner-img-col">
                     <div class="app-banner-img-wrap">
-                        <img src="https://plus.unsplash.com/premium_photo-1681760173535-5c82d39ce645?q=80&w=784&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" onerror="this.onerror=null;this.src='{{ asset('website/images/app-img.jpg') }}';" alt="GOTOGOPOST Mobile App" class="app-banner-img">
+                        <img src="{{ asset('website/images/app-banner-mockup.jpg') }}" onerror="this.onerror=null;this.src='{{ asset('website/images/app-img.jpg') }}';" alt="GOTOGOPOST Mobile App" class="app-banner-img">
                     </div>
                 </div>
             </div>
