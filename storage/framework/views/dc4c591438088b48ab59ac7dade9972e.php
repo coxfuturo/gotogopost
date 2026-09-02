@@ -1,58 +1,111 @@
-
 <?php $__env->startSection('content'); ?>
 
-<!-- Scoped Custom CSS for Contact Page -->
+<!-- Scoped Custom CSS for Contact Page Banner & Hover Cards -->
 <style>
-/* Contact Banner */
-.ban_sec {
+/* ==========================================================================
+   1. TOP HERO BANNER (Matches Payment Section Banner Style)
+   ========================================================================== */
+.contact-page-top-hero {
+    position: relative;
     width: 100%;
-    margin-top: 0;
+    height: 300px;
     overflow: hidden;
 }
 
-.contact-banner {
+.contact-hero-bg {
+    position: relative;
     width: 100%;
-    height: 380px;
+    height: 100%;
+}
+
+.contact-hero-img {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    object-position: center;
-    filter: brightness(0.9);
+    object-position: center 35%;
+    filter: brightness(0.8) contrast(1.05);
+    transition: transform 0.6s ease;
 }
 
-/* Contact Breadcrumb Header */
-.contact-page-header {
-    background: linear-gradient(135deg, #0b132b 0%, #1e293b 100%) !important;
-    padding: 24px 0 !important;
+.contact-page-top-hero:hover .contact-hero-img {
+    transform: scale(1.02);
+}
+
+.contact-hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(180deg, rgba(11, 19, 43, 0.4) 0%, rgba(11, 19, 43, 0.85) 100%);
+    display: flex;
+    align-items: center;
+}
+
+.contact-hero-content {
     color: #ffffff;
-    border-bottom: 3px solid #ff0000;
+    font-family: 'Montserrat', sans-serif;
 }
 
-.contact-page-header .breadcrumb {
-    background: transparent !important;
-    padding: 0 !important;
-    margin: 0 !important;
+.contact-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    padding: 6px 18px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+
+.contact-hero-badge i {
+    color: #d9251d;
+}
+
+.contact-hero-title {
+    font-size: 32px;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+    text-transform: uppercase;
+}
+
+.contact-hero-breadcrumb {
     font-size: 14px;
+    font-weight: 500;
+    color: #cbd5e1;
 }
 
-.contact-page-header .breadcrumb a {
-    color: #cbd5e1 !important;
-    text-decoration: none !important;
+.contact-hero-breadcrumb a {
+    color: #ffffff;
+    text-decoration: none;
+    transition: color 0.2s ease;
 }
 
-.contact-page-header .breadcrumb a:hover {
-    color: #ff0000 !important;
+.contact-hero-breadcrumb a:hover {
+    color: #d9251d;
 }
 
-.contact-page-header .breadcrumb span.active-crumb {
-    color: #ffffff !important;
-    font-weight: 600;
+.contact-hero-breadcrumb i {
+    margin: 0 8px;
+    color: #94a3b8;
 }
 
-.contact-page-header .breadcrumb i {
-    margin: 0 10px;
-    color: #64748b;
+.contact-hero-breadcrumb .active-crumb {
+    color: #cbd5e1;
 }
 
-/* Contact Details Section */
+/* ==========================================================================
+   2. CONTACT DETAILS & PREMIUM HOVER CARDS
+   ========================================================================== */
 .contactpagesec {
     padding: 65px 0 !important;
     background-color: #ffffff;
@@ -75,7 +128,7 @@
     left: 0;
     width: 45px;
     height: 4px;
-    background: #ff0000;
+    background: #d9251d;
     border-radius: 2px;
 }
 
@@ -86,38 +139,70 @@
     margin-bottom: 35px !important;
 }
 
-/* Contact Cards */
+/* Modern Card Appearance with Smooth Hover Lift & Reactions */
 .fh-contact-box {
-    background: #f8fafc !important;
+    background: #ffffff !important;
     border: 1px solid #e2e8f0 !important;
-    border-radius: 14px !important;
-    padding: 24px 20px !important;
+    border-radius: 16px !important;
+    padding: 26px 22px !important;
     margin-bottom: 24px !important;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03) !important;
-    transition: all 0.25s ease !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03) !important;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.fh-contact-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: transparent;
+    transition: background 0.3s ease;
 }
 
 .fh-contact-box:hover {
-    transform: translateY(-4px) !important;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08) !important;
-    border-color: #ff0000 !important;
+    transform: translateY(-5px) !important;
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08) !important;
+    border-color: rgba(217, 37, 29, 0.3) !important;
+}
+
+.fh-contact-box:hover::before {
+    background: #d9251d;
 }
 
 .fh-contact-box i.flaticon-pin,
 .fh-contact-box i.flaticon-business,
 .fh-contact-box i.flaticon-phone-call,
 .fh-contact-box i.flaticon-share {
-    font-size: 24px !important;
-    color: #ff0000 !important;
-    margin-bottom: 10px !important;
+    font-size: 26px !important;
+    color: #d9251d !important;
+    margin-bottom: 12px !important;
     display: inline-block;
+    transition: all 0.3s ease !important;
+}
+
+.fh-contact-box:hover i.flaticon-pin,
+.fh-contact-box:hover i.flaticon-business,
+.fh-contact-box:hover i.flaticon-phone-call,
+.fh-contact-box:hover i.flaticon-share {
+    transform: scale(1.1);
+    color: #b91c1c !important;
 }
 
 .fh-contact-box .box-title {
-    font-size: 17px !important;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 18px !important;
     font-weight: 700 !important;
     color: #0b132b !important;
     margin-bottom: 8px !important;
+    transition: color 0.3s ease !important;
+}
+
+.fh-contact-box:hover .box-title {
+    color: #d9251d !important;
 }
 
 .fh-contact-box .desc p {
@@ -136,25 +221,28 @@
 }
 
 .fh-contact-box.type-social ul li a {
-    width: 36px !important;
-    height: 36px !important;
-    border-radius: 50% !important;
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 10px !important;
     background: #0b132b !important;
     color: #ffffff !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
     text-decoration: none !important;
-    font-size: 14px !important;
-    transition: all 0.25s ease !important;
+    font-size: 15px !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
 .fh-contact-box.type-social ul li a:hover {
-    background: #ff0000 !important;
-    transform: translateY(-2px) !important;
+    background: #d9251d !important;
+    transform: translateY(-3px) !important;
+    box-shadow: 0 6px 14px rgba(217, 37, 29, 0.35) !important;
 }
 
-/* Contact Form & Map Section */
+/* ==========================================================================
+   3. CONTACT FORM & MAP SECTION
+   ========================================================================== */
 .contactpagform {
     padding: 65px 0 !important;
     background-color: #f8fafc !important;
@@ -180,7 +268,7 @@
     transform: translateX(-50%);
     width: 50px;
     height: 4px;
-    background: #ff0000;
+    background: #d9251d;
     border-radius: 2px;
 }
 
@@ -209,27 +297,29 @@
 }
 
 .contact-form-card .form-control:focus {
-    border-color: #ff0000 !important;
-    box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1) !important;
+    border-color: #d9251d !important;
+    box-shadow: 0 0 0 3px rgba(217, 37, 29, 0.12) !important;
 }
 
 .contact-form-card button[type="submit"] {
-    background: #ff0000 !important;
+    background: #d9251d !important;
+    background-image: linear-gradient(135deg, #e31837 0%, #c8102e 100%) !important;
     border: none !important;
     color: #ffffff !important;
+    font-family: 'Montserrat', sans-serif !important;
     font-weight: 700 !important;
     font-size: 15px !important;
     padding: 12px 36px !important;
     border-radius: 8px !important;
     cursor: pointer !important;
     transition: all 0.25s ease !important;
-    box-shadow: 0 6px 18px rgba(255, 0, 0, 0.25) !important;
+    box-shadow: 0 6px 18px rgba(217, 37, 29, 0.25) !important;
 }
 
 .contact-form-card button[type="submit"]:hover {
-    background: #cc0000 !important;
+    background: #b91c1c !important;
     transform: translateY(-2px) !important;
-    box-shadow: 0 8px 24px rgba(255, 0, 0, 0.35) !important;
+    box-shadow: 0 8px 24px rgba(217, 37, 29, 0.35) !important;
 }
 
 .map-container {
@@ -247,39 +337,51 @@
     min-height: 420px;
 }
 
+/* Responsive Media Queries */
 @media (max-width: 991px) {
+    .contact-page-top-hero {
+        height: 240px;
+    }
+    .contact-hero-title {
+        font-size: 26px;
+    }
     .map-container {
         margin-top: 30px;
         min-height: 350px;
     }
 }
+
+@media (max-width: 576px) {
+    .contact-page-top-hero {
+        height: 200px;
+    }
+    .contact-hero-title {
+        font-size: 22px;
+    }
+}
 </style>
 
-<section class="ban_sec">
-    <div class="ban_img">
-        <img class="contact-banner" src="<?php echo e(asset('website/images/contactBanner2.jpg')); ?>" alt="banner" />
-    </div>
-</section>
-
-<!--Page Header-->
-<div class="contact-page-header title-area">
-    <div class="breadcrumb-area">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-8 col-sm-12 col-xs-12 site-breadcrumb">
-                    <nav class="breadcrumb">
-                        <a class="home" href="<?php echo e(route('website.index')); ?>"><span>Home</span></a>
-                        <i class="fa fa-angle-right" aria-hidden="true"></i>
-                        <span class="active-crumb">Contact</span>
+<!-- 1. Top Section Hero Banner (Same Style as Payment Section) -->
+<div class="contact-page-top-hero">
+    <div class="contact-hero-bg">
+        <img src="https://images.unsplash.com/photo-1596524430615-b46475ddff6e?auto=format&fit=crop&w=2000&q=85" alt="GOTOGO POST Contact Banner" class="contact-hero-img">
+        <div class="contact-hero-overlay">
+            <div class="container">
+                <div class="contact-hero-content">
+                    <span class="contact-hero-badge"><i class="fa fa-phone"></i> GOTOGO POST</span>
+                    <h1 class="contact-hero-title">CONTACT US</h1>
+                    <nav class="contact-hero-breadcrumb">
+                        <a href="<?php echo e(route('website.index')); ?>">Home</a>
+                        <i class="fa fa-angle-right"></i>
+                        <span class="active-crumb">Contact Us</span>
                     </nav>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<!--Page Header end-->
 
-<!--contact pagesec-->
+<!-- 2. Contact Details Section -->
 <section class="contactpagesec secpadd">
     <div class="container">
         <div class="row">
@@ -292,6 +394,7 @@
                 
                 <div class="row">
                     <div class="col-md-6 col-sm-12">
+                        <!-- Card 1: Address -->
                         <div class="fh-contact-box type-address">
                             <i class="flaticon-pin"></i>
                             <h4 class="box-title">Visit our office</h4>
@@ -299,6 +402,8 @@
                                 <p>Gaur City Mall Office Space - Sector 4, Greater Noida Uttar Pradesh 201318</p>
                             </div>
                         </div>
+
+                        <!-- Card 2: Email -->
                         <div class="fh-contact-box type-email">
                             <i class="flaticon-business"></i>
                             <h4 class="box-title">Mail Us at</h4>
@@ -309,6 +414,7 @@
                     </div>
 
                     <div class="col-md-6 col-sm-12">
+                        <!-- Card 3: Phone -->
                         <div class="fh-contact-box type-phone">
                             <i class="flaticon-phone-call"></i>
                             <h4 class="box-title">Call us on</h4>
@@ -317,6 +423,7 @@
                             </div>
                         </div>
 
+                        <!-- Card 4: Social -->
                         <div class="fh-contact-box type-social">
                             <i class="flaticon-share"></i>
                             <h4 class="box-title">We are social</h4>
@@ -351,7 +458,7 @@
 </section>
 <!--contact end-->
 
-<!--contact form -->
+<!-- 3. Contact Form & Google Map Section -->
 <section class="contactpagform graybg secpadd">
     <div class="container">
         <div class="fh-section-title clearfix f25 text-center version-dark paddbtm40">
@@ -465,5 +572,4 @@
 </script>
 <?php $__env->stopPush(); ?>
 <?php $__env->stopSection(); ?>
-    
 <?php echo $__env->make('website.layouts.master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\coxfuturetech\gotogopost\resources\views/website/contact.blade.php ENDPATH**/ ?>

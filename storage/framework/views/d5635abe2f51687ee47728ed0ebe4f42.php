@@ -341,9 +341,9 @@
     color: #000000 !important;
 }
 
-/* --- Login Main Button Styling --- */
+/* --- Login & Register Main Button Styling (Logo Blue) --- */
 .header-v1 .nav .fh-btn.btn {
-    background: linear-gradient(135deg, #0d6efd, #0b5ed7) !important;
+    background: linear-gradient(135deg, #183b9e, #102c80) !important;
     color: #ffffff !important;
     font-size: 14px;
     font-weight: 600;
@@ -351,7 +351,7 @@
     padding: 9px 22px;
     border-radius: 30px; /* Rounded pill design */
     border: none;
-    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.25);
+    box-shadow: 0 4px 12px rgba(16, 44, 128, 0.25);
     transition: all 0.3s ease;
     display: inline-flex;
     align-items: center;
@@ -359,10 +359,10 @@
     text-transform: capitalize;
 }
 
-/* Hover on Login Button */
+/* Hover on Login & Register Button */
 .header-v1 .nav .fh-btn.btn:hover {
-    background: linear-gradient(135deg, #0b5ed7, #0a58ca) !important;
-    box-shadow: 0 6px 16px rgba(13, 110, 253, 0.35);
+    background: linear-gradient(135deg, #102c80, #0c2263) !important;
+    box-shadow: 0 6px 16px rgba(16, 44, 128, 0.35);
     transform: translateY(-1px);
 }
 
@@ -403,7 +403,7 @@
 /* Link Hover Effect */
 .header-v1 .nav li.has-children .sub-menu a:hover {
     background: #f1f5f9 !important;
-    color: #0d6efd !important;
+    color: #102c80 !important;
     padding-left: 18px; /* Smooth slide effect */
 }
 </style>
@@ -507,7 +507,7 @@
                                     
                                            
                                             <li class="has-children">
-                                                <a href="#">GoToGo Digital Courier Services</a>
+                                                <a href="#">GOTOGO Digital Courier Services</a>
                                                 <ul class="sub-menu">
                                                     <li class="has-children">
                                                         <a href="#">E2E</a>
@@ -562,7 +562,7 @@
                                             <li><a href="<?php echo e(route('pph.login')); ?>">Prime Process Hub</a></li>
                                             
                                             <li><a href="<?php echo e(route('deliveryBoy.login')); ?>">Delivery | Pickup Boy</a></li>
-                                            <li><a href="<?php echo e(route('customer.login')); ?>">Bussiness Bulk Customer Services</a></li>
+                                            <li><a href="<?php echo e(route('customer.login')); ?>">Bussiness Bulk Customer</a></li>
                                             <li><a href="<?php echo e(route('market.login')); ?>">Sales Marketing Manager</a></li>
                                         </ul>
 
@@ -580,8 +580,8 @@
 
                                             <li><a href="<?php echo e(route('pph.register')); ?>">Prime Process Hub</a></li>
                                                <li><a href="<?php echo e(route('deliveryBoy.register')); ?>">Delivery | Pickup Boy</a></li>
-                                               <li><a href="<?php echo e(route('franchise.combo.index')); ?>">Hub Center</a></li>
-                                               <li><a href="<?php echo e(route('customer.register')); ?>">Bussiness Bulk Customer Services</a></li>
+                                               <li><a href="<?php echo e(route('franchise.combo.index')); ?>"> Associate Hub Center</a></li>
+                                               <li><a href="<?php echo e(route('customer.register')); ?>">Bussiness Bulk Customer</a></li>
                                                <li><a href="<?php echo e(route('market.register')); ?>">Sales Marketing Manager</a></li>
 
                                         </ul>
@@ -625,9 +625,6 @@
         <ul class="menu">
 
             <li class=""><a href="<?php echo e(route('website.index')); ?>">Home</a>
-
-                
-
             </li>
 
             <li class="menu-item-has-children"><a href="#" class="dropdown-toggle">Services</a>
