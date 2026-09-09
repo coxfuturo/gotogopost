@@ -162,7 +162,7 @@
 
                     <div class="account-box">
                         <div class="account-wrapper">
-                            <h3 class="account-title mb-3">Franchise Register Form</h3>
+                            <h3 class="account-title mb-3">Bussiness Associate Register </h3>
 
                             <!-- Row -->
 
