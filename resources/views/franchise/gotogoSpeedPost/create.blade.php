@@ -676,7 +676,7 @@
 
                           </li>
 
-                           <li>
+                          <li>
 
                             <div class="col-lg-3 title"><span id="mobilespan"></span> Customer</div>
 
@@ -698,7 +698,6 @@
                             </div>
 
                           </li>
-
                     </ul>
 
                 </div>
@@ -717,17 +716,17 @@
                    <div class="row">
                        <div class="col-sm-4">
                               <div class="d-flex flex-column">
-                                <span>Franchise</span>
-                                <span>Credit Account</span>
-                                <span class="credit-balance">{{ number_format($franchise_details->india_credit_amount, 2) }} Balance</span>
+                                <span>Gotogo Post Account</span>
+                                <span>Credit Amount</span>
+                                <span class="credit-balance">{{ number_format($franchise_details->credit_balance, 2) }} Balance</span>
                               </div>
                        </div>
 
                        <div class="col-sm-4">
                               <div class="d-flex flex-column text-right">
-                                 <span>Franchise</span>
-                                 <span>Advance  Account</span>
-                                 <span class="gotogo-balance">{{ number_format($franchise_details->indiapost_balance, 2) }} Balance</span>
+                                 <span>Gotogo Post Account</span>
+                                 <span>Advance Amount</span>
+                                 <span class="gotogo-balance">{{ number_format($franchise_details->gotogo_balance, 2) }} Balance</span>
                               </div>
                        </div>
 

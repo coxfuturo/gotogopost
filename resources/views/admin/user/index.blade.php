@@ -60,7 +60,7 @@
             <div class="card-body">
                 <div class="table-responsive">
     
-                    <table class="table table-striped custom-table datatable">
+                    <table class="table table-bordered custom-table datatable table-hover">
         
                         <thead>
         
@@ -87,7 +87,7 @@
         
                                 <td>{{$i+1}}</td>
         
-                                <td>
+                                <td class="text-start">
         
                                     <h2 class="table-avatar">
         
@@ -113,9 +113,9 @@
         
                                 <td>{{$user->phone}}</td>
         
-                                <td>{{$user->email}}</td>
+                                <td class="text-start">{{$user->email}}</td>
                                 <td>{{$user->pincode}}</td>
-                                <td>{{$user->address}}</td>
+                                <td class="text-start">{{$user->address}}</td>
         
                                 <td>
         

@@ -69,7 +69,7 @@
                 <!-- Right Column (Content + Barcode) -->
                 <td class="right-column">
                     <p class="bold-text">{{\App\Models\Admin::GOTOGO_POST_SPEED}}</p>
-                    <p class="bold-text" >Franchise NO: <b>{{ $linkDetail->franchise_no }}</b></p>
+                    <p class="bold-text" >Business Associate NO: <b>{{ $linkDetail->franchise_no }}</b></p>
                     <p class="bold-text" >CPH NO: <b>{{ $linkDetail->cms_no }}</b></p>
                     <p class="bold-text" >PPH NO: <b>{{ $linkDetail->pph_no }}</b></p>
 

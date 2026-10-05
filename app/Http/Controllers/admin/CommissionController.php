@@ -1,17 +1,12 @@
 <?php
-
-
-
 namespace App\Http\Controllers\admin;
-
-
-
 use App\Http\Controllers\Controller;
 
 use App\Models\Commission;
 
 use Illuminate\Http\Request;
-
+use App\Models\Franchise;
+use App\Models\FranchiseServiceCommission;
 
 
 
@@ -62,6 +57,48 @@ class CommissionController extends Controller
             'e2hrates' => $e2hrates,
         ]);
     }
+
+   public function franchiseCommission()
+{
+    $franchises = Franchise::select('id', 'franchise_no')
+        ->orderBy('id', 'desc')
+        ->get();
+
+    return view('admin.commission.franchise', compact('franchises'));
+}
+
+public function saveFranchiseCommission(Request $request)
+{
+    $request->validate([
+        'franchise_id' => 'required|exists:franchises,id',
+
+        'commission.1' => 'required|in:5,10,15,20',
+        'commission.3' => 'required|in:5,10,15,20',
+        'commission.4' => 'required|in:5,10,15,20',
+        'commission.5' => 'required|in:5,10,15,20',
+        'commission.6' => 'required|in:5,10,15,20',
+        'commission.9' => 'required|in:5,10,15,20',
+    ]);
+
+    $serviceTypes = [1, 3, 4, 5, 6, 9];
+
+    foreach ($serviceTypes as $serviceType) {
+        FranchiseServiceCommission::updateOrCreate(
+            [
+                'franchise_id' => $request->franchise_id,
+                'service_type' => $serviceType,
+            ],
+            [
+                'commission_rate' => $request->commission[$serviceType],
+                'is_active' => true,
+            ]
+        );
+    }
+
+    return redirect()
+        ->back()
+        ->with('success', 'Franchise commission updated successfully.');
+}
 
 
 

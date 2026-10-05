@@ -646,7 +646,7 @@
                                 <select name="payment_method" id="paymentMethod" class="select form-select"  data-tags="true" data-placeholder="Select an option" required>
 
                                     <option value="">Select an option</option>
-                                    <option value="{{'franchise'}}">Franchise</option>
+                                    <option value="{{'franchise'}}">Business Associate</option>
                                     <option value="{{'manager'}}">S.M. Manager</option>
                                     <!-- <option value="{{'customer'}}">Customer</option> -->
                                     <option value="{{'pickup'}}">Pickup Boy</option>
@@ -717,16 +717,16 @@
                    <div class="row">
                        <div class="col-sm-4">
                               <div class="d-flex flex-column">
-                                <span>Franchise</span>
-                                <span>Credit Account</span>
+                                <span>India Post Account</span>
+                                <span>Credit Amount</span>
                                 <span class="credit-balance">{{ number_format($franchise_details->india_credit_amount, 2) }} Balance</span>
                               </div>
                        </div>
 
                        <div class="col-sm-4">
                               <div class="d-flex flex-column text-right">
-                                 <span>Franchise</span>
-                                 <span>Advance  Account</span>
+                                 <span>India Post Account</span>
+                                 <span>Advance  Amount</span>
                                  <span class="gotogo-balance">{{ number_format($franchise_details->indiapost_balance, 2) }} Balance</span>
                               </div>
                        </div>
@@ -749,9 +749,9 @@
                         <hr>
                         <div class="col-sm-8 my-2">
                               @if(!empty($linkDetails))
-        <div class="">
+        {{-- <div class="">
             <div class="">FO-CODE-{{$linkDetails->franchise_no}}-BNPL-{{$linkDetails->bnpl_no}}-CI-{{$linkDetails->contract_id}}</div>
-        </div>
+        </div> --}}
         @else
         <div class="">
 
@@ -1206,7 +1206,7 @@
 
                     <h5 class="card-title mb-0">Parcel Details</h5>
 
-                    <a href="#" style="min-width: 90px;font-size:14px;" class="btn-price btn add-btn" data-bs-toggle="modal" data-bs-target="#add_support_tickets"></i> Upload</a>
+                    <a href="#" style="min-width: 90px;font-size:14px;" class="btn-price btn add-btn" data-bs-toggle="modal" data-bs-target="#add_support_tickets"></i> Bulk Upload</a>
 
                 </div>
 

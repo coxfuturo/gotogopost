@@ -232,7 +232,7 @@
 
                                 <div style="width:100%;text-align:center">
                                     <li class="d-flex justify-content-between px-3">
-                                        <div class="document-title">Franchise Image</div>
+                                        <div class="document-title">Business Associate Image</div>
                                         <div data-bs-toggle="modal" data-bs-target="#franchise_view"><button class="btn btn-sm btn-dark">View</button></div>
                                     </li>
 
@@ -388,7 +388,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-header">
-                        <h3>Franchise Image</h3>
+                        <h3>Business Associate Image</h3>
                     </div>
                     <div class="modal-btn delete-action">
                         <div class="row">
@@ -642,8 +642,8 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="input-block mb-3">
-                                        <label class="col-form-label">Father/Husband Name</label>
-                                        <input type="text" class="form-control" name="father_name" value="{{$franchise->father_name}}" required>
+                                        <label class="col-form-label">Director/Owner Name</label>
+                                        <input type="text" class="form-control" name="Director/Owner Name" value="{{$franchise->father_name}}" required>
                                     </div>
                                 </div>
                                 <div class="col-md-4">

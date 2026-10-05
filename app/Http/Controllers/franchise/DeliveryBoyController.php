@@ -35,7 +35,7 @@ class DeliveryBoyController extends Controller
 
         // return  $datas;
 
-        return view('franchise.delboy.index', compact('datas'));
+        return view('franchise.dailyBookingReport.delboy.index', compact('datas'));
     }
 
     public function create(Request $request)

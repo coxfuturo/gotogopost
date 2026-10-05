@@ -708,12 +708,27 @@ class IndiaPostRegisteredController extends Controller
             $franchise->increment('remaining_balance', $commission);
             $franchise->save();
 
-            FranchiseCommissionDetail::create([
-                "franchise_id" => $franchiseId,
-                "service_type" => IndiaPostRegisteredParcel::SERVICE_TYPE_INDIA_POST_REGISTERED,
-                "amount" => $payment_amount,
-                "commission" => $commission,
-            ]);
+          // Franchise-specific commission
+$serviceType = IndiaPostRegisteredParcel::SERVICE_TYPE_INDIA_POST_REGISTERED;
+
+$netAmount = $payment_amount / 1.18;
+
+$commissionData = $rateCalculater->calculateFranchiseCommission(
+    $franchiseId,
+    $serviceType,
+    $netAmount
+);
+
+$commissionRate = $commissionData['rate'];
+$commission = $commissionData['commission'];
+
+FranchiseCommissionDetail::create([
+    "franchise_id" => $franchiseId,
+    "service_type" => $serviceType,
+    "amount" => $netAmount,
+    "commission" => $commission,
+    "commission_rate" => $commissionRate,
+]);
 
             $franchiseSeriesDetails = FranchiseBarcodeSeries::where("franchise_id", $franchiseId)->first();
 

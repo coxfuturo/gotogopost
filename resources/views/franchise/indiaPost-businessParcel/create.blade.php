@@ -588,9 +588,9 @@
                                 <select name="payment_method" id="paymentMethod" class="select form-select"  data-tags="true" data-placeholder="Select an option" required>
 
                                     <option value="">Select an option</option>
-                                    <option value="{{'franchise'}}">Franchise</option>
+                                    <option value="{{'franchise'}}">Business Associate</option>
                                     <option value="{{'manager'}}">S.M. Manager</option>
-                                    <!-- <option value="{{'customer'}}">Customer</option> -->
+                                    <option value="{{'customer'}}">Business Bulk</option>
                                     <option value="{{'pickup'}}">Pickup Boy</option>
 
                                 </select>
@@ -619,7 +619,7 @@
 
                             <li>
 
-                            <div class="col-lg-3 title"><span id="mobilespan"></span> Customer</div>
+                            <div class="col-lg-3 title"><span id="mobilespan"></span> Business Bulk</div>
 
                             <div class="col-lg-8">
                                 <select name="payment_type_cod" id="paymentType" class="select form-select"  data-tags="true" data-placeholder="Select an option" required>
@@ -653,7 +653,7 @@
                    <div class="row">
                        <div class="col-sm-4">
                               <div class="d-flex flex-column">
-                                <span>Franchise</span>
+                                <span>India Post Account</span>
                                   <span>Credit Account</span>
                                   <span class="credit-balance">{{ number_format($franchise_details->india_credit_amount, 2) }}</span>
                               </div>
@@ -662,7 +662,7 @@
 
                        <div class="col-sm-4">
                               <div class="d-flex flex-column text-right">
-                                 <span>Franchise</span>
+                                 <span>India Post Account</span>
                                  <span>Advance  Account</span>
                                  <span class="gotogo-balance">{{ number_format($franchise_details->indiapost_balance, 2) }}</span>
                               </div>
@@ -676,9 +676,9 @@
                         <hr>
                        <div class="col-sm-8 my-2" >
                                @if(!empty($linkDetails))
-        <div class="">
+        {{-- <div class="">
             <div class="">FO-CODE-{{$linkDetails->franchise_no}}-BNPL-{{$linkDetails->bnpl_no}}-CI-{{$linkDetails->contract_id}}</div>
-        </div>
+        </div> --}}
         @else
         <div class="">
 
@@ -688,14 +688,14 @@
 
   <label class="form-check getPrice" style="flex: 1; display: flex; align-items: center; justify-content: space-between; border: 1px solid gray; padding: 10px; border-radius: 5px; cursor: pointer;">
     <div>
-      Surface <span id="texteconomic" style="color: green;">Rs.0</span>
+      Air <span id="texteconomic" style="color: green;">Rs.0</span>
     </div>
     <input class="form-check-input economic" type="radio" name="fastest" value="1">
   </label>
 
   <label class="form-check getPrice" style="flex: 1; display: flex; align-items: center; justify-content: space-between; border: 1px solid gray; padding: 10px; border-radius: 5px; cursor: pointer;">
     <div>
-      Air <span id="textfastest" style="color: blue;">Rs.0</span>
+     Surface <span id="textfastest" style="color: blue;">Rs.0</span>
     </div>
     <input class="form-check-input fastest" type="radio" name="fastest" value="2" >
   </label>

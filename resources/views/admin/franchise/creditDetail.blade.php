@@ -114,24 +114,19 @@
     </div>
 </form>
 
-
-
 <div class="row">
-    <div class="col-md-12">
-
-        
+    <div class="col-md-12">        
         <div class="card">
             <div class="card-body">
                 <ul class="list-unstyled d-flex justify-content-between" style="flex-wrap:wrap">
-                    <li><strong>Franchise No:</strong> {{ $franchiseDetails->franchise_no }}</li>
+                    <li><strong>Business Associate No:</strong> {{ $franchiseDetails->franchise_no }}</li>
                     <li><strong>Name:</strong> {{ $franchiseDetails->name }}</li>
                     <li><strong>Pincode:</strong> {{ $franchiseDetails->pincode }}</li>
-            
                 </ul>
                 <ul class="list-unstyled d-flex justify-content-between" style="flex-wrap:wrap">
                     <li><strong>Mobile:</strong> {{ $franchiseDetails->mobile }}</li>
                     <li><strong>Total Credit:</strong> {{ $data->sum('credit_amount') }}</li>
-                    <li><strong>GOTOGO Balance:</strong> {{ $franchiseDetails->gotogo_balance  }}</li>
+                    <li><strong>Gotogo Balance:</strong> {{ $franchiseDetails->gotogo_balance  }}</li>
                 </ul>
                 <div class="table-responsive table-newdatatable" id="franchise_daily_booking_report">
                     <table class="table table-new custom-table mb-0 datatable">
@@ -154,15 +149,12 @@
                             @endforeach
                         </tbody>
                     </table>
-                    
-                    
                 </div>
             </div>
         </div>
        
     </div>
 </div>
-
 
 <!-- Price Modal -->
 <div class="modal fade" id="priceModal" tabindex="-1" aria-labelledby="priceModalLabel" aria-hidden="true">
@@ -178,11 +170,10 @@
                      <div class="mb-3">
                         <label for="select" class="form-label">Select Credit Type</label><br>
                         <select name="type" class="form-form" style="width:100%">
-                            <option value="gotogo">Gotogo Credit</option>
-                            <option value="indiaPost">India Post Credit</option>
+                            <option value="gotogo">Gotogo Post Services Credit Amount</option>
+                            <option value="indiaPost">India Post Services Credit Amount</option>
                         </select>
                     </div>
-
                     <div class="mb-3">
                         <label for="price" class="form-label">Credit</label>
                         <input type="text" class="form-control" name="amount" id="price" placeholder="Enter amount">
@@ -194,15 +185,6 @@
     </div>
 </div>
 
-
-
-
-
-
-
-
-
-
 @push('page-javascript')
 <script>
     $(document).ready(function(){
@@ -211,9 +193,6 @@
         });
     });
 </script>
-
-
-
 
 @endpush
 

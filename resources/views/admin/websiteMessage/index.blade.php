@@ -16,7 +16,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-striped custom-table datatable">
+                    <table class="table table-bordered custom-table datatable table-hover">
                         <thead>
                             <tr>
                                 <th>SN#</th>
@@ -32,10 +32,10 @@
                             @foreach($website_message as $data)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td class="text-center">{{ $data->name }}</td>
-                                <td class="text-center">{{ $data->phone }}</td>
-                                <td class="text-center">{{ $data->email }}</td>
-                                <td class="text-center">{{ $data->option }}</td>
+                                <td class="text-start">{{ $data->name }}</td>
+                                <td class="text-start">{{ $data->phone }}</td>
+                                <td class="text-start">{{ $data->email }}</td>
+                                <td class="text-start">{{ $data->option }}</td>
                                 <td>{{ \Illuminate\Support\Str::limit($data->message, 100) }}</td>
                                 <td class="text-end">
                                     <a href="javascript:void(0);" class="text-danger" onclick="delete_modal({{ $data->id }})">

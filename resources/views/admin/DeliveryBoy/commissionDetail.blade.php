@@ -143,10 +143,10 @@
                                 <th>#</th>
                                 <th class="text-center">Date</th>
                                 <th class="text-center">Service Type</th>
-                                <th class="text-center">Prepaid Amount</th>
+                                <th class="text-center">Advance Amount</th>
                                 <th class="text-center">COD Amount</th>
                                 <th class="text-center">Total Amount</th>
-                                <th class="text-center">Prepaid Commission</th>
+                                <th class="text-center">Advance Commission</th>
                                 <th class="text-center">COD Commission</th>
                                 <th class="text-center">Total Commission</th>
                             </tr>

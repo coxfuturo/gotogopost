@@ -48,6 +48,7 @@ use App\Models\GotogoLink;
 
 
 
+
 class GotogoSpeedPostController extends Controller
 
 {

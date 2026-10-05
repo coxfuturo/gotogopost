@@ -66,18 +66,18 @@
 
 <body>
     <div class="container">
-        <h1>Commission and CPH Details</h1>
+        <h1>Commission and P.O/CPH Details</h1>
 
         <!-- pph Details Table -->
         <div class="table-container">
-            <h2>CPH Details</h2>
+            <h2>P.O/CPH Details</h2>
 
             <table class="border">
                 <tr>
                     <td class="border">
                         <table>
                             <tr>
-                                <th>CPH No</th>
+                                <th>P.O/CPH No</th>
                                 <td>{{ $pphDetails->cms_no }}</td>
                             </tr>
                             <tr>
@@ -85,7 +85,7 @@
                                 <td>{{ $pphDetails->name }}</td>
                             </tr>
                             <tr>
-                                <th>Father's Name</th>
+                                <th>Director/Owner Name</th>
                                 <td>{{ $pphDetails->father_name }}</td>
                             </tr>
                             <tr>

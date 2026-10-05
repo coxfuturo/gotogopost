@@ -12,7 +12,7 @@
 
         <meta name="author" content="Dreamguys - Bootstrap Admin Template" />
 
-        <title>E-Customer|Register</title>
+        <title>Sales Marketing manager|Register</title>
 
         <link href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/8.11.8/sweetalert2.min.css" rel="stylesheet" type="text/css" />
 
@@ -191,7 +191,7 @@
 
                     <div class="account-box">
                         <div class="account-wrapper">
-                            <h3 class="account-title mb-3">E-Customer Services Register Form</h3>
+                            <h3 class="account-title mb-3">S.M.Manager Update Form</h3>
 
                             <!-- Row -->
 

@@ -4,20 +4,10 @@
 
 @section('content')
 
-
-
 @push('add-modal-code')
-
 
 @endpush
 
-
-
-
-
-
-
-<!-- Search Filter -->
 <div class="row">
 
     <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
@@ -34,11 +24,6 @@
         </div>
     </div>
 </div>
-<!-- /Search Filter -->
-
-
-
-
 
 <div class="row">
 

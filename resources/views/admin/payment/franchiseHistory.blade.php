@@ -1,17 +1,9 @@
 @extends('admin.layouts.master')
-
 @section('title') Franchise Register Payment Report @endsection
-
 @section('content')
-
 @push('add-modal-code')
-
 @endpush
-
-
 @push('add-modal-code')
-
-
 @endpush
 
 <style>
@@ -41,7 +33,7 @@
         display: block;
     } 
 
-     .table-newdatatable .dataTables_length {
+    .table-newdatatable .dataTables_length {
         display: block;
     }
 
@@ -77,54 +69,45 @@
         margin: 0 !important;
     }
 </style>
-        <form action="{{ route('admin.franchise.paymentHistory', ['membertype' => 'franchise']) }}" method="GET">
-            <div class="row">
-                <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-                    <div class="input-block mb-3 form-focus">
-                        <div class="cal-icon">
-                            <!-- Add 'name' attribute to input field -->
-                            <input class="form-control floating datetimepicker start_date" value="{{ request()->get('start_date') }}" type="text" name="start_date" />
-                        </div>
-                        <label class="focus-label">Start Date</label>
-                    </div>
+<form action="{{ route('admin.franchise.paymentHistory', ['membertype' => 'franchise']) }}" method="GET">
+    <div class="row">
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            <div class="input-block mb-3 form-focus">
+                <div class="cal-icon">
+                    <!-- Add 'name' attribute to input field -->
+                    <input class="form-control floating datetimepicker start_date" value="{{ request()->get('start_date') }}" type="text" name="start_date" />
                 </div>
-                <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-                    <div class="input-block mb-3 form-focus">
-                        <div class="cal-icon">
-                            <!-- Add 'name' attribute to input field -->
-                            <input class="form-control floating datetimepicker end_date" value="{{ request()->get('end_date') }}" type="text" name="end_date" />
-                        </div>
-                        <label class="focus-label">End Date</label>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-1">
-                    <div class="d-grid d-flex">
-                        <button type="submit" class="btn btn-success">Search</button> &nbsp;&nbsp;
-                        <a href="{{ route('admin.franchise.paymentHistory', ['membertype' => 'franchise']) }}" class="btn btn-sm btn-danger" data-toggle="tooltip" data-original-title="Reset">
-                            <i class="fa-regular fa-trash-can m-r-5 mt-2"></i>
-                        </a>
-                    </div>
-                </div>
-
-                 <div class="col-5 text-end">
-                     <h4><b>Total Amount: <span style="color:#fc6075">{{$total}}</b></span></h4>
-                </div>
-                
+                <label class="focus-label">Start Date</label>
             </div>
-        </form>
-    </div>
-
-
-
-
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            <div class="input-block mb-3 form-focus">
+                <div class="cal-icon">
+                    <!-- Add 'name' attribute to input field -->
+                    <input class="form-control floating datetimepicker end_date" value="{{ request()->get('end_date') }}" type="text" name="end_date" />
+                </div>
+                <label class="focus-label">End Date</label>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-1">
+            <div class="d-grid d-flex">
+                <button type="submit" class="btn btn-success">Search</button> &nbsp;&nbsp;
+                <a href="{{ route('admin.franchise.paymentHistory', ['membertype' => 'franchise']) }}" class="btn btn-sm btn-danger" data-toggle="tooltip" data-original-title="Reset">
+                    <i class="fa-regular fa-trash-can m-r-5 mt-2"></i>
+                </a>
+            </div>
+        </div>
+        <div class="col-5 text-end">
+           <h4><b>Total Amount: <span style="color:#fc6075">{{$total}}</b></span></h4>
+       </div>
+   </div>
+</form>
+</div>
 
 <div class="row">
-    <div class="col-md-12">
-
-        
+    <div class="col-md-12">        
         <div class="card">
             <div class="card-body">
-                
                 <div class="table-responsive table-newdatatable" id="franchise_daily_booking_report">
                     <table class="table table-striped custom-table datatable">
                         <thead>
@@ -141,39 +124,25 @@
                         </thead>
 
                         @foreach($paymentHistory as $index => $value)
-                            <tr>
-                                <td>{{ $index + 1 }}</td>
-                                <td>{{ $value->franchise->name }}</td>
-                                <td>{{ $value->franchise->email }}</td>
-                                <td>{{ $value['amount'] }}</td>
-                                <td>{{ $value['razorpay_payment_id'] }}</td>
-                                <td>{{ $value['status'] }}</td>
-                                <td>{{ \Carbon\Carbon::parse($value->created_at)->format('d-m-Y') }}</td>
-                                <td>
-                                 <button  onClick="print({{$value->id}})" style="margin-right:10px;" class="btn add-btn">Print</button>
-                                 </td>
-                            </tr>
-                            @endforeach
-                       
-                    </table>
-                    
-                    
-                </div>
-            </div>
-        </div>
-       
-    </div>
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $value->franchise->name }}</td>
+                            <td>{{ $value->franchise->email }}</td>
+                            <td>{{ $value['amount'] }}</td>
+                            <td>{{ $value['razorpay_payment_id'] }}</td>
+                            <td>{{ $value['status'] }}</td>
+                            <td>{{ \Carbon\Carbon::parse($value->created_at)->format('d-m-Y') }}</td>
+                            <td>
+                               <button  onClick="print({{$value->id}})" style="margin-right:10px;" class="btn add-btn">Print</button>
+                           </td>
+                       </tr>
+                       @endforeach
+                   </table>
+               </div>
+           </div>
+       </div>
+   </div>
 </div>
-
-
-
-
-
-
-
-
-
-
 
 @push('page-javascript')
 
@@ -192,21 +161,16 @@
                 iframe.style.height = '0';
                 iframe.style.border = 'none';
                 document.body.appendChild(iframe);
-
                 iframe.contentDocument.open();
                 iframe.contentDocument.write(response.otherPageContent);
                 iframe.contentDocument.close();
-
                 iframe.contentWindow.focus();
                 iframe.contentWindow.print();
-
                 document.body.removeChild(iframe);
             }
         });
     }
 </script>
 
-
 @endpush
-
 @endsection

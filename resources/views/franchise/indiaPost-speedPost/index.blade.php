@@ -357,15 +357,15 @@ document.addEventListener("click", function () {
                             <label style="width: 220px;" class="label">
                                 or <span class="browse-files">
                                     <input type="file" class="default-file-input" name="file" />
-                                    <span class="browse-files-text">browse file</span>
-                                    <span>from device</span>
+                                    <span class="browse-files-text">Browse File</span>
+                                    <span>From Device</span>
                                 </span>
                             </label>
                         </div>
                         <div class="file-block">
                             <div class="file-info">
-                                <span class="material-icons-outlined file-icon">description</span> <span class="file-name"> </span> | <span class="file-size"> </span>
-                                <span class="material-icons remove-file-icon">delete</span>
+                                <span class="material-icons-outlined file-icon">Description</span> <span class="file-name"> </span> | <span class="file-size"> </span>
+                                <span class="material-icons remove-file-icon">Delete</span>
                             </div>
                         </div>
                         <a href="{{route('franchise.india-post-speed-post.downloadForamt')}}">

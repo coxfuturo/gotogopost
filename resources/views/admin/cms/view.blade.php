@@ -97,7 +97,7 @@
                                 <div class="profile-info-left">
                                     <h3 class="user-name m-t-0 mb-0">{{$data->name}}</h3>
                                     <h5 class="">Name : {{$data->name}}</h5>
-                                    <h5 class="">Father Name : {{$data->father_name}}</h5>
+                                    <h5 class="">Director/Owner Name : {{$data->father_name}}</h5>
                                     <div class="staff-id">ID : {{$data->generated_id}}</div>
                                     <div class="staff-id">CMS NO : {{$data->cms_no}}</div>
                                     <div class="doj ">Date of registration : {{date('d M Y',strtotime($data->created_at))}}</div>
@@ -779,13 +779,13 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="input-block mb-3">
-                                        <label class="col-form-label">Father/Husband Name</label>
+                                        <label class="col-form-label">Director/Owner Name</label>
                                         <input type="text" class="form-control" name="father_name" value="{{$data->father_name}}" required>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="input-block mb-3">
-                                        <label class="col-form-label">Phone Number</label>
+                                        <label class="col-form-label">Firm/Company/Mobile Number</label>
                                         <input type="text" class="form-control" name="mobile" value="{{$data->mobile}}" required>
                                     </div>
                                 </div>

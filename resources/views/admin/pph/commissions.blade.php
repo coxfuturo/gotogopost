@@ -78,17 +78,17 @@
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive table-newdatatable" id="franchise_daily_booking_report">
-                    <table class="table table-new custom-table mb-0 datatable">
+                    <table class="table table-bordered custom-table datatable table-hover">
                         <thead>
                             <tr>
-                                <th>#</th>
-                                <th>PPH No</th>
+                                <th class="text-center">Sr.no.</th>
+                                <th>PPH No.</th>
                                 <th>Name</th>
                                 <th>Mobile</th>
                                 <th>Email</th>
                                 <th>Pincode</th>
                                 <th>Commission</th>
-                                <th></th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -96,13 +96,13 @@
                             @foreach($data as $index => $value)
                             <tr>
                                 <td>{{ $index + 1 }}</td>
-                                <td>{{ $value['pph_no'] }}</td>
-                                <td>{{ $value['name'] }}</td>
-                                <td>{{ $value['mobile'] }}</td>
-                                <td>{{ $value['email'] }}</td>
-                                <td>{{ $value['pincode'] }}</td>
-                                <td>{{ $value['commission'] }}</td>
-                                <td>
+                                <td class="text-start">{{ $value['pph_no'] }}</td>
+                                <td class="text-start">{{ $value['name'] }}</td>
+                                <td class="text-start">{{ $value['mobile'] }}</td>
+                                <td class="text-start">{{ $value['email'] }}</td>
+                                <td class="text-start">{{ $value['pincode'] }}</td>
+                                <td class="text-start">{{ $value['commission'] }}</td>
+                                <td class="text-start">
                                     <a class="custom-button" href="{{ route('admin.pph.commissionDetail', ['id' => $value->id]) }}">
                                         <i class="fa fa-eye"></i> View
                                     </a>

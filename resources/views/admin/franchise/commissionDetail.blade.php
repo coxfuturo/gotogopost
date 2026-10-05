@@ -10,9 +10,7 @@
 </div>
 @endpush
 
-
 @push('add-modal-code')
-
 
 @endpush
 
@@ -129,7 +127,7 @@
         <div class="card">
             <div class="card-body">
                 <ul class="list-unstyled d-flex justify-content-between" style="flex-wrap:wrap">
-                    <li><strong>Franchise No:</strong> {{ $franchiseDetails->franchise_no }}</li>
+                    <li><strong>Business Associate No:</strong> {{ $franchiseDetails->franchise_no }}</li>
                     <li><strong>Name:</strong> {{ $franchiseDetails->name }}</li>
                     <li><strong>Pincode:</strong> {{ $franchiseDetails->pincode }}</li>
                     <li><strong>Mobile:</strong> {{ $franchiseDetails->mobile }}</li>
@@ -143,10 +141,10 @@
                                 <th>#</th>
                                 <th class="text-center">Date</th>
                                 <th class="text-center">Service Type</th>
-                                <th class="text-center">Prepaid Amount</th>
+                                <th class="text-center">Advance Amount</th>
                                 <th class="text-center">COD Amount</th>
                                 <th class="text-center">Total Amount</th>
-                                <th class="text-center">Prepaid Commission</th>
+                                <th class="text-center">Advance Commission</th>
                                 <th class="text-center">COD Commission</th>
                                 <th class="text-center">Total Commission</th>
                             </tr>
@@ -218,28 +216,13 @@
                             </tr>
                         </tbody>
                     </table>
-                </div>
-                
+                </div>  
             </div>
         </div>
-
-
-
     </div>
 </div>
 
-
-
-
-
-
-
-
-
-
-
 @push('page-javascript')
-
 
 <script>
     $('#print').on('click', function() {
@@ -273,8 +256,6 @@
         });
     });
 </script>
-
-
 
 @endpush
 

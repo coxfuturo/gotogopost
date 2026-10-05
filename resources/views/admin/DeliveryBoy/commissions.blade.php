@@ -4,11 +4,7 @@
 
 @section('content')
 
-
-
-
 @push('add-modal-code')
-
 
 @endpush
 
@@ -72,16 +68,15 @@
     }
 </style>
 
-
 <div class="row">
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive table-newdatatable" id="franchise_daily_booking_report">
-                    <table class="table table-new custom-table mb-0 datatable">
+                    <table class="table table-bordered custom-table datatable table-hover">
                         <thead>
                             <tr>
-                                <th>#</th>
+                                <th class="text-center">Sr. No.</th>
                                 <th>DeliveryBoy No</th>
                                 <th>Name</th>
                                 <th>Mobile</th>
@@ -97,15 +92,15 @@
                             @foreach($data as $index => $value)
                             <tr> 
                                 <td>{{ $index + 1 }}</td>
-                                <td>{{ $value['delivery_boy_no'] }}</td>
-                                <td>{{ $value['name'] }}</td>
-                                <td>{{ $value['mobile'] }}</td>
-                                <td>{{ $value['email'] }}</td>
-                                <td>{{ $value['pincode'] }}</td>
-                                <td>{{ $value['wallet_balance'] }}</td>
-                                <td>{{ $value['commission'] ?? 'N/A' }}</td>
-                                <td>{{ $value['remaining_balance'] ?? 0 }}</td>
-                                <td>
+                                <td class="text-start">{{ $value['delivery_boy_no'] }}</td>
+                                <td class="text-start">{{ $value['name'] }}</td>
+                                <td class="text-start">{{ $value['mobile'] }}</td>
+                                <td class="text-start">{{ $value['email'] }}</td>
+                                <td class="text-start">{{ $value['pincode'] }}</td>
+                                <td class="text-start">{{ $value['wallet_balance'] }}</td>
+                                <td class="text-start">{{ $value['commission'] ?? 'N/A' }}</td>
+                                <td class="text-start">{{ $value['remaining_balance'] ?? 0 }}</td>
+                                <td class="text-start">
                                     <a class="custom-button" href="{{ route('admin.deliveryBoy.commissionDetail', ['id' => $value['id']]) }}" >
                                         <i class="fa fa-eye"></i> View
                                     </a>
@@ -178,9 +173,6 @@
         });
     }
 </script>
-
-
-
 
 @endpush
 

@@ -16,19 +16,12 @@ Route::group([
     });
 
     Route::controller(PrepaidController::class)->group(function () {
-        
-        // ✅ ADD THIS LINE - Profile route
         Route::get('/prepaid/profile', 'showProfile')->name('prepaid.profile');
-        
-        // ✅ Existing routes
         Route::get('/booking/downloadTableForCreatedTable', 'downloadTableForCreatedTable')
-            ->name('prepaid.booking.downloadTableForCreatedTable');
-            
+        ->name('prepaid.booking.downloadTableForCreatedTable');
         Route::get('/booking/short-print', 'shortPrintForCreatedParcel')
-            ->name('prepaid.booking.shortPrintForCreatedParcel');
-            
-        // ❗ Dynamic route last me
+        ->name('prepaid.booking.shortPrintForCreatedParcel');            
         Route::get('/booking/{type}', 'index')
-            ->name('prepaid.booking.index');
+        ->name('prepaid.booking.index');
     });
 });

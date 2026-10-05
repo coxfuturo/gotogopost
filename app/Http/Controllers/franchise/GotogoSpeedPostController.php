@@ -7,6 +7,7 @@ use App\Models\GotogoSpeedPostParcel;
 use App\Models\GotogoSpeedPostTrackOrder;
 use App\Models\PickupDetails;
 use App\Models\Franchise;
+use App\Models\ECustomer;
 use App\Models\GotogoLink;
 use App\Models\FranchiseCommissionDetail;
 use Illuminate\Http\Request;
@@ -355,40 +356,53 @@ class GotogoSpeedPostController extends Controller
 
 
     public function create()
+{
 
-    {
-
-        // $barcode_no = "US200000039CO";
-        // // $barcode_no = "323456";
-
-        // $generator = new BarcodeGeneratorPNG();
-        // $barcode = $generator->getBarcode($barcode_no, $generator::TYPE_CODE_128);
-        // $barcode_image_src = base64_encode($barcode);
-
-
-        // return view('franchise.gotogoSpeedPost.create', [
-        //     'pickupDetails' => $pickupDetails,
-        //     'franchise_details' => $franchise_details,
-        //     'linkDetails' => $linkDetail,
-        //     'barcodeAvailable' => $barcodeAvailable
-        // ]);
+    $franchise_details = Franchise::where(
+        'id',
+        Franchise::getFranchiseId()
+    )->select(
+        'franchise_no',
+        'credit_balance',
+        'gotogo_balance',
+        'gst_number'
+    )->first();
 
 
-        // return View::make('print.indiaPost.testprint', ['barcode_image_src' => 2344])->render();
+    $linkDetail = GotogoLink::where(
+        'franchise_no',
+        $franchise_details->franchise_no
+    )->first();
 
 
-        $franchise_details = Franchise::where('id', Franchise::getFranchiseId())->select('franchise_no', 'credit_balance', 'gotogo_balance', 'gst_number')->first();
-        $linkDetail = GotogoLink::where('franchise_no', $franchise_details->franchise_no)->first();
-        $pickupDetails = PickupDetails::where('franchise_id', Franchise::getFranchiseId())->where("status", 0)->get();
-        $barcodeAvailable = $this->getBarcodeAvailableCount();
+    $pickupDetails = PickupDetails::where('franchise_id',Franchise::getFranchiseId())->where('status',1)->get();
 
-        return view('franchise.gotogoSpeedPost.create', [
-            'pickupDetails' => $pickupDetails,
-            'franchise_details' => $franchise_details,
-            'linkDetails' => $linkDetail,
-            'barcodeAvailable' => $barcodeAvailable
-        ]);
-    }
+
+    $barcodeAvailable = $this->getBarcodeAvailableCount();
+
+
+    // Debug all data
+    // dd([
+    //     'franchise_id' => Franchise::getFranchiseId(),
+
+    //     'franchise_details' => $franchise_details,
+
+    //     'linkDetail' => $linkDetail,
+
+    //     'pickupDetails' => $pickupDetails,
+
+    //     'barcodeAvailable' => $barcodeAvailable,
+    // ]);
+
+
+    return view('franchise.gotogoSpeedPost.create', [
+        'pickupDetails' => $pickupDetails,
+        'franchise_details' => $franchise_details,
+        'linkDetails' => $linkDetail,
+        'barcodeAvailable' => $barcodeAvailable
+    ]);
+}
+
 
 
     public function savePdf($parcel)
@@ -892,13 +906,28 @@ class GotogoSpeedPostController extends Controller
                 return response()->json(['status' => 400, 'message' => 'Balance Low']);
             }
 
-            FranchiseCommissionDetail::create([
-                "franchise_id" => $franchiseId,
-                "service_type" => GotogoSpeedPostParcel::SERVICE_TYPE_GOTO_POST_SPEED,
-                "amount" => $payment_amount / 1.18,
-                "commission" => number_format($commission, 2, '.', ''),
-                "payment_method" => 'prepaid',
-            ]);
+          // Franchise-specific commission
+$serviceType = GotogoSpeedPostParcel::SERVICE_TYPE_GOTO_POST_SPEED;
+
+$netAmount = $payment_amount / 1.18;
+
+$commissionData = $rateCalculater->calculateFranchiseCommission(
+    $franchiseId,
+    $serviceType,
+    $netAmount
+);
+
+$commissionRate = $commissionData['rate'];
+$commission = $commissionData['commission'];
+
+FranchiseCommissionDetail::create([
+    "franchise_id" => $franchiseId,
+    "service_type" => $serviceType,
+    "amount" => $netAmount,
+    "commission" => $commission,
+    "commission_rate" => $commissionRate,
+    "payment_method" => 'prepaid',
+]);
 
             if ($request->payment_method === 'manager' || $request->payment_method === 'pickup') {
         $datamanager = new ManagerCommissionDetail();

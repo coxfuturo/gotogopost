@@ -75,7 +75,7 @@
         margin: 0 !important;
     }
 </style>
-<form action="{{ route('franchise.franchise-payment.credit') }}" method="GET">
+<form action="{{ route('admin.franchise-payment.credit') }}" method="GET">
     <div class="row">
         <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
             <div class="input-block mb-3 form-focus">
@@ -118,7 +118,7 @@
         <div class="card">
             <div class="card-body">
                 <ul class="list-unstyled d-flex justify-content-between" style="flex-wrap:wrap">
-                    <li><strong>Franchise No:</strong> {{ $franchiseDetails->franchise_no }}</li>
+                    <li><strong>Business Associate No:</strong> {{ $franchiseDetails->franchise_no }}</li>
                     <li><strong>Name:</strong> {{ $franchiseDetails->name }}</li>
                     <li><strong>Pincode:</strong> {{ $franchiseDetails->pincode }}</li>
             
@@ -126,7 +126,7 @@
                 <ul class="list-unstyled d-flex justify-content-between" style="flex-wrap:wrap">
                     <li><strong>Mobile:</strong> {{ $franchiseDetails->mobile }}</li>
                     <li><strong>Total Credit:</strong> {{ $data->sum('credit_amount') }}</li>
-                    <li><strong>GOTOGO Balance:</strong> {{ $franchiseDetails->gotogo_balance  }}</li>
+                    <li><strong>Gotogo Balance:</strong> {{ $franchiseDetails->gotogo_balance  }}</li>
                 </ul>
                 <div class="table-responsive table-newdatatable" id="franchise_daily_booking_report">
                     <table class="table table-new custom-table mb-0 datatable">

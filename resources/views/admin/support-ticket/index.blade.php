@@ -82,7 +82,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="table-responsive">
-                    <table class="table table-striped custom-table mb-0 datatable">
+                    <table class="table table-bordered custom-table datatable table-hover">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -100,18 +100,18 @@
                             @foreach($datas as $i=>$model)
                             <tr>
                                 <td>{{$i+1}}</td>
-                                <td><a href="ticket-view.html">#TKT-{{$model->id}}</a></td>
-                                <td>{{date('d M Y h:i A',strtotime($model->created_at))}}</td>
-                                <td>
+                                <td class="text-start"><a href="ticket-view.html">#TKT-{{$model->id}}</a></td>
+                                <td class="text-start">{{date('d M Y h:i A',strtotime($model->created_at))}}</td>
+                                <td class="text-start">
                                     <a href="{{ route('admin.support-ticket.get_details',['id' => $model->id]) }}" class="btn btn-primary btn-xs text-white">
                                         <i class="fa fa-edit-1 mr-1"></i> Reply</a>
                                     <span class="badge badge-danger badge-pill"> {{ $model->message()->where('messageable_type',\App\Models\Franchise::class)->where('is_read',0)->count() }}</span>
 
                                 </td>
-                                <td>{{$model->status == 1 ? 'Open' : 'Close'}}</td>
-                                <td>{{$model->title}}</td>
+                                <td class="text-start">{{$model->status == 1 ? 'Open' : 'Close'}}</td>
+                                <td class="text-start">{{$model->title}}</td>
 
-                                {{-- <td>
+                                {{-- <td class="text-start">
                                     {{$model->message[count($model->message)-1]->body}}
                                 </td> --}}
                                 <td class="text-end">

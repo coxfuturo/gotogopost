@@ -82,7 +82,7 @@
     <div class="container">
         <!-- Franchise Details Table -->
         <div class="table-container">
-            <h2>Market Manager</h2>
+            <h2>Sales Market Manager</h2>
             <table>
                 <tr>
                     <td class="border">
@@ -92,7 +92,7 @@
                                 <td>{{ $franchiseDetails->society }}</td>
                             </tr>
                             <tr>
-                                <th>Franchise No</th>
+                                <th>Business Associate No</th>
                                 <td>{{ $franchiseDetails->franchise_no }}</td>
                             </tr>
                             <tr>

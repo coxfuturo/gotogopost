@@ -1,13 +1,8 @@
 @extends('admin.layouts.master')
-
 @section('title') Parcel Management @endsection
-
 @section('content')
-<!-- Row -->
 <div class="row">
     <div class="col-sm-12">
-
-        <!-- Custom Boostrap Validation -->
         <div class="card">
             <form action="{{route('admin.parcel.store')}}" enctype="multipart/form-data" method="POST" class="needs-validation" novalidate>
                 @csrf
@@ -22,7 +17,7 @@
                                 <div class="col-md-4 mb-3">
                                     <label class="text-dark">Select Pickup details<span class="text-danger">*</span></label>
                                     <select name="pickup-details" id="pickup-details" class="select" data-tags="true" data-placeholder="Select an option" >
-                                        <option value="">Select an option</option>
+                                        <option value="">Select An Option</option>
                                         @foreach($pickupDetails as $user)
                                         <option value="{{$user->id}}">{{$user->name}} </option>
                                         @endforeach
@@ -108,7 +103,7 @@
                         </div>
                     </div>
                 </div>
-                              
+
                 <div class="card-header">
                     <h5 class="card-title mb-0">Consignee Details</h5>
                 </div>
@@ -195,9 +190,9 @@
                                 <div class="col-md-4 mb-3">
                                     <label class="text-dark">Payment Method<span class="text-danger">*</span></label>
                                     <select name="payment_method" id="paymentMethod" class="select" data-tags="true" data-placeholder="Select an option" required>
-                                        <option value="">Select an option</option>  
+                                        <option value="">Select An Option</option>  
                                         <option value="{{'cod'}}">Cash on delivery</option>
-                                        <option value="{{'prepaid'}}">Prepaid</option>                                    
+                                        <option value="{{'prepaid'}}">Advance</option>                                    
                                     </select>                      
                                 </div> 
                             </div>
@@ -256,15 +251,10 @@
                 </div>
             </form>
         </div>
-        <!-- /Custom Boostrap Validation -->
-
     </div>
 </div>
-<!-- /Row -->
 
 @push('page-javascript')
-
-
 <script>
     $('#ConsigneePincode').on('change', function() {
         var pincode = $('#ConsigneePincode').val();
@@ -286,7 +276,6 @@
 
     $('#pickup-details').on('change', function(e) {
         var csrfToken = "{{ csrf_token() }}";
-
         $.ajax({
             type: 'POST',
             url: "{{ route('admin.pickup-details.details') }}",
@@ -311,24 +300,16 @@
         });
     });
 
-
-
-
     function displayFile(id) {
         const fileInput = document.getElementById(`fileInput${id}`);
         const fileContainer = document.getElementById(`fileContainer${id}`);
-
-        // Clear any previous content
         fileContainer.innerHTML = "";
-
-        // Check if a file is selected
         if (fileInput.files.length === 0) {
             fileContainer.innerHTML = "<p>No file selected.</p>";
             return;
         }
         const file = fileInput.files[0];
         const fileType = file.type;
-
         if (fileType === "application/pdf") {
             // Display PDF
             const reader = new FileReader();
@@ -357,7 +338,6 @@
     function forceUpper(strInput) {
         strInput.value = strInput.value.toUpperCase();
     }
-
     var bankIfsc = $('#ifsc_code');
     var bankIfscError = $('#bank_ifsc_error');
     var bankName = $('#bank_name');
@@ -373,7 +353,6 @@
                         bankName.val(res.BANK);
                         bankBranch.val(res.BRANCH);
                         bankIfscError.html('');
-
                     }
                 },
                 'error': function(xhr, status, error) {
@@ -390,12 +369,9 @@
         }
     });
 </script>
-
 <script src="https://maps.google.com/maps/api/js?key=AIzaSyARf505VVJ_bn-5BnQ5qFbyKqWGF4DRn9U&libraries=places&callback=initAutocomplete" type="text/javascript"></script>
-
 <script>
     google.maps.event.addDomListener(window, 'load', initialize);
-
     function initialize() {
         var input = document.getElementById('address');
         var autocomplete = new google.maps.places.Autocomplete(input);
@@ -407,5 +383,4 @@
     }
 </script>
 @endpush
-
 @endsection

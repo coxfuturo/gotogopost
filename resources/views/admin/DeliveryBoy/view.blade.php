@@ -1,12 +1,8 @@
 @extends('admin.layouts.master')
 
-
-
 @section('title') Delivery Boy Management @endsection
 
-
 @section('content')
-
 
 <style>
     .profile-view .profile-img-wrap img {
@@ -171,13 +167,13 @@
 
                     <div class="card-body">
 
-                        <h3 class="card-title">Bank information</h3>
+                        <h3 class="card-title">Bank Information</h3>
 
                         <ul class="personal-info">
 
                             <li>
 
-                                <div class="title">Bank name</div>
+                                <div class="title">Bank Name</div>
 
                                 <div class="text">{{$data->kyc->bank_name ?? 'N/A' }}</div>
 
@@ -185,7 +181,7 @@
 
                             <li>
 
-                                <div class="title">Bank account No.</div>
+                                <div class="title">Bank Account No.</div>
 
                                 <div class="text">{{$data->kyc->account_number ?? 'N/A' }}</div>
 
@@ -361,7 +357,7 @@
                     <tr>
                         <th>#</th>
                         <th>Service</th>
-                        <th>No of Articles</th>
+                        <th>No Of Articles</th>
                         <th>Total Value</th>
                         <th>Wallet Amount</th>
                         <th>Wallet Balalnce</th>
@@ -422,7 +418,7 @@
                     <!-- GOTOGO Post Business Parcel -->
                     <tr>
                         <td>2</td>
-                        <td>GOTOGO Post Business Parcel</td>
+                        <td>Gotogo Post Business Parcel</td>
                         <td>
                             <div class="dropdown action-label goto-post-business-class">
                                 @if($data->gotogo_business_parcel == 1)
@@ -442,7 +438,7 @@
                     <!-- GOTOGO Post Registered -->
                     <tr>
                         <td>3</td>
-                        <td>GOTOGO Post Registered</td>
+                        <td>Gotogo Post Registered</td>
                         <td>
                             <div class="dropdown action-label active-inactive-menu-3">
                                 @if($data->gotogo_post_registered == 1)

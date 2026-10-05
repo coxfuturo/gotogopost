@@ -1,10 +1,6 @@
 @extends('admin.layouts.master')
-
 @section('title')Parcel Management @endsection
-
 @section('content')
-
-
 <div class="row">
     <div class="col-md-6 d-flex">
         <div class="card profile-box flex-fill">
@@ -43,7 +39,6 @@
             </div>
         </div>
     </div>
-    
     <div class="col-md-6 d-flex">
         <div class="card profile-box flex-fill">
             <div class="card-header">
@@ -81,14 +76,6 @@
         </div>
     </div>
 </div>
-
-
-
-
-
-
-
-
 <div class="mt-2">
     <div class="col-md-6 d-flex">
         <div class="card profile-box flex-fill">
@@ -123,9 +110,6 @@
         </div>
     </div>
 </div>
-
-
-<!-- Profile Modal -->
 <div id="profile_info" class="modal custom-modal fade" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
@@ -170,20 +154,20 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                <div class="input-block mb-3">
-                                    <label class="col-form-label">Address</label>
-                                    <textarea name="address" class="form-control" id="address" required>{{old('address',$data->address)}}</textarea>
-                                    <input type="hidden" name="latitude" value="{{old('latitude',$data->latitude)}}" id="latitude">
-                                    <input type="hidden" name="longitude" value="{{old('longitude',$data->longitude)}}" id="longitude">
+                                    <div class="input-block mb-3">
+                                        <label class="col-form-label">Address</label>
+                                        <textarea name="address" class="form-control" id="address" required>{{old('address',$data->address)}}</textarea>
+                                        <input type="hidden" name="latitude" value="{{old('latitude',$data->latitude)}}" id="latitude">
+                                        <input type="hidden" name="longitude" value="{{old('longitude',$data->longitude)}}" id="longitude">
+                                    </div>
                                 </div>
-                            </div>
                             </div>
                         </div>
                     </div>
                     <div class="row">         
                         <div class="col-md-6">
                             <div class="input-block mb-3">
-                                <label class="col-form-label">Pin Code</label>
+                                <label class="col-form-label">PinCode</label>
                                 <input type="text" class="form-control NumberValidate" id="pincode" maxlength="6" name="pincode" value="{{$data->pincode}}" required>
                                 <div class="invalid-feedback validerror">
                                 </div>
@@ -207,7 +191,6 @@
                                 <input type="text" class="form-control" id="city" name="city" value="{{$data->city}}">
                             </div>
                         </div>
-                
                     </div>
                     <div class="row">         
                         <div class="col-md-6">
@@ -229,9 +212,6 @@
         </div>
     </div>
 </div>
-<!-- /Profile Modal -->
-
-<!-- Bank Modal -->
 <div id="bank_info" class="modal custom-modal fade" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
@@ -245,7 +225,6 @@
                 <form>
                     <div class="row">
                         <div class="col-md-12">
-
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="input-block mb-3">
@@ -284,13 +263,9 @@
                                         {{-- <input type="text" class="form-control" name="branch_name" value="{{$data->kyc->branch_name}}" required> --}}
                                     </div>
                                 </div>
-
-
-
                             </div>
                         </div>
                     </div>
-
                     <div class="submit-section">
                         <button class="btn btn-primary submit-btn">Submit</button>
                     </div>
@@ -299,9 +274,6 @@
         </div>
     </div>
 </div>
-<!-- /Bank Modal -->
-
-
 @push('page-javascript')
 <script>
     function status_update(id) {
@@ -320,16 +292,13 @@
                 } else {
                     Swal.fire('Error!', "Something went wrong", 'error')
                 }
-
             }
-
         });
     }
 </script>
 <script>
     $('#pincode').on('change', function() {
         var pincode = $('#pincode').val();
-
         $.ajax({
             type: 'GET',
             url: "{{url('admin/city-state')}}" + '/' + pincode,
@@ -344,24 +313,17 @@
             }
         });
     });
-
     function displayFile(id) {
         const fileInput = document.getElementById(`fileInput${id}`);
         const fileContainer = document.getElementById(`fileContainer${id}`);
-
-        // Clear any previous content
         fileContainer.innerHTML = "";
-
-        // Check if a file is selected
         if (fileInput.files.length === 0) {
             fileContainer.innerHTML = "<p>No file selected.</p>";
             return;
         }
         const file = fileInput.files[0];
         const fileType = file.type;
-
         if (fileType === "application/pdf") {
-            // Display PDF
             const reader = new FileReader();
             reader.onload = function(e) {
                 const pdfData = e.target.result;
@@ -384,16 +346,13 @@
             fileContainer.innerHTML = "<p>Unsupported file type.</p>";
         }
     }
-
     function forceUpper(strInput) {
         strInput.value = strInput.value.toUpperCase();
     }
-
     var bankIfsc = $('#ifsc_code');
     var bankIfscError = $('#bank_ifsc_error');
     var bankName = $('#bank_name');
     var bankBranch = $('#branch_name');
-
     bankIfsc.on('input', function() {
         var ifscCode = bankIfsc.val();
         if (ifscCode.length === 11) {
@@ -404,7 +363,6 @@
                         bankName.val(res.BANK);
                         bankBranch.val(res.BRANCH);
                         bankIfscError.html('');
-
                     }
                 },
                 'error': function(xhr, status, error) {
@@ -421,12 +379,9 @@
         }
     });
 </script>
-
 <script src="https://maps.google.com/maps/api/js?key=AIzaSyARf505VVJ_bn-5BnQ5qFbyKqWGF4DRn9U&libraries=places&callback=initAutocomplete" type="text/javascript"></script>
-
 <script>
     google.maps.event.addDomListener(window, 'load', initialize);
-
     function initialize() {
         var input = document.getElementById('address');
         var autocomplete = new google.maps.places.Autocomplete(input);

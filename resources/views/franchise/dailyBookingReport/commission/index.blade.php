@@ -123,7 +123,7 @@
         <div class="card">
             <div class="card-body">
                 <ul class="list-unstyled d-flex justify-content-between" style="flex-wrap:wrap">
-                    <li><strong>Franchise No:</strong> {{ $franchiseDetails->franchise_no }}</li>
+                    <li><strong>Business Associate No:</strong> {{ $franchiseDetails->franchise_no }}</li>
                     <li><strong>Name:</strong> {{ $franchiseDetails->name }}</li>
                     <li><strong>Pincode:</strong> {{ $franchiseDetails->pincode }}</li>
                     <li><strong>Mobile:</strong> {{ $franchiseDetails->mobile }}</li>

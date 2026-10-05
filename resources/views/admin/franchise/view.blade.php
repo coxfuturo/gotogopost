@@ -1,9 +1,8 @@
 @extends('admin.layouts.master')
 
-@section('title') Franchise Management @endsection
+@section('title') Business Associate Management @endsection
 
 @section('content')
-
 
 <style>
     .tab-content {
@@ -17,7 +16,6 @@
         width: 70%;
         float: left;
     }
-
     table.table-new.dataTable>thead .sorting:after,
     table.table-new.dataTable>thead .sorting_asc:after,
     table.table-new.dataTable>thead .sorting_desc:after,
@@ -31,7 +29,6 @@
         font-size: 12px;
         opacity: 1;
     }
-
     table.table-new.dataTable>thead .sorting:before,
     table.table-new.dataTable>thead .sorting_asc:before,
     table.table-new.dataTable>thead .sorting_desc:before,
@@ -45,7 +42,6 @@
         font-size: 12px;
         opacity: 1;
     }
-
     .personal-info li .document-title {
         color: #333333;
         float: left;
@@ -53,8 +49,6 @@
         width: auto;
     }
 </style>
-
-
 <div class="card mb-0">
     <div class="card-body">
         <div class="row">
@@ -62,12 +56,12 @@
                 <div class="profile-view">
                     <div class="profile-img-wrap">
                         <div class="profile-img">
-                        @php
+                            @php
                             $photos = isset($franchise->kyc->photo) ? explode(',', $franchise->kyc->photo) : [];
                             $firstPhoto = !empty($photos[0]) ? asset('admin/franchise/' . $franchise->generated_id . '/' . trim($photos[0])) : asset('admin/assets/img/profiles/avatar-02.jpg');
-                        @endphp
-                    
-                        <a href="#"><img src="{{ $firstPhoto }}" alt="Profile Image"></a>
+                            @endphp
+
+                            <a href="#"><img src="{{ $firstPhoto }}" alt="Profile Image"></a>
                         </div>
                     </div>
                     <div class="profile-basic">
@@ -75,10 +69,10 @@
                             <div class="col-md-5">
                                 <div class="profile-info-left">
                                     <h3 class="user-name m-t-0 mb-0">{{$franchise->name}}</h3>
-                                    <h5 class="">Father/Husband Name : {{$franchise->father_name}}</h5>
+                                    <h5 class="">Director/Owner Name : {{$franchise->father_name}}</h5>
                                     <!-- <small class="text-muted">Web Designer</small> -->
                                     <div class="staff-id">ID : {{$franchise->generated_id}}</div>
-                                    <div class="doj">Date of registration : {{date('d M Y',strtotime($franchise->created_at))}}</div>
+                                    <div class="doj">Date of Registration : {{date('d M Y',strtotime($franchise->created_at))}}</div>
                                     <div class="staff-msg"><a class="btn btn-custom" href="{{route('admin.support-ticket.get_details',$franchise->id)}}">Send Message</a></div>
                                 </div>
                             </div>
@@ -134,6 +128,7 @@
                 <li class="nav-item"><a href="#parcel" data-bs-toggle="tab" class="nav-link">Parcels</a></li>
                 <li class="nav-item"><a href="#franchise_daily_booking_report" data-bs-toggle="tab" class="nav-link">Daily Booking Report</a></li>
                 <li class="nav-item"><a href="#franchise_assigned_services" data-bs-toggle="tab" class="nav-link">Assigned Services</a></li>
+                <li class="nav-item"><a href="#franchise_commission" data-bs-toggle="tab" class="nav-link">Business Associate Commission</a></li>
             </ul>
         </div>
     </div>
@@ -166,7 +161,7 @@
                                 <div class="text">{{$franchise->kyc->ifsc_code}}</div>
                             </li>
                             <li>
-                                <div class="title">PAN No</div>
+                                <div class="title">Pan No</div>
                                 <div class="text">{{$franchise->kyc->pan_card}}</div>
                             </li>
                             <li>
@@ -200,7 +195,7 @@
 
                                 <div style="width:100%;text-align:center">
                                     <li class="d-flex justify-content-between px-3">
-                                        <div class="document-title">Franchise Image</div>
+                                        <div class="document-title">Business Associate Image</div>
                                         <div data-bs-toggle="modal" data-bs-target="#franchise_view"><button class="btn btn-sm btn-dark">View</button></div>
                                     </li>
 
@@ -241,29 +236,29 @@
                     <div class="modal-btn delete-action">
                         <div class="row">
                             @if (!empty($franchise->kyc->adhar_front_img))
-                                @php
-                                    $frontImages = explode(',', $franchise->kyc->adhar_front_img);
-                                @endphp
-                    
-                                @foreach ($frontImages as $image)
-                                    <div class="col-md-4">
-                                        <img src="{{ asset('admin/franchise/' . $franchise->generated_id . '/' . $image) }}" alt="Adhar Front" class="img-thumbnail">
-                                    </div>
-                                @endforeach
+                            @php
+                            $frontImages = explode(',', $franchise->kyc->adhar_front_img);
+                            @endphp
+
+                            @foreach ($frontImages as $image)
+                            <div class="col-md-4">
+                                <img src="{{ asset('admin/franchise/' . $franchise->generated_id . '/' . $image) }}" alt="Adhar Front" class="img-thumbnail">
+                            </div>
+                            @endforeach
                             @endif
                         </div>
-                    
+
                         <div class="row">
                             @if (!empty($franchise->kyc->adhar_back_img))
-                                @php
-                                    $backImages = explode(',', $franchise->kyc->adhar_back_img);
-                                @endphp
-                    
-                                @foreach ($backImages as $image)
-                                    <div class="col-md-4">
-                                        <img src="{{ asset('admin/franchise/' . $franchise->generated_id . '/' . $image) }}" alt="Adhar Back" class="img-thumbnail">
-                                    </div>
-                                @endforeach
+                            @php
+                            $backImages = explode(',', $franchise->kyc->adhar_back_img);
+                            @endphp
+
+                            @foreach ($backImages as $image)
+                            <div class="col-md-4">
+                                <img src="{{ asset('admin/franchise/' . $franchise->generated_id . '/' . $image) }}" alt="Adhar Back" class="img-thumbnail">
+                            </div>
+                            @endforeach
                             @endif
                         </div>
                     </div>
@@ -290,15 +285,15 @@
                     <div class="modal-btn delete-action">
                         <div class="row">
                             @if (!empty($franchise->kyc->pan_img))
-                                @php
-                                    $panImages = explode(',', $franchise->kyc->pan_img);
-                                @endphp
-                    
-                                @foreach ($panImages as $image)
-                                    <div class="col-md-4">
-                                        <img src="{{ asset('admin/franchise/' . $franchise->generated_id . '/' . $image) }}" alt="PAN Image" class="img-thumbnail">
-                                    </div>
-                                @endforeach
+                            @php
+                            $panImages = explode(',', $franchise->kyc->pan_img);
+                            @endphp
+
+                            @foreach ($panImages as $image)
+                            <div class="col-md-4">
+                                <img src="{{ asset('admin/franchise/' . $franchise->generated_id . '/' . $image) }}" alt="PAN Image" class="img-thumbnail">
+                            </div>
+                            @endforeach
                             @endif
                         </div>
                     </div>
@@ -325,15 +320,15 @@
                     <div class="modal-btn delete-action">
                         <div class="row">
                             @if (!empty($franchise->kyc->cheque_img))
-                                @php
-                                    $chequeImages = explode(',', $franchise->kyc->cheque_img);
-                                @endphp
-                    
-                                @foreach ($chequeImages as $image)
-                                    <div class="col-md-4">
-                                        <img src="{{ asset('admin/franchise/' . $franchise->generated_id . '/' . $image) }}" alt="Cheque Image" class="img-thumbnail">
-                                    </div>
-                                @endforeach
+                            @php
+                            $chequeImages = explode(',', $franchise->kyc->cheque_img);
+                            @endphp
+
+                            @foreach ($chequeImages as $image)
+                            <div class="col-md-4">
+                                <img src="{{ asset('admin/franchise/' . $franchise->generated_id . '/' . $image) }}" alt="Cheque Image" class="img-thumbnail">
+                            </div>
+                            @endforeach
                             @endif
                         </div>
                     </div>
@@ -356,20 +351,20 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-header">
-                        <h3>Franchise Image</h3>
+                        <h3>Business Associate Image</h3>
                     </div>
                     <div class="modal-btn delete-action">
                         <div class="row">
                             @if (!empty($franchise->kyc->photo))
-                                @php
-                                    $photos = explode(',', $franchise->kyc->photo);
-                                @endphp
-                    
-                                @foreach ($photos as $image)
-                                    <div class="col-md-4">
-                                        <img src="{{ asset('admin/franchise/' . $franchise->generated_id . '/' . $image) }}" alt="Photo" class="img-thumbnail">
-                                    </div>
-                                @endforeach
+                            @php
+                            $photos = explode(',', $franchise->kyc->photo);
+                            @endphp
+
+                            @foreach ($photos as $image)
+                            <div class="col-md-4">
+                                <img src="{{ asset('admin/franchise/' . $franchise->generated_id . '/' . $image) }}" alt="Photo" class="img-thumbnail">
+                            </div>
+                            @endforeach
                             @endif
                         </div>
                     </div>                    
@@ -396,15 +391,15 @@
                     <div class="modal-btn delete-action">
                         <div class="row">
                             @if (!empty($franchise->kyc->other_document))
-                                @php
-                                    $otherDocuments = explode(',', $franchise->kyc->other_document);
-                                @endphp
-                    
-                                @foreach ($otherDocuments as $image)
-                                    <div class="col-md-4">
-                                        <img src="{{ asset('admin/franchise/' . $franchise->generated_id . '/' . $image) }}" alt="Other Document" class="img-thumbnail">
-                                    </div>
-                                @endforeach
+                            @php
+                            $otherDocuments = explode(',', $franchise->kyc->other_document);
+                            @endphp
+
+                            @foreach ($otherDocuments as $image)
+                            <div class="col-md-4">
+                                <img src="{{ asset('admin/franchise/' . $franchise->generated_id . '/' . $image) }}" alt="Other Document" class="img-thumbnail">
+                            </div>
+                            @endforeach
                             @endif
                         </div>
                     </div>                    
@@ -431,470 +426,538 @@
                         <div class="row">
                             <video width="640" height="480" controls>
                                 <source src="{{ asset('admin/franchise/' . $franchise->generated_id . '/' . $franchise->kyc->video_kyc) }}" type="video/mp4">
-                                Your browser does not support the video tag.
-                            </video>
+                                    Your browser does not support the video tag.
+                                </video>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <!-- video_kyc  Modal -->
+        <!-- video_kyc  Modal -->
 
 
 
-    <!-- Parcel Tab -->
-    <div class="tab-pane fade" id="parcel">
+        <!-- Parcel Tab -->
+        <div class="tab-pane fade" id="parcel">
 
-        <!-- Search Filter -->
-        <div class="row">
-
-            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-                <div class="input-block mb-3 form-focus">
-                    <div class="cal-icon">
-                        <input class="form-control floating datetimepicker date" type="text">
-                    </div>
-                    <label class="focus-label">Date</label>
-                </div>
-            </div>
-            <div class="col-sm-6 col-md-1">
-                <div class="d-grid">
-                    <button type="submit" onclick="filterParcelsByDate()" class="btn btn-success">Search</button>
-                </div>
-            </div>
-        </div>
-        <!-- /Search Filter -->
-        <div class="table-responsive table-newdatatable m-0">
-            <table class="table table-new custom-table mb-0 datatable">
-                <thead>
-                    <tr>
-                        <th>SN#</th>
-                        <th>Service</th>
-                        <th>Pickup Name</th>
-                        <th>Pickup Pincode</th>
-                        <th>Consignee Name</th>
-                        <th>Consignee Pincode</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if ($parcel->count()>0)
-                    @foreach ($parcel as $i=>$item)
-                    <tr>
-                        <td>{{$i+1}}</td>
-                        <td>{{$item->service_type}}</td>
-                        <td>{{$item->pickup_name}}</td>
-                        <td>{{$item->pickup_pincode}}</td>
-                        <td>{{$item->consignee_name}}</td>
-                        <td>{{$item->consignee_pincode}}</td>
-                        <td>
-                            <div class="table-actions d-flex">
-                                <a class="delete-table me-2" href="{{ route('admin.parcel.view', ['id' => $item->barcode_no, 'service_type' => $item->service_number]) }}">
-                                    <img src="{{ asset('admin/assets/img/icons/eye.svg') }}" alt="Eye Icon">
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                    @endforeach
-                    @endif
-
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <!-- /Parcel Tab -->
-
-
-    <!-- Daily booking report -->
-    <div class="tab-pane fade" id="franchise_daily_booking_report">
-        <div class="table-responsive table-newdatatable">
             <!-- Search Filter -->
             <div class="row">
 
                 <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
                     <div class="input-block mb-3 form-focus">
                         <div class="cal-icon">
-                            <input class="form-control floating datetimepicker bookingdate" type="text">
+                            <input class="form-control floating datetimepicker date" type="text">
                         </div>
                         <label class="focus-label">Date</label>
                     </div>
                 </div>
                 <div class="col-sm-6 col-md-1">
                     <div class="d-grid">
-                        <button type="submit" onclick="filterDailyBookingsReportByDate()" class="btn btn-success">Search</button>
+                        <button type="submit" onclick="filterParcelsByDate()" class="btn btn-success">Search</button>
                     </div>
                 </div>
             </div>
             <!-- /Search Filter -->
-            <table class="table table-new custom-table mb-0 datatable">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Service</th>
-                        <th>No of Articles</th>
-                        <th>Total Value</th>
-                        <th>Wallet Amount</th>
-                        <th>Wallet Balalnce</th>
-                    </tr>
-                </thead>
-                <tbody>
+            <div class="table-responsive table-newdatatable m-0">
+                <table class="table table-new custom-table mb-0 datatable">
+                    <thead>
+                        <tr>
+                            <th>SN#</th>
+                            <th>Service</th>
+                            <th>Pickup Name</th>
+                            <th>Pickup Pincode</th>
+                            <th>Consignee Name</th>
+                            <th>Consignee Pincode</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if ($parcel->count()>0)
+                        @foreach ($parcel as $i=>$item)
+                        <tr>
+                            <td>{{$i+1}}</td>
+                            <td>{{$item->service_type}}</td>
+                            <td>{{$item->pickup_name}}</td>
+                            <td>{{$item->pickup_pincode}}</td>
+                            <td>{{$item->consignee_name}}</td>
+                            <td>{{$item->consignee_pincode}}</td>
+                            <td>
+                                <div class="table-actions d-flex">
+                                    <a class="delete-table me-2" href="{{ route('admin.parcel.view', ['id' => $item->barcode_no, 'service_type' => $item->service_number]) }}">
+                                        <img src="{{ asset('admin/assets/img/icons/eye.svg') }}" alt="Eye Icon">
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
+                        @endif
 
-                    @foreach($bookingData as $key=>$value)
-                    <tr>
-                        <td>{{$key}}</td>
-                        <td>{{$value['service_type']}}</td>
-                        <td>{{$value['No_of_article']}}</td>
-                        <td>{{$value['total_value']}}</td>
-                        <td>{{$value['wallet_balance']}}</td>
-                        <td>{{$value['remaining_balance']}}</td>
-                    </tr>
-                    @endforeach
-
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
+        <!-- Daily booking report -->
+        <div class="tab-pane fade" id="franchise_daily_booking_report">
+            <div class="table-responsive table-newdatatable">
+                <!-- Search Filter -->
+                <div class="row">
+
+                    <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                        <div class="input-block mb-3 form-focus">
+                            <div class="cal-icon">
+                                <input class="form-control floating datetimepicker bookingdate" type="text">
+                            </div>
+                            <label class="focus-label">Date</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-1">
+                        <div class="d-grid">
+                            <button type="submit" onclick="filterDailyBookingsReportByDate()" class="btn btn-success">Search</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- /Search Filter -->
+                <table class="table table-new custom-table mb-0 datatable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Service</th>
+                            <th>No of Articles</th>
+                            <th>Total Value</th>
+                            <th>Wallet Amount</th>
+                            <th>Wallet Balalnce</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach($bookingData as $key=>$value)
+                        <tr>
+                            <td>{{$key}}</td>
+                            <td>{{$value['service_type']}}</td>
+                            <td>{{$value['No_of_article']}}</td>
+                            <td>{{$value['total_value']}}</td>
+                            <td>{{$value['wallet_balance']}}</td>
+                            <td>{{$value['remaining_balance']}}</td>
+                        </tr>
+                        @endforeach
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Assigned Services -->
+        <div class="tab-pane fade" id="franchise_assigned_services">
+            <div class="table-responsive table-newdatatable">
+                <table class="table table-new custom-table mb-0 datatable">
+                    <thead class="text-start">
+                        <tr>
+                            <th>Sr.No.</th>
+                            <th class="text-start">Service</th>
+                            <th class="text-start">Discount Commission</th>
+                            <th class="text-start">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-start">
+                        <tr class="text-start">
+                            <td class="text-start">1</td>
+                            <td class="text-start">Gotogo Post Speed</td>
+                             <td class="text-start {{ request()->fullUrl() == route('admin.commission.index', ['membertype' => 'franchise']) ? 'active' : '' }}">
+                                <a href="{{route('admin.commission.index',['membertype'=>'franchise'])}}" class="btn btn-white btn-sm btn-rounded" aria-expanded="false"><i class="fa-regular fa-circle-dot text-success"></i> view Commission</a>  
+                            </td>
+                            <td class="text-start">
+                                <div class="dropdown action-label goto-post-speed-class">
+                                    @if($franchise->gotogo_speed_post == 1)
+                                    <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot text-success"></i> Active </a>
+                                    @else
+                                    <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot text-danger"></i> Inactive </a>
+                                    @endif
+                                    <div class="dropdown-menu active-inactive-menu-1">
+                                        <a class="dropdown-item" onclick="service_status_update('{{$franchise->id}}', '1', '1')" href="#"><i class="fa-regular fa-circle-dot text-success"></i> Active</a>
+                                        <a class="dropdown-item" onclick="service_status_update('{{$franchise->id}}', '1', '0')" href="#"><i class="fa-regular fa-circle-dot text-danger"></i> Inactive</a>
+                                    </div>
+                                </div>
+                                
+                            </td>
+                            
+                        </tr>
+                        <tr>
+                            <td class="text-start">2</td>
+                            <td class="text-start">Gotogo Post Business Parcel</td>
+                            <td class="text-start {{ request()->fullUrl() == route('admin.commission.index', ['membertype' => 'franchise']) ? 'active' : '' }}">
+                                <a href="{{route('admin.commission.index',['membertype'=>'franchise'])}}" class="btn btn-white btn-sm btn-rounded" aria-expanded="false"><i class="fa-regular fa-circle-dot text-success"></i> view Commission</a>  
+                            </td>
+                            <td>
+                                <div class="dropdown action-label goto-post-business-class text-start">
+                                    @if($franchise->gotogo_business_parcel == 1)
+                                    <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot text-success"></i> Active </a>
+                                    @else
+                                    <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot text-danger"></i> Inactive </a>
+                                    @endif
+                                    <div class="dropdown-menu active-inactive-menu-3">
+                                        <a class="dropdown-item" onclick="service_status_update('{{$franchise->id}}', '3', '1')" href="#"><i class="fa-regular fa-circle-dot text-success"></i> Active</a>
+                                        <a class="dropdown-item" onclick="service_status_update('{{$franchise->id}}', '3', '0')" href="#"><i class="fa-regular fa-circle-dot text-danger"></i> Inactive</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-start">3</td>
+                            <td class="text-start">Gotogo Post Registered</td>
+                             <td class="text-start {{ request()->fullUrl() == route('admin.commission.index', ['membertype' => 'franchise']) ? 'active' : '' }}">
+                                <a href="{{route('admin.commission.index',['membertype'=>'franchise'])}}" class="btn btn-white btn-sm btn-rounded" aria-expanded="false"><i class="fa-regular fa-circle-dot text-success"></i> view Commission</a>  
+                            </td>
+                            <td>
+                                <div class="dropdown action-label active-inactive-menu-3 text-start">
+                                    @if($franchise->gotogo_post_registered == 1)
+                                    <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot text-success"></i> Active </a>
+                                    @else
+                                    <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot text-danger"></i> Inactive </a>
+                                    @endif
+                                    <div class="dropdown-menu active-inactive-menu-4">
+                                        <a class="dropdown-item" onclick="service_status_update('{{$franchise->id}}', '4', '1')" href="#"><i class="fa-regular fa-circle-dot text-success"></i> Active</a>
+                                        <a class="dropdown-item" onclick="service_status_update('{{$franchise->id}}', '4', '0')" href="#"><i class="fa-regular fa-circle-dot text-danger"></i> Inactive</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-start">4</td>
+                            <td class="text-start">India Post Speed</td>
+                            <td class="text-start {{ request()->fullUrl() == route('admin.commission.index', ['membertype' => 'franchise']) ? 'active' : '' }}">
+                                <a href="{{route('admin.commission.index',['membertype'=>'franchise'])}}" class="btn btn-white btn-sm btn-rounded" aria-expanded="false"><i class="fa-regular fa-circle-dot text-success"></i> view Commission</a>  
+                            </td>
+                            <td class="text-start">
+                                <div class="dropdown action-label india-post-speed-class">
+                                    @if($franchise->india_post_speed == 1)
+                                    <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot text-success"></i> Active </a>
+                                    @else
+                                    <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot text-danger"></i> Inactive </a>
+                                    @endif
+                                    <div class="dropdown-menu active-inactive-menu-5">
+                                        <a class="dropdown-item" onclick="service_status_update('{{$franchise->id}}', '5', '1')" href="#"><i class="fa-regular fa-circle-dot text-success"></i> Active</a>
+                                        <a class="dropdown-item" onclick="service_status_update('{{$franchise->id}}', '5', '0')" href="#"><i class="fa-regular fa-circle-dot text-danger"></i> Inactive</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-start">5</td>
+                            <td class="text-start">India Post Business</td>
+                            <td class="text-start {{ request()->fullUrl() == route('admin.commission.index', ['membertype' => 'franchise']) ? 'active' : '' }}">
+                                <a href="{{route('admin.commission.index',['membertype'=>'franchise'])}}" class="btn btn-white btn-sm btn-rounded" aria-expanded="false"><i class="fa-regular fa-circle-dot text-success"></i> view Commission</a>  
+                            </td>
+                            <td class="text-start">
+                                <div class="dropdown action-label india-post-business-class">
+                                    @if($franchise->india_post_business == 1)
+                                    <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot text-success"></i> Active </a>
+                                    @else
+                                    <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot text-danger"></i> Inactive </a>
+                                    @endif
+                                    <div class="dropdown-menu active-inactive-menu-6">
+                                        <a class="dropdown-item" onclick="service_status_update('{{$franchise->id}}', '6', '1')" href="#"><i class="fa-regular fa-circle-dot text-success"></i> Active</a>
+                                        <a class="dropdown-item" onclick="service_status_update('{{$franchise->id}}', '6', '0')" href="#"><i class="fa-regular fa-circle-dot text-danger"></i> Inactive</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-start">6</td>
+                            <td class="text-start">India Post Registered</td>
+                            <td class="text-start {{ request()->fullUrl() == route('admin.commission.index', ['membertype' => 'franchise']) ? 'active' : '' }}">
+                                <a href="{{route('admin.commission.index',['membertype'=>'franchise'])}}" class="btn btn-white btn-sm btn-rounded" aria-expanded="false"><i class="fa-regular fa-circle-dot text-success"></i> view Commission</a>  
+                            </td>
+                            <td class="text-start">
+                                <div class="dropdown action-label india-post-registered-class">
+                                    @if($franchise->india_post_registered == 1)
+                                    <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot text-success"></i> Active </a>
+                                    @else
+                                    <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot text-danger"></i> Inactive </a>
+                                    @endif
+                                    <div class="dropdown-menu active-inactive-menu-7">
+                                        <a class="dropdown-item" onclick="service_status_update('{{$franchise->id}}', '7', '1')" href="#"><i class="fa-regular fa-circle-dot text-success"></i> Active</a>
+                                        <a class="dropdown-item" onclick="service_status_update('{{$franchise->id}}', '7', '0')" href="#"><i class="fa-regular fa-circle-dot text-danger"></i> Inactive</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <!-- E2E -->
+                        <tr>
+                            <td class="text-start">7</td>
+                            <td class="text-start">E2E</td>
+                            <td class="text-start {{ request()->fullUrl() == route('admin.commission.index', ['membertype' => 'franchise']) ? 'active' : '' }}">
+                                <a href="{{route('admin.commission.index',['membertype'=>'franchise'])}}" class="btn btn-white btn-sm btn-rounded" aria-expanded="false"><i class="fa-regular fa-circle-dot text-success"></i> view Commission</a>  
+                            </td>
+                            <td class="text-start">
+                                <div class="dropdown action-label india-post-registered-class">
+                                    @if($franchise->e2e == 1)
+                                    <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot text-success"></i> Active </a>
+                                    @else
+                                    <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot text-danger"></i> Inactive </a>
+                                    @endif
+                                    <div class="dropdown-menu active-inactive-menu-8">
+                                        <a class="dropdown-item" onclick="service_status_update('{{$franchise->id}}', '8', '1')" href="#"><i class="fa-regular fa-circle-dot text-success"></i> Active</a>
+                                        <a class="dropdown-item" onclick="service_status_update('{{$franchise->id}}', '8', '0')" href="#"><i class="fa-regular fa-circle-dot text-danger"></i> Inactive</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <!-- E2E -->
+                        <tr class="text-start">
+                            <td class="text-start">8</td>
+                            <td class="text-start">E2H</td>
+                             <td class="text-start {{ request()->fullUrl() == route('admin.commission.index', ['membertype' => 'franchise']) ? 'active' : '' }}">
+                                <a href="{{route('admin.commission.index',['membertype'=>'franchise'])}}" class="btn btn-white btn-sm btn-rounded" aria-expanded="false"><i class="fa-regular fa-circle-dot text-success"></i> view Commission</a>  
+                            </td>
+                            <td class="text-start">
+                                <div class="dropdown action-label india-post-registered-class">
+                                    @if($franchise->e2h == 1)
+                                    <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot text-success"></i> Active </a>
+                                    @else
+                                    <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot text-danger"></i> Inactive </a>
+                                    @endif
+                                    <div class="dropdown-menu active-inactive-menu-9">
+                                        <a class="dropdown-item" onclick="service_status_update('{{$franchise->id}}', '9', '1')" href="#"><i class="fa-regular fa-circle-dot text-success"></i> Active</a>
+                                        <a class="dropdown-item" onclick="service_status_update('{{$franchise->id}}', '9', '0')" href="#"><i class="fa-regular fa-circle-dot text-danger"></i> Inactive</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card mt-4 " id="franchise_commission">
+    <div class="card-header">
+        <h4 class="mb-0">Franchise Commission</h4>
     </div>
-    <!-- Daily booking report -->
 
+    <div class="card-body">
 
-    <!-- Assigned Services -->
-    <div class="tab-pane fade" id="franchise_assigned_services">
-        <div class="table-responsive table-newdatatable">
-
-            <table class="table table-new custom-table mb-0 datatable">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th class="text-center">Service</th>
-                        <th class="text-center">Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- GOTOGO Post Speed -->
-                    <tr>
-                        <td>1</td>
-                        <td>GOTOGO Post Speed</td>
-                        <td>
-                            <div class="dropdown action-label goto-post-speed-class">
-                                @if($franchise->gotogo_speed_post == 1)
-                                <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot text-success"></i> Active </a>
-                                @else
-                                <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot text-danger"></i> Inactive </a>
-                                @endif
-                                <div class="dropdown-menu active-inactive-menu-1">
-                                    <a class="dropdown-item" onclick="service_status_update('{{$franchise->id}}', '1', '1')" href="#"><i class="fa-regular fa-circle-dot text-success"></i> Active</a>
-                                    <a class="dropdown-item" onclick="service_status_update('{{$franchise->id}}', '1', '0')" href="#"><i class="fa-regular fa-circle-dot text-danger"></i> Inactive</a>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <!-- GOTOGO Post Business Parcel -->
-                    <tr>
-                        <td>2</td>
-                        <td>GOTOGO Post Business Parcel</td>
-                        <td>
-                            <div class="dropdown action-label goto-post-business-class">
-                                @if($franchise->gotogo_business_parcel == 1)
-                                <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot text-success"></i> Active </a>
-                                @else
-                                <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot text-danger"></i> Inactive </a>
-                                @endif
-                                <div class="dropdown-menu active-inactive-menu-3">
-                                    <a class="dropdown-item" onclick="service_status_update('{{$franchise->id}}', '3', '1')" href="#"><i class="fa-regular fa-circle-dot text-success"></i> Active</a>
-                                    <a class="dropdown-item" onclick="service_status_update('{{$franchise->id}}', '3', '0')" href="#"><i class="fa-regular fa-circle-dot text-danger"></i> Inactive</a>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-
-
-                    <!-- GOTOGO Post Registered -->
-                    <tr>
-                        <td>3</td>
-                        <td>GOTOGO Post Registered</td>
-                        <td>
-                            <div class="dropdown action-label active-inactive-menu-3">
-                                @if($franchise->gotogo_post_registered == 1)
-                                <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot text-success"></i> Active </a>
-                                @else
-                                <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot text-danger"></i> Inactive </a>
-                                @endif
-                                <div class="dropdown-menu active-inactive-menu-4">
-                                    <a class="dropdown-item" onclick="service_status_update('{{$franchise->id}}', '4', '1')" href="#"><i class="fa-regular fa-circle-dot text-success"></i> Active</a>
-                                    <a class="dropdown-item" onclick="service_status_update('{{$franchise->id}}', '4', '0')" href="#"><i class="fa-regular fa-circle-dot text-danger"></i> Inactive</a>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-
-
-                    <!-- Additional rows -->
-                    <!-- India Post Speed -->
-                    <tr>
-                        <td>4</td>
-                        <td>India Post Speed</td>
-                        <td>
-                            <div class="dropdown action-label india-post-speed-class">
-                                @if($franchise->india_post_speed == 1)
-                                <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot text-success"></i> Active </a>
-                                @else
-                                <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot text-danger"></i> Inactive </a>
-                                @endif
-                                <div class="dropdown-menu active-inactive-menu-5">
-                                    <a class="dropdown-item" onclick="service_status_update('{{$franchise->id}}', '5', '1')" href="#"><i class="fa-regular fa-circle-dot text-success"></i> Active</a>
-                                    <a class="dropdown-item" onclick="service_status_update('{{$franchise->id}}', '5', '0')" href="#"><i class="fa-regular fa-circle-dot text-danger"></i> Inactive</a>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                    <!-- India Post Business -->
-                    <tr>
-                        <td>5</td>
-                        <td>India Post Business</td>
-                        <td>
-                            <div class="dropdown action-label india-post-business-class">
-                                @if($franchise->india_post_business == 1)
-                                <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot text-success"></i> Active </a>
-                                @else
-                                <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot text-danger"></i> Inactive </a>
-                                @endif
-                                <div class="dropdown-menu active-inactive-menu-6">
-                                    <a class="dropdown-item" onclick="service_status_update('{{$franchise->id}}', '6', '1')" href="#"><i class="fa-regular fa-circle-dot text-success"></i> Active</a>
-                                    <a class="dropdown-item" onclick="service_status_update('{{$franchise->id}}', '6', '0')" href="#"><i class="fa-regular fa-circle-dot text-danger"></i> Inactive</a>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                    <!-- India Post Registered -->
-                    <tr>
-                        <td>6</td>
-                        <td>India Post Registered</td>
-                        <td>
-                            <div class="dropdown action-label india-post-registered-class">
-                                @if($franchise->india_post_registered == 1)
-                                <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot text-success"></i> Active </a>
-                                @else
-                                <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot text-danger"></i> Inactive </a>
-                                @endif
-                                <div class="dropdown-menu active-inactive-menu-7">
-                                    <a class="dropdown-item" onclick="service_status_update('{{$franchise->id}}', '7', '1')" href="#"><i class="fa-regular fa-circle-dot text-success"></i> Active</a>
-                                    <a class="dropdown-item" onclick="service_status_update('{{$franchise->id}}', '7', '0')" href="#"><i class="fa-regular fa-circle-dot text-danger"></i> Inactive</a>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                    <!-- E2E -->
-                    <tr>
-                        <td>7</td>
-                        <td>E2E</td>
-                        <td>
-                            <div class="dropdown action-label india-post-registered-class">
-                                @if($franchise->e2e == 1)
-                                <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot text-success"></i> Active </a>
-                                @else
-                                <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot text-danger"></i> Inactive </a>
-                                @endif
-                                <div class="dropdown-menu active-inactive-menu-8">
-                                    <a class="dropdown-item" onclick="service_status_update('{{$franchise->id}}', '8', '1')" href="#"><i class="fa-regular fa-circle-dot text-success"></i> Active</a>
-                                    <a class="dropdown-item" onclick="service_status_update('{{$franchise->id}}', '8', '0')" href="#"><i class="fa-regular fa-circle-dot text-danger"></i> Inactive</a>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                    <!-- E2E -->
-                    <tr>
-                        <td>8</td>
-                        <td>E2H</td>
-                        <td>
-                            <div class="dropdown action-label india-post-registered-class">
-                                @if($franchise->e2h == 1)
-                                <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot text-success"></i> Active </a>
-                                @else
-                                <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot text-danger"></i> Inactive </a>
-                                @endif
-                                <div class="dropdown-menu active-inactive-menu-9">
-                                    <a class="dropdown-item" onclick="service_status_update('{{$franchise->id}}', '9', '1')" href="#"><i class="fa-regular fa-circle-dot text-success"></i> Active</a>
-                                    <a class="dropdown-item" onclick="service_status_update('{{$franchise->id}}', '9', '0')" href="#"><i class="fa-regular fa-circle-dot text-danger"></i> Inactive</a>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <!-- Assigned Services -->
-
-</div>
-<!-- Profile Modal -->
-<div id="profile_info" class="modal custom-modal fade" role="dialog">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Profile Information</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+        @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
             </div>
-            <div class="modal-body">
-                <form>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="profile-img-wrap edit-img">
-                                <div id="fileContainer1">
-                                    <img class="inline-block" src="{{isset($franchise->kyc->photo) ? asset('admin/franchise/'.$franchise->generated_id.'/'.$franchise->kyc->photo) : asset('admin/assets/img/profiles/avatar-02.jpg')}}">
-                                </div>
-                                <div class="fileupload btn">
-                                    <span class="btn-text">Edit</span>
-                                    <input class="upload" id="fileInput1" onchange="displayFile(1)" type="file">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="input-block mb-3">
-                                        <label class="col-form-label">Name</label>
-                                        <input type="text" class="form-control" name="name" value="{{$franchise->name}}" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="input-block mb-3">
-                                        <label class="col-form-label">Father/Husband Name</label>
-                                        <input type="text" class="form-control" name="father_name" value="{{$franchise->father_name}}" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="input-block mb-3">
-                                        <label class="col-form-label">Phone Number</label>
-                                        <input type="text" class="form-control" name="mobile" value="{{$franchise->mobile}}" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="input-block mb-3">
-                                        <label class="col-form-label">Email</label>
-                                        <input type="text" class="form-control" name="email" value="{{$franchise->email}}" required>
-                                    </div>
-                                </div>
+        @endif
 
-                            </div>
-                        </div>
+        <form method="POST"
+              action="{{ route('admin.franchise.commission.save', $franchise->id) }}">
+
+            @csrf
+
+            <div class="row">
+
+                @foreach([
+                    1 => 'Gotogo Speed Post ',
+                    3 => 'Gotogo Business',
+                    4 => 'Gotogo Registered',
+                    5 => 'India Post Speed Post',
+                    6 => 'India Post Business',
+                    9 => 'E2H'
+                ] as $serviceType => $serviceName)
+
+                    <div class="col-md-4 mb-3">
+
+                        <label class="form-label">
+                            {{ $serviceName }}
+                        </label>
+
+                        <select
+                            name="commission[{{ $serviceType }}]"
+                            class="form-select"
+                            required
+                        >
+
+                            <option value="">Select Commission</option>
+
+                            @foreach([5, 10, 15, 20] as $rate)
+
+                                <option
+                                    value="{{ $rate }}"
+                                    {{ isset($franchiseCommission[$serviceType])
+                                        && $franchiseCommission[$serviceType]->commission_rate == $rate
+                                        ? 'selected'
+                                        : '' }}
+                                >
+                                    {{ $rate }}%
+                                </option>
+
+                            @endforeach
+
+                        </select>
+
                     </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="input-block mb-3">
-                                <label class="col-form-label">Address</label>
-                                <textarea name="address" class="form-control" id="address" required>{{old('address',$franchise->address)}}</textarea>
-                                <input type="hidden" name="latitude" value="{{old('latitude',$franchise->latitude)}}" id="latitude">
-                                <input type="hidden" name="longitude" value="{{old('longitude',$franchise->longitude)}}" id="longitude">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="input-block mb-3">
-                                <label class="col-form-label">Pin Code</label>
-                                <input type="text" class="form-control NumberValidate" id="pincode" maxlength="6" name="pincode" value="{{$franchise->pincode}}" required>
-                                <div class="invalid-feedback validerror">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="input-block mb-3">
-                                <label class="col-form-label">State</label>
-                                <input type="text" class="form-control" id="state" readonly name="state" value="{{$franchise->state}}">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="input-block mb-3">
-                                <label class="col-form-label">District</label>
-                                <input type="text" class="form-control" id="district" readonly name="district" value="{{$franchise->district}}">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="input-block mb-3">
-                                <label class="col-form-label">City</label>
-                                <input type="text" class="form-control" id="city" name="city" value="{{$franchise->city}}">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="submit-section">
-                        <button class="btn btn-primary submit-btn">Submit</button>
-                    </div>
-                </form>
+
+                @endforeach
+
             </div>
-        </div>
-    </div>
-</div>
-<!-- /Profile Modal -->
 
-<!-- Bank Modal -->
-<div id="bank_info" class="modal custom-modal fade" role="dialog">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Bank Information</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="row">
-                        <div class="col-md-12">
+            <button type="submit" class="btn btn-primary">
+                Save Commission
+            </button>
 
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="input-block mb-3">
-                                        <label class="col-form-label">Pan Card No.</label>
-                                        <input type="text" class="form-control" name="pan_card" value="{{$franchise->kyc->pan_card}}" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="input-block mb-3">
-                                        <label class="col-form-label">Adhar Card No.</label>
-                                        <input type="text" class="form-control" name="adhar_card" value="{{$franchise->kyc->adhar_card}}" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="input-block mb-3">
-                                        <label class="col-form-label">Bank Account No.</label>
-                                        <input type="text" class="form-control" name="account_number" value="{{$franchise->kyc->account_number}}" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="input-block mb-3">
-                                        <label class="col-form-label">IFSC Code</label>
-                                        <input type="text" class="form-control" name="ifsc_code" maxlength="11" onkeyup="return forceUpper(this);" value="{{$franchise->kyc->ifsc_code}}" required>
-                                        <div class="text-danger" id="bank_ifsc_error"></div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="input-block mb-3">
-                                        <label class="col-form-label">Bank Name</label>
-                                        <input type="text" class="form-control" name="bank_name" value="{{$franchise->kyc->bank_name}}" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="input-block mb-3">
-                                        <label class="col-form-label">Branch Name</label>
-                                        <input type="text" class="form-control" name="branch_name" value="{{$franchise->kyc->branch_name}}" required>
-                                    </div>
-                                </div>
+        </form>
 
-
-
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="submit-section">
-                        <button class="btn btn-primary submit-btn">Submit</button>
-                    </div>
-                </form>
-            </div>
-        </div>
     </div>
 </div>
-<!-- /Bank Modal -->
+    </div>
+    <div id="profile_info" class="modal custom-modal fade" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Profile Information</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="profile-img-wrap edit-img">
+                                    <div id="fileContainer1">
+                                        <img class="inline-block" src="{{isset($franchise->kyc->photo) ? asset('admin/franchise/'.$franchise->generated_id.'/'.$franchise->kyc->photo) : asset('admin/assets/img/profiles/avatar-02.jpg')}}">
+                                    </div>
+                                    <div class="fileupload btn">
+                                        <span class="btn-text">Edit</span>
+                                        <input class="upload" id="fileInput1" onchange="displayFile(1)" type="file">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="input-block mb-3">
+                                            <label class="col-form-label">Name</label>
+                                            <input type="text" class="form-control" name="name" value="{{$franchise->name}}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="input-block mb-3">
+                                            <label class="col-form-label">Father/Husband Name</label>
+                                            <input type="text" class="form-control" name="father_name" value="{{$franchise->father_name}}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="input-block mb-3">
+                                            <label class="col-form-label">Phone Number</label>
+                                            <input type="text" class="form-control" name="mobile" value="{{$franchise->mobile}}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="input-block mb-3">
+                                            <label class="col-form-label">Email</label>
+                                            <input type="text" class="form-control" name="email" value="{{$franchise->email}}" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="input-block mb-3">
+                                    <label class="col-form-label">Address</label>
+                                    <textarea name="address" class="form-control" id="address" required>{{old('address',$franchise->address)}}</textarea>
+                                    <input type="hidden" name="latitude" value="{{old('latitude',$franchise->latitude)}}" id="latitude">
+                                    <input type="hidden" name="longitude" value="{{old('longitude',$franchise->longitude)}}" id="longitude">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="input-block mb-3">
+                                    <label class="col-form-label">Pin Code</label>
+                                    <input type="text" class="form-control NumberValidate" id="pincode" maxlength="6" name="pincode" value="{{$franchise->pincode}}" required>
+                                    <div class="invalid-feedback validerror">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="input-block mb-3">
+                                    <label class="col-form-label">State</label>
+                                    <input type="text" class="form-control" id="state" readonly name="state" value="{{$franchise->state}}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="input-block mb-3">
+                                    <label class="col-form-label">District</label>
+                                    <input type="text" class="form-control" id="district" readonly name="district" value="{{$franchise->district}}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="input-block mb-3">
+                                    <label class="col-form-label">City</label>
+                                    <input type="text" class="form-control" id="city" name="city" value="{{$franchise->city}}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="submit-section">
+                            <button class="btn btn-primary submit-btn">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="bank_info" class="modal custom-modal fade" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Bank Information</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-12">
 
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="input-block mb-3">
+                                            <label class="col-form-label">Pan Card No.</label>
+                                            <input type="text" class="form-control" name="pan_card" value="{{$franchise->kyc->pan_card}}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="input-block mb-3">
+                                            <label class="col-form-label">Adhar Card No.</label>
+                                            <input type="text" class="form-control" name="adhar_card" value="{{$franchise->kyc->adhar_card}}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="input-block mb-3">
+                                            <label class="col-form-label">Bank Account No.</label>
+                                            <input type="text" class="form-control" name="account_number" value="{{$franchise->kyc->account_number}}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="input-block mb-3">
+                                            <label class="col-form-label">IFSC Code</label>
+                                            <input type="text" class="form-control" name="ifsc_code" maxlength="11" onkeyup="return forceUpper(this);" value="{{$franchise->kyc->ifsc_code}}" required>
+                                            <div class="text-danger" id="bank_ifsc_error"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="input-block mb-3">
+                                            <label class="col-form-label">Bank Name</label>
+                                            <input type="text" class="form-control" name="bank_name" value="{{$franchise->kyc->bank_name}}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="input-block mb-3">
+                                            <label class="col-form-label">Branch Name</label>
+                                            <input type="text" class="form-control" name="branch_name" value="{{$franchise->kyc->branch_name}}" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="submit-section">
+                            <button class="btn btn-primary submit-btn">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
 @push('page-javascript')
 
@@ -915,13 +978,9 @@
                 } else {
                     Swal.fire('Error!', "Something went wrong", 'error')
                 }
-
             }
-
         });
     }
-
-
 
     function service_status_update(franchiseId, serviceType, status) {
         $.ajax({
@@ -936,54 +995,51 @@
             success: function(data) {
                 if (data.success) {
                     Swal.fire('Success!', "Status updated", 'success');
-
                     // Determine the new button based on the status
                     var newElement = $('<a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"></a>');
                     var iconClass = data.status == '0' ? 'text-danger' : 'text-success';
                     var statusText = data.status == '0' ? 'Inactive' : 'Active';
 
                     newElement.html('<i class="fa-regular fa-circle-dot ' + iconClass + '"></i> ' + statusText);
-
-                    // Log the new element for debugging
+              // Log the new element for debugging
                     console.log($(newElement).get(0));
-
                     // Determine which element to update based on serviceType
                     switch (data.serviceType) {
-                        case '1':
+                    case '1':
                             // Handle GOTOGO Post Speed specific update
-                            $('.active-inactive-menu-1').prev().replaceWith(newElement);
-                            break;
-                        case '3':
+                        $('.active-inactive-menu-1').prev().replaceWith(newElement);
+                        break;
+                    case '3':
                             // Handle GOTOGO Post SuperFast specific update
-                            $('.active-inactive-menu-3').prev().replaceWith(newElement);
-                            break;
-                        case '4':
+                        $('.active-inactive-menu-3').prev().replaceWith(newElement);
+                        break;
+                    case '4':
                             // Handle GOTOGO Post Business Parcel specific update
-                            $('.active-inactive-menu-4').prev().replaceWith(newElement);
-                            break;
-                        case '5':
+                        $('.active-inactive-menu-4').prev().replaceWith(newElement);
+                        break;
+                    case '5':
                             // Handle India Post Speed specific update
-                            $('.active-inactive-menu-5').prev().replaceWith(newElement);
-                            break;
-                        case '6':
+                        $('.active-inactive-menu-5').prev().replaceWith(newElement);
+                        break;
+                    case '6':
                             // Handle India Post Business specific update
-                            $('.active-inactive-menu-6').prev().replaceWith(newElement);
-                            break;
-                        case '7':
+                        $('.active-inactive-menu-6').prev().replaceWith(newElement);
+                        break;
+                    case '7':
                             // Handle India Post Registered specific update
-                            $('.active-inactive-menu-7').prev().replaceWith(newElement);
-                            break;
-                        case '8':
+                        $('.active-inactive-menu-7').prev().replaceWith(newElement);
+                        break;
+                    case '8':
                             // Handle E2E specific update
-                            $('.active-inactive-menu-8').prev().replaceWith(newElement);
-                            break;
-                        case '9':
+                        $('.active-inactive-menu-8').prev().replaceWith(newElement);
+                        break;
+                    case '9':
                             // Handle E2H specific update
-                            $('.active-inactive-menu-9').prev().replaceWith(newElement);
-                            break;
-                        default:
-                            console.error('Unknown service type:', data.serviceType);
-                            break;
+                        $('.active-inactive-menu-9').prev().replaceWith(newElement);
+                        break;
+                    default:
+                        console.error('Unknown service type:', data.serviceType);
+                        break;
                     }
                 } else {
                     Swal.fire('Error!', "Something went wrong", 'error');
@@ -993,15 +1049,9 @@
         });
     }
 </script>
-
-
-
-
-
 <script>
     $('#pincode').on('change', function() {
         var pincode = $('#pincode').val();
-
         $.ajax({
             type: 'GET',
             url: "{{url('admin/city-state')}}" + '/' + pincode,
@@ -1020,10 +1070,8 @@
     function displayFile(id) {
         const fileInput = document.getElementById(`fileInput${id}`);
         const fileContainer = document.getElementById(`fileContainer${id}`);
-
         // Clear any previous content
         fileContainer.innerHTML = "";
-
         // Check if a file is selected
         if (fileInput.files.length === 0) {
             fileContainer.innerHTML = "<p>No file selected.</p>";
@@ -1031,7 +1079,6 @@
         }
         const file = fileInput.files[0];
         const fileType = file.type;
-
         if (fileType === "application/pdf") {
             // Display PDF
             const reader = new FileReader();
@@ -1056,7 +1103,6 @@
             fileContainer.innerHTML = "<p>Unsupported file type.</p>";
         }
     }
-
     function forceUpper(strInput) {
         strInput.value = strInput.value.toUpperCase();
     }
@@ -1065,7 +1111,6 @@
     var bankIfscError = $('#bank_ifsc_error');
     var bankName = $('#bank_name');
     var bankBranch = $('#branch_name');
-
     bankIfsc.on('input', function() {
         var ifscCode = bankIfsc.val();
         if (ifscCode.length === 11) {
@@ -1076,7 +1121,6 @@
                         bankName.val(res.BANK);
                         bankBranch.val(res.BRANCH);
                         bankIfscError.html('');
-
                     }
                 },
                 'error': function(xhr, status, error) {

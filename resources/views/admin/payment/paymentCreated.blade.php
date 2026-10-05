@@ -1,20 +1,16 @@
 @extends('admin.layouts.master')
-
 @section('title') Franchise Credit Payment @endsection
-
 @section('content')
-
 @if (session('success'))
-    <script>
-        Swal.fire({
-            icon: 'success',
-            title: 'Success!',
-            text: '{{ session('success') }}',
-            confirmButtonText: 'Okay'
-        });
-    </script>
+<script>
+    Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: '{{ session('success') }}',
+        confirmButtonText: 'Okay'
+    });
+</script>
 @endif
-
 
 <style>
     .personal-info li .text {
@@ -40,23 +36,23 @@
                         <div class="input-group mt-2">
                             <span class="input-group-text"><i class="fa fa-money-bill"></i></span>
                             <input type="number" class="form-control NumberValidate" id="amount" name="amount"
-                                placeholder="Enter Amount" required min="1">
+                            placeholder="Enter Amount" required min="1">
                             <div class="invalid-feedback">
                                 Please Enter a Valid Amount
                             </div>
                         </div>
                     </div>
 
-                     <div class="col-md-12 mb-3">
-                        <label for="amount">franchise <span class="text-danger">*</span></label>
+                    <div class="col-md-12 mb-3">
+                        <label for="amount">Business Associate <span class="text-danger">*</span></label>
                         <div class="input-group mt-2">
                             <span style="width:100%">
                              <select class="form-control" name="franchise">
-                                <option selected disabled>Select Franchise</option>
+                                <option selected disabled>Select Business Associate</option>
                                 @foreach($data as $list)
-                                     <option value="{{$list->id}}">{{$list->name}}</option>
+                                <option value="{{$list->id}}">{{$list->name}}</option>
                                 @endforeach
-                             </select></span>
+                            </select></span>
                             <div class="invalid-feedback">
                                 Please Enter a Valid Amount
                             </div>

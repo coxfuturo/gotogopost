@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\admin;
-
+use App\Models\FranchiseServiceCommission;
 use App\Http\Controllers\Controller;
 use App\Models\Franchise;
 use App\Models\FranchisePayment;
@@ -44,6 +44,27 @@ class FranchiseController extends Controller
         $datas = Franchise::get();
         return view('admin.franchise.index', compact('datas'));
     }
+
+    public function saveFranchiseCommission(Request $request, $id)
+{
+    foreach ($request->commission as $serviceType => $rate) {
+
+        FranchiseServiceCommission::updateOrCreate(
+            [
+                'franchise_id' => $id,
+                'service_type' => $serviceType,
+            ],
+            [
+                'commission_rate' => $rate,
+                'is_active' => 1,
+            ]
+        );
+    }
+
+    return redirect()
+        ->route('admin.franchise.view', $id)
+        ->with('success', 'Franchise commission updated successfully.');
+}
 
 
 
@@ -305,6 +326,7 @@ class FranchiseController extends Controller
     {
 
         $frachinse =  Franchise::findorfail($id);
+        $franchiseCommission = FranchiseServiceCommission::where('franchise_id',$id)->get()->keyBy('service_type');
 
         $franchise_id = $id; // Replace $id with the actual franchise ID
 
@@ -412,7 +434,8 @@ class FranchiseController extends Controller
             [
                 'franchise' => $frachinse,
                 'parcel' => $allParcels,
-                'bookingData' => $dailybookingdata
+                'bookingData' => $dailybookingdata,
+                'franchiseCommission' => $franchiseCommission
             ]
         );
     }

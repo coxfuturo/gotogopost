@@ -87,6 +87,8 @@ class LoginController extends Controller
                     return view('franchise.auth.makePayment', [
                         'franchise_id' => $franchise->id,
                         'amount' => $amount->franchise * 100,
+                         'mobile' => $franchise->mobile,
+    'email' => $franchise->email,
                     ]);
                 }
             }
@@ -200,11 +202,11 @@ class LoginController extends Controller
                 'email' => 'required|email|unique:franchises,email',
                 'pincode' => 'required|digits:6',
                 'city' => 'required',
-                'district' => 'required',
-                'state' => 'required',
-                'address' => 'required',
+                'district' => '',
+                'state' => '',
+                'address' => '',
                 'society_name' => 'required',
-                'cph_link' => 'required',
+                'cph_link' => '',
                 'gender' => 'required',
                 'age' => 'required|numeric|min:18',
                 'natality' => 'required',
@@ -379,7 +381,9 @@ private function generateRandomPassword($length = 8)
         return view('franchise.auth.makePayment', [
             'franchise_id' => $franchise->id,
             'amount' => $amount ? ($amount->franchise * 100) : 0,
-            'franchise' => $franchise
+            'franchise' => $franchise,
+                'mobile' => $franchise->mobile,
+    'email' => $franchise->email
         ]);
     }
 
@@ -595,97 +599,164 @@ private function generateRandomPassword($length = 8)
         return view('franchise.auth.register');
     }
 
-    public function paymentStore(Request $request)
-    {
-        $input = $request->all();
-        $api = new Api('rzp_live_hZ7MLP0RaGm3Dx', 'XVMFy4TcNEkX9Yf2x2nhjUPn');
-        
-        try {
-            $franchise = FranchisePayment::where('franchise_id', $request->franchise_id)->first();
-            
-            if (empty($franchise)) {
-                $paymentRecord = FranchisePayment::create([
-                    'franchise_id' => $request->franchise_id,
-                    'razorpay_payment_id' => $request->razorpay_payment_id,
-                    'amount' => $request->final_amount,
-                    'status' => 'pending',
-                    'type'  => 'register',
-                    'method' => 'razorpay',
-                ]);
-            } else {
-                $paymentRecord = FranchisePayment::find($franchise->id);
-            }
+   public function paymentStore(Request $request)
+{
+    $input = $request->all();
 
-            if (!empty($input['razorpay_payment_id'])) {
-                try {
-                    $payment = $api->payment->fetch($input['razorpay_payment_id']);
-                } catch (\Exception $e) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Error fetching payment details from Razorpay: ' . $e->getMessage(),
-                    ], 500);
-                }
+    $api = new Api(
+        env('RAZORPAY_KEY'),
+        env('RAZORPAY_SECRET')
+    );
 
-                try {
-                    $response = $payment->capture([
-                        'amount' => $payment['amount'],
-                    ]);
-                } catch (\Exception $e) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Error capturing payment: ' . $e->getMessage(),
-                    ], 500);
-                }
+    try {
 
-                try {
-                    if ($response['status'] == 'captured') {
-                        $paymentRecord->update(['status' => 'completed']);
-                        // Update franchise payment status
-                        $franchiseRecord = Franchise::find($request->franchise_id);
-                        if ($franchiseRecord) {
-                            $franchiseRecord->payment_status = 1;
-                            $franchiseRecord->save();
-                        }
-                    } else {
-                        $paymentRecord->update(['status' => 'failed']);
-                    }
-                } catch (\Exception $e) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Error updating payment status: ' . $e->getMessage(),
-                    ], 500);
-                }
+        /*
+        |--------------------------------------------------------------------------
+        | Find Franchise
+        |--------------------------------------------------------------------------
+        */
+        $franchiseRecord = Franchise::find($request->franchise_id);
 
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Franchise created and payment processed successfully!',
-                    'data' => [
-                        'id' => $request->generated_id,
-                        'password' => $request->password,
-                    ]
-                ]);
-            } else {
-                try {
-                    $paymentRecord->update(['status' => 'failed']);
-                } catch (\Exception $e) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Error updating payment status to failed: ' . $e->getMessage(),
-                    ], 500);
-                }
-
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Payment failed: Payment ID is missing',
-                ], 400);
-            }
-        } catch (\Exception $e) {
+        if (!$franchiseRecord) {
             return response()->json([
                 'success' => false,
-                'message' => 'Payment processing failed: ' . $e->getMessage(),
+                'message' => 'Franchise not found.'
+            ], 404);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Razorpay Payment ID Check
+        |--------------------------------------------------------------------------
+        */
+        if (empty($request->razorpay_payment_id)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Payment ID is missing.'
+            ], 400);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Create a NEW payment record for this payment
+        |--------------------------------------------------------------------------
+        */
+        $paymentRecord = FranchisePayment::create([
+            'franchise_id' => $franchiseRecord->id,
+            'razorpay_payment_id' => $request->razorpay_payment_id,
+            'amount' => $request->final_amount,
+            'status' => 'pending',
+            'type' => 'register',
+            'method' => 'razorpay',
+        ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Fetch Payment From Razorpay
+        |--------------------------------------------------------------------------
+        */
+        try {
+
+            $payment = $api->payment->fetch(
+                $request->razorpay_payment_id
+            );
+
+        } catch (\Exception $e) {
+
+            $paymentRecord->update([
+                'status' => 'failed'
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching payment details from Razorpay: '
+                    . $e->getMessage()
             ], 500);
         }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Capture Payment
+        |--------------------------------------------------------------------------
+        */
+        try {
+
+            $response = $payment->capture([
+                'amount' => $payment['amount'],
+            ]);
+
+        } catch (\Exception $e) {
+
+            $paymentRecord->update([
+                'status' => 'failed'
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error capturing payment: '
+                    . $e->getMessage()
+            ], 500);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Payment Successful
+        |--------------------------------------------------------------------------
+        */
+        if ($response['status'] == 'captured') {
+
+            // Payment completed
+            $paymentRecord->update([
+                'status' => 'completed'
+            ]);
+
+            // Update franchise payment status
+            $franchiseRecord->payment_status = 1;
+            $franchiseRecord->save();
+
+            /*
+            |--------------------------------------------------------------------------
+            | IMPORTANT:
+            | Login the SAME franchise after successful payment
+            |--------------------------------------------------------------------------
+            */
+            Auth::guard('franchise')->login($franchiseRecord);
+
+            /*
+            |--------------------------------------------------------------------------
+            | Return Success Response
+            |--------------------------------------------------------------------------
+            */
+            return response()->json([
+                'success' => true,
+                'message' => 'Payment successful.',
+                'redirect' => route('franchise.dashboard')
+            ]);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Payment Failed
+        |--------------------------------------------------------------------------
+        */
+        $paymentRecord->update([
+            'status' => 'failed'
+        ]);
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Payment was not captured.'
+        ], 400);
+
+    } catch (\Exception $e) {
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Payment processing failed: '
+                . $e->getMessage()
+        ], 500);
     }
+}
 
     public function getLocation(Request $request)
     {

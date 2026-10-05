@@ -53,7 +53,7 @@
             <table class="table table-striped custom-table datatable">
                 <thead>
                     <tr>
-                        <th>SN#</th>
+                        <th>Sr.No.</th>
                         <th>Name</th>
                         <th>Email</th>
                         <th>Phone</th>

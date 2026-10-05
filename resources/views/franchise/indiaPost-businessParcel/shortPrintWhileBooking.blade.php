@@ -173,10 +173,10 @@
                         <div class="service-title">India Post Business Parcel</div>
                         <table>
                             <tr>
-                                <td><strong>Franchise NO:</strong> {{ $linkDetail->franchise_no }}</td>
+                                <td><strong>Business Associate NO:</strong> {{ $linkDetail->franchise_no }}</td>
                             </tr>
                             <tr>
-                                <td><strong>Customer_id NO:</strong> {{ $linkDetail->customer_id }}</td>
+                                <td><strong>Business Bulk_id NO:</strong> {{ $linkDetail->customer_id }}</td>
                             </tr>
                             <tr>
                                 <td><strong>BNPL No:</strong> {{ $linkDetail->bnpl_no }}</td>

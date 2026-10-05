@@ -657,9 +657,9 @@
                                 <select name="payment_method" id="paymentMethod" class="select form-select"  data-tags="true" data-placeholder="Select an option" required>
 
                                     <option value="">Select an option</option>
-                                    <option value="{{'franchise'}}">Franchise</option>
+                                    <option value="{{'franchise'}}">Business Associate</option>
                                     <option value="{{'manager'}}">S.M. Manager</option>
-                                    <!-- <option value="{{'customer'}}">Customer</option> -->
+                                    <option value="{{'customer'}}">Business Bulk</option>
                                     <option value="{{'pickup'}}">Pickup Boy</option>
 
                                 </select>
@@ -689,7 +689,7 @@
 
                            <li>
 
-                            <div class="col-lg-3 title"><span id="emailspan"></span> Customer</div>
+                            <div class="col-lg-3 title"><span id="emailspan"></span> Business Bulk</div>
 
                             <div class="col-lg-8">
                                 <select name="pickupDetails" id="pickup-details" class="select form-select"  data-tags="true" data-placeholder="Select an option" >
@@ -720,16 +720,16 @@
                    <div class="row">
                        <div class="col-sm-4">
                               <div class="d-flex flex-column">
-                                <span>Franchise</span>
-                                <span>Credit Account</span>
+                                <span>Gotogo Account</span>
+                                <span>Credit Amount</span>
                                 <span class="credit-balance">{{ number_format($franchise_details->credit_balance, 2) }} Balance</span>
                               </div>
                        </div>
 
                        <div class="col-sm-4">
                               <div class="d-flex flex-column text-right">
-                                 <span>franchise</span>
-                                 <span>Advance  Account</span>
+                                 <span>Gotogo Account</span>
+                                 <span>Advance  Amount</span>
                                  <span class="gotogo-balance">{{ number_format($franchise_details->gotogo_balance, 2) }} Balance</span>
                               </div>
                        </div>

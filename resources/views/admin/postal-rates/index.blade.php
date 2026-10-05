@@ -5,7 +5,7 @@
 @push('add-modal-code')
 <div class="col-auto float-end ms-auto">
     @if($rates->count()>0)
-    <a href="{{route('admin.postal-rates.edit',['type'=>request()->query('type')])}}" class="btn add-btn"><i class="fa-solid fa-pen"></i> edit</a>
+    <a href="{{route('admin.postal-rates.edit',['type'=>request()->query('type')])}}" class="btn add-btn"><i class="fa-solid fa-pen"></i> Edit</a>
     @else
     <a href="{{route('admin.postal-rates.create',['type'=>request()->query('type')])}}" class="btn add-btn"><i class="fa-solid fa-plus"></i>Add</a>
     @endif
@@ -21,27 +21,27 @@
         <p>EMS speed post is a guaranteed and fast mail service for letters,Parcel and Packets deliverable in a specified time,between specified stations in India.(Rate In INR)</p>
         @endif
         <div class="table-responsive">
-            <table class="table table-striped custom-table mb-0">
+            <table class="table table-bordered custom-table datatable table-hover">
                 <thead>
-                    <tr>
-                        <th>weight</th>
+                    <tr class="text-start">
+                        <th>Weight</th>
                         <th>Local</th>
-                        <th>51 to 200 kms</th>
-                        <th>201 to 500 kms</th>
-                        <th>501 to 1000 kms</th>
-                        <th>1001 to 2000 kms</th>
-                        <th>above 2000 kms</th>
+                        <th>51-200 kms</th>
+                        <th>201-500 kms</th>
+                        <th>501-1000 kms</th>
+                        <th>1001-2000 kms</th>
+                        <th>Above 2000 kms</th>
                     </tr>
                 </thead>
                 @foreach($rates as $rate)
-                <tr>
-                    <td>{{ $rate->weight }}</td>
-                    <td>{{ $rate['Local'] }}</td> <!-- Use square brackets with quotes -->
-                    <td>{{ $rate['upto_200_kms'] }}</td>
-                    <td>{{ $rate['rate_201_to_500_kms'] }}</td> 
-                    <td>{{ $rate['rate_501_to_1000_kms'] }}</td>
-                    <td>{{ $rate['rate_1001_to_2000_kms'] }}</td>
-                    <td>{{ $rate['above_2000_kms'] }}</td>
+                <tr class="text-start">
+                    <td class="text-start">{{ $rate->weight }}</td>
+                    <td class="text-start">{{ $rate['Local'] }}</td> <!-- Use square brackets with quotes -->
+                    <td class="text-start">{{ $rate['upto_200_kms'] }}</td>
+                    <td class="text-start">{{ $rate['rate_201_to_500_kms'] }}</td> 
+                    <td class="text-start">{{ $rate['rate_501_to_1000_kms'] }}</td>
+                    <td class="text-start">{{ $rate['rate_1001_to_2000_kms'] }}</td>
+                    <td class="text-start">{{ $rate['above_2000_kms'] }}</td>
                 </tr>
                 @endforeach
             </table>

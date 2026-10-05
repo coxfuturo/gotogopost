@@ -1,11 +1,8 @@
 @extends('admin.layouts.master')
 @section('title') Parcel Management @endsection
 @section('content')
-<!-- Row -->
 <div class="row">
     <div class="col-sm-12">
-
-        <!-- Custom Boostrap Validation -->
         <div class="card">
             <form action="{{ route('admin.parcel.edit', $data->id) }}" enctype="multipart/form-data" method="POST" class="needs-validation" novalidate>
                 @csrf
@@ -20,7 +17,7 @@
                                 <div class="col-md-4 mb-3">
                                     <label class="text-dark">Select Pickup details<span class="text-danger">*</span></label>
                                     <select name="pickup-details" id="pickup-details" class="select" data-tags="true" data-placeholder="Select an option">
-                                        <option value="">Select an option</option>
+                                        <option value="">Select An Option</option>
                                         @foreach($pickupDetails as $user)
                                         <option value="{{ $user->id }}">{{ $user->name }} </option>
                                         @endforeach
@@ -106,7 +103,7 @@
                         </div>
                     </div>
                 </div>
-            
+
                 <div class="card-header">
                     <h5 class="card-title mb-0">Consignee Details</h5>
                 </div>
@@ -193,9 +190,9 @@
                                 <div class="col-md-4 mb-3">
                                     <label class="text-dark">Payment Method<span class="text-danger">*</span></label>
                                     <select name="payment_method" id="paymentMethod" class="select" data-tags="true" data-placeholder="Select an option" required>
-                                        <option value="">Select an option</option>
+                                        <option value="">Select An Option</option>
                                         <option {{ $data && $data->payment_method == 'cod' ? 'selected' : '' }} value="cod">Cash on delivery</option>
-                                        <option {{ $data && $data->payment_method == 'prepaid' ? 'selected' : '' }} value="prepaid">Prepaid</option>
+                                        <option {{ $data && $data->payment_method == 'prepaid' ? 'selected' : '' }} value="prepaid">Advance</option>
                                     </select>                                    
                                 </div>
                             </div>
@@ -266,15 +263,9 @@
                 </div>
             </form>                 
         </div>
-        <!-- /Custom Boostrap Validation -->
-
     </div>
 </div>
-<!-- /Row -->
-
 @push('page-javascript')
-
-
 <script>
     $('#pincode').on('change', function() {
         var pincode = $('#pincode').val();
@@ -299,40 +290,36 @@
 
 
     $('#pickup-details').on('change', function(e) {
-    var csrfToken = "{{ csrf_token() }}";
+        var csrfToken = "{{ csrf_token() }}";
 
-    $.ajax({
-        type: 'POST',
-        url: "{{ route('admin.pickup-details.details') }}",
-        headers: {
-            'X-CSRF-TOKEN': csrfToken
-        },
-        data: { id: e.target.value },
-        success: function(data) {
-            if (data) { 
-                $('#PickupName').val(data.name);
-                $('#PickupMobile').val(data.phone);
-                $('#PickupEmail').val(data.email);
-                $('#PickupPincode').val(data.pincode);
-                $('#PickupCity').val(data.city);
-                $('#PickupState').val(data.state);
-                $('#PickupAddress').val(data.address);
+        $.ajax({
+            type: 'POST',
+            url: "{{ route('admin.pickup-details.details') }}",
+            headers: {
+                'X-CSRF-TOKEN': csrfToken
+            },
+            data: { id: e.target.value },
+            success: function(data) {
+                if (data) { 
+                    $('#PickupName').val(data.name);
+                    $('#PickupMobile').val(data.phone);
+                    $('#PickupEmail').val(data.email);
+                    $('#PickupPincode').val(data.pincode);
+                    $('#PickupCity').val(data.city);
+                    $('#PickupState').val(data.state);
+                    $('#PickupAddress').val(data.address);
 
-            } else {
-                $('.validerror').text('Please enter a valid pincode');
+                } else {
+                    $('.validerror').text('Please enter a valid pincode');
+                }
             }
-        }
+        });
     });
-});
 
     function displayFile(id) {
         const fileInput = document.getElementById(`fileInput${id}`);
         const fileContainer = document.getElementById(`fileContainer${id}`);
-
-        // Clear any previous content
         fileContainer.innerHTML = "";
-
-        // Check if a file is selected
         if (fileInput.files.length === 0) {
             fileContainer.innerHTML = "<p>No file selected.</p>";
             return;
@@ -401,9 +388,7 @@
         }
     });
 </script>
-
 <script src="https://maps.google.com/maps/api/js?key=AIzaSyARf505VVJ_bn-5BnQ5qFbyKqWGF4DRn9U&libraries=places&callback=initAutocomplete" type="text/javascript"></script>
-
 <script>
     google.maps.event.addDomListener(window, 'load', initialize);
 

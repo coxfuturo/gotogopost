@@ -80,5 +80,5 @@ Route::get('/prepaid/booking/short-print', [PrepaidController::class, 'shortPrin
     ->name('prepaid.booking.shortPrintForCreatedParcel');
     
     
-// Route::post('/storeByfile', [IndiaPostSpeedPostController::class, 'storeByFile'])
-//     ->name('franchise.india-post-speed-post.storeByfile');
+Route::post('/storeByfile', [IndiaPostSpeedPostController::class, 'storeByFile'])
+    ->name('franchise.india-post-speed-post.storeByfile');

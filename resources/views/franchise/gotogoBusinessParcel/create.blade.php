@@ -643,9 +643,9 @@
                                 <select name="payment_method" id="paymentMethod" class="select form-select"  data-tags="true" data-placeholder="Select an option" required>
 
                                     <option value="">Select an option</option>
-                                    <option value="{{'franchise'}}">Franchise</option>
+                                    <option value="{{'franchise'}}">Business Associate</option>
                                     <option value="{{'manager'}}">S.M. Manager</option>
-                                    <!-- <option value="{{'customer'}}">Customer</option> -->
+                                     <option value="{{'customer'}}">Business Bulk</option>
                                     <option value="{{'pickup'}}">Pickup Boy</option>
 
                                 </select>
@@ -675,7 +675,7 @@
 
                            <li>
 
-                            <div class="col-lg-3 title"><span id="mobilespan"></span> Customer</div>
+                            <div class="col-lg-3 title"><span id="mobilespan"></span> Business Bulk</div>
 
                             <div class="col-lg-8">
                                 <select name="payment_type_cod" id="paymentType" class="select form-select"  data-tags="true" data-placeholder="Select an option" required>
@@ -711,7 +711,7 @@
                    <div class="row">
                        <div class="col-sm-4">
                               <div class="d-flex flex-column">
-                                <span>Franchise</span>
+                                <span>India Post Account</span>
                                 <span>Credit Account</span>
                                 <span class="credit-balance">{{ number_format($franchise_details->credit_balance, 2) }} Balance</span>
                               </div>
@@ -719,7 +719,7 @@
 
                        <div class="col-sm-4">
                               <div class="d-flex flex-column text-right">
-                                <span>Franchise</span>
+                                <span>India Post Account</span>
                                  <span>Advance  Account</span>
                                  <span class="gotogo-balance">{{ number_format($franchise_details->gotogo_balance, 2) }} Balance</span>
                               </div>
@@ -790,7 +790,7 @@
 
                     <div class="card-title mb-0">
 
-                        Customer Address
+                        Business Bulk Address
 
                     </div>
 

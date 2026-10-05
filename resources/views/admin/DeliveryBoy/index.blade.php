@@ -26,14 +26,14 @@
             <div class="card-body">
                 <div class="table-responsive">
 
-                    <table class="table table-striped custom-table datatable">
+                    <table class="table table-bordered custom-table datatable table-hover">
                         <thead>
                             <tr>
                                 <th>SN#</th>
                                 <th class="text-center">Name</th>
                                 <th class="text-center">Phone</th>
                                 <th class="text-center">Email</th>
-                                <th class="text-center">address</th>
+                                <th class="text-center">Address</th>
                                 <th class="text-center">Status</th>
                                 <th class="text-end">Action</th>
                             </tr>
@@ -41,8 +41,8 @@
                         <tbody>
                             @foreach($datas as $i => $data)
                             <tr>
-                                <td>{{$i+1}}</td>
-                                <td>
+                                <td class="text-center">{{$i+1}}</td>
+                                <td class="text-start">
                                     <h2 class="table-avatar">
                                         
                                         @if ($data->kyc && $data->kyc->photo)
@@ -56,10 +56,10 @@
                                     </h2>
                                 </td>
 
-                                <td>{{$data->mobile}}</td>
-                                <td>{{$data->email}}</td>
-                                <td>{{$data->address}}</td>
-                                <td>
+                                <td class="text-start">{{$data->mobile}}</td>
+                                <td class="text-start">{{$data->email}}</td>
+                                <td class="text-start">{{$data->address}}</td>
+                                <td class="text-start">
                                     @if($data->status == 1)
                                         <span class="badge bg-success p-2 fs-8 fw-medium">Active</span>
                                     @elseif($data->status == 2)
@@ -70,7 +70,7 @@
                                 </td>
                                 
                                 
-                                <td class="text-end">
+                                <td class="text-center">
                                     <div class="dropdown dropdown-action">
                                         <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                         <div class="dropdown-menu dropdown-menu-right">

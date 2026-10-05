@@ -232,7 +232,7 @@
 
                                 <div style="width:100%;text-align:center">
                                     <li class="d-flex justify-content-between px-3">
-                                        <div class="document-title">Customer Image</div>
+                                        <div class="document-title">Business Bulk Image</div>
                                         <div data-bs-toggle="modal" data-bs-target="#franchise_view"><button class="btn btn-sm btn-dark">View</button></div>
                                     </li>
 

@@ -12,7 +12,7 @@
 
         <meta name="author" content="Dreamguys - Bootstrap Admin Template" />
 
-        <title>Premium Customer Services|Register</title>
+        <title>Business Bulk Customer|Register</title>
 
         <link href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/8.11.8/sweetalert2.min.css" rel="stylesheet" type="text/css" />
 
@@ -191,7 +191,7 @@
 
                     <div class="account-box">
                         <div class="account-wrapper">
-                            <h3 class="account-title mb-3">Premium Customer Services Register Form</h3>
+                            <h3 class="account-title mb-3">Business Bulk Customer Form</h3>
 
                             <!-- Row -->
 
@@ -231,7 +231,7 @@
                                                             </div>
 
                                                             <div class="col-md-4 mb-3">
-                                                                <label for="father_name">Father/Husband Name <span class="text-danger">*</span></label>
+                                                                <label for="father_name">Director/Owner Name <span class="text-danger">*</span></label>
 
                                                                 <div class="input-group">
                                                                     <span class="input-group-text"><i class="fa fa-user"></i></span>
@@ -242,18 +242,18 @@
                                                                         id="father_name"
                                                                         name="father_name"
                                                                         value="{{old('father_name')}}"
-                                                                        placeholder="Father/Husband Name"
+                                                                        placeholder="Director/Owner Name"
                                                                         required
                                                                     />
 
                                                                     <div class="invalid-feedback">
-                                                                        Please provide Father/Husband Name
+                                                                        Please provide Director/Owner Name
                                                                     </div>
                                                                 </div>
                                                             </div>
 
                                                             <div class="col-md-4 mb-3">
-                                                                <label for="mobile">Mobile <span class="text-danger">*</span></label>
+                                                                <label for="mobile">Firm/Company/Mobile <span class="text-danger">*</span></label>
 
                                                                 <div class="input-group">
                                                                     <span class="input-group-text"><i class="fa fa-building"></i></span>
@@ -265,12 +265,12 @@
                                                                         id="mobile"
                                                                         name="mobile"
                                                                         value="{{old('mobile')}}"
-                                                                        placeholder="Mobile."
+                                                                        placeholder="Firm/Company/Mobile"
                                                                         required
                                                                     />
 
                                                                     <div class="invalid-feedback">
-                                                                        Please provide mobile number
+                                                                        Please provide Firm/Company/Mobiles
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -671,11 +671,11 @@
                                                             </div>
 
                                                             <div class="col-md-4 mb-3 location_col">
-                                                                <label for="gst_number">Link:-Office Near By Franchise</label>
+                                                                <label for="gst_number">Link:-Office Near By Business Associate/L.P.O.</label>
 
                                                                 <div class="input-group">
                                                                     <select name="cph_link" class="form-control location_dropdown">
-                                                                        <option selected disabled>Please Select Franchise</option>
+                                                                        <option selected disabled>Please Select Business Associate/L.P.O.</option>
                                                                     </select>
                                                                     <!-- <input  type="text" class="form-control location_dropdown"  name="cph_link" placeholder="Please Select Location" readonly/> -->
                                                                 </div>

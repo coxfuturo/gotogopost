@@ -21,10 +21,11 @@ class Admin extends Authenticatable
     ];
 
     public const GOTOGO_POST_SPEED = "Super Speed Packet";
-    public const GOTOGO_POST_BUSINESS = 'Post Express Package';
-    public const GOTOGO_POST_REGISTERED = 'Post Secure Packet';
-    public const INDIA_POST_SPEED = 'SP-Packet Document';
+    public const GOTOGO_POST_BUSINESS = 'Post Express Parcel';
+    public const GOTOGO_POST_REGISTERED = 'Post Secure Parcel-';
+    public const INDIA_POST_SPEED = 'SP-Document Domestic';
     public const INDIA_POST_BUSINESS = 'SP-Parcel Domestic';
+    public const INDIA_POST_REGISTERED = 'SP-Buisness Parcel';
     public const E2E = 'E2E';
     public const E2H = 'E2H';
 

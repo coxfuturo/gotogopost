@@ -331,7 +331,7 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="row">
+                                                        <!-- <div class="row">
                                                             <div class="col-md-4 mb-3">
                                                                 <label for="district">District <span class="text-danger">*</span></label>
 
@@ -358,7 +358,7 @@
                                                                         Please provide state
                                                                     </div>
                                                                 </div>
-                                                            </div>
+                                                            </div> -->
 
                                                             <div class="col-md-4 mb-3">
                                                                 <label for="address">Residential/Office Address <span class="text-danger">*</span></label>

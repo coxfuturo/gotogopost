@@ -121,16 +121,16 @@
             <div class="card-body">
                 
                 <div class="table-responsive table-newdatatable" id="franchise_daily_booking_report">
-                    <table class="table table-striped custom-table datatable">
+                    <table class="table table-bordered custom-table datatable table-hover">
                         <thead>
                             <tr>
-                                <th>#</th>
-                                <th class="text-center">Name</th>
-                                <th class="text-center">Email</th>
-                                <th class="text-center">Amount</th>
-                                <th class="text-center">Transaction Id</th>
-                                <th class="text-center">Status</th>
-                                <th class="text-center">Date</th>
+                                <th>Sr.No.</th>
+                                <th class="text-start">Name</th>
+                                <th class="text-start">Email</th>
+                                <th class="text-start">Amount</th>
+                                <th class="text-start">Transaction Id</th>
+                                <th class="text-start">Status</th>
+                                <th class="text-start">Date</th>
                                 <th class="text-center">Invoice</th>
                             </tr>
                         </thead>
@@ -138,13 +138,13 @@
                         @foreach($paymentHistory as $index => $value)
                             <tr>
                                 <td>{{ $index + 1 }}</td>
-                                <td>{{ $value->pph->name }}</td>
-                                <td>{{ $value->pph->email }}</td>
-                                <td>{{ $value['amount'] }}</td>
-                                <td>{{ $value['razorpay_payment_id'] }}</td>
-                                <td>{{ $value['status'] }}</td>
-                                <td>{{ \Carbon\Carbon::parse($value->created_at)->format('d-m-Y') }}</td>
-                                <td>
+                                <td class="text-start">{{ $value->pph->name }}</td>
+                                <td class="text-start">{{ $value->pph->email }}</td>
+                                <td class="text-start">{{ $value['amount'] }}</td>
+                                <td class="text-start">{{ $value['razorpay_payment_id'] }}</td>
+                                <td class="text-start">{{ $value['status'] }}</td>
+                                <td class="text-start">{{ \Carbon\Carbon::parse($value->created_at)->format('d-m-Y') }}</td>
+                                <td class="text-start">
                                  <button  onClick="print({{$value->id}})" style="margin-right:10px;" class="btn add-btn">Print</button>
                                  </td>
                             </tr>

@@ -818,13 +818,28 @@ class GotogoBusinessParcelController extends Controller
                 return response()->json(['status' => 400, 'message' => 'Balance Low']);
             }
 
-            FranchiseCommissionDetail::create([
-                "franchise_id" => $franchiseId,
-                "service_type" => GotogoBusinessParcel::SERVICE_TYPE_GOTO_POST_BUSINESS_PARCEL,
-                "amount" => $payment_amount / 1.18,
-                "commission" => number_format($commission, 2, '.', ''),
-                "payment_method" => $request->payment_method,
-            ]);
+         // Franchise-specific commission
+$serviceType = GotogoBusinessParcel::SERVICE_TYPE_GOTO_POST_BUSINESS_PARCEL;
+
+$netAmount = $payment_amount / 1.18;
+
+$commissionData = $rateCalculater->calculateFranchiseCommission(
+    $franchiseId,
+    $serviceType,
+    $netAmount
+);
+
+$commissionRate = $commissionData['rate'];
+$commission = $commissionData['commission'];
+
+FranchiseCommissionDetail::create([
+    "franchise_id" => $franchiseId,
+    "service_type" => $serviceType,
+    "amount" => $netAmount,
+    "commission" => $commission,
+    "commission_rate" => $commissionRate,
+    "payment_method" => $request->payment_method,
+]);
 
             if ($request->payment_method === 'manager' || $request->payment_method === 'pickup') {
         $datamanager = new ManagerCommissionDetail();

@@ -108,7 +108,7 @@
                     <table class="table table-striped custom-table datatable">
                         <thead>
                             <tr>
-                                <th>SN#</th>
+                                <th class="text-center">Sr.No.</th>
                                 <th>State</th>
                                 <th>District</th>
                                 <th>Pincode</th>
@@ -121,12 +121,12 @@
 
                             <tr>
                                 <td>{{$i+1}}</td>
-                                <td>{{$list->state_name}}</td>
+                                <td class="text-start">{{$list->state_name}}</td>
 
-                                <td>{{$list->district}}</td>
-                                <td>{{$list->pincode}}</td>
+                                <td class="text-start">{{$list->district}}</td>
+                                <td class="text-start">{{$list->pincode}}</td>
 
-                                <td>
+                                <td class="text-start">
                                     <div class="dropdown action-label">
                                         @if($list->status == 1)
 
