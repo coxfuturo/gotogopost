@@ -12,7 +12,7 @@
 
         <meta name="author" content="Dreamguys - Bootstrap Admin Template" />
 
-        <title>Franchise|Register</title>
+        <title>Business Associate|Register</title>
 
         <link href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/8.11.8/sweetalert2.min.css" rel="stylesheet" type="text/css" />
 
@@ -97,11 +97,18 @@ const options = {
     currency: "INR",
     name: "gotogopost.com",
     description: "Register Payment",
+    prefill: {
+    contact: "{{ $mobile }}",
+    email: "{{ $email }}"
+},
     image: "https://gotogopost.com/website/images/logonewtransparent.png",
     theme: {
         color: "#ff7529",
     },
     handler: function (response) {
+  alert("RAZORPAY SUCCESS CALLBACK");
+
+    console.log("RAZORPAY RESPONSE:", response);
         const paymentData = {
             razorpay_payment_id: response.razorpay_payment_id,
             final_amount: amountInPaise,
@@ -120,18 +127,18 @@ const options = {
             success: function (paymentResponse) {
 
                 console.log(paymentResponse)
-                if (paymentResponse.success) {
-                    Swal.fire({
-                        icon: "success",
-                        title: "Payment Successful",
-                        text: `${paymentResponse.message}`,
-                        confirmButtonText: "Okay",
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.location.href = "{{ route('franchise.login') }}"; // Redirect to login
-                        }
-                    });
-                } else {
+               if (paymentResponse.success) {
+    Swal.fire({
+        icon: "success",
+        title: "Payment Successful",
+        text: paymentResponse.message,
+        confirmButtonText: "Okay",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = paymentResponse.redirect;
+        }
+    });
+} else {
                     Swal.fire({
                         icon: "error",
                         title: "Payment Failed",
@@ -172,6 +179,17 @@ const options = {
 
 // Initialize Razorpay instance
 const rzp = new Razorpay(options);
+
+rzp.on('payment.failed', function (response) {
+    console.log("RAZORPAY PAYMENT FAILED:", response);
+
+    alert(
+        "Payment Failed\n" +
+        "Code: " + response.error.code + "\n" +
+        "Description: " + response.error.description
+    );
+});
+
 rzp.open();
 </script>
 @endif

@@ -73,7 +73,7 @@
     <link href="{{ asset('website/css/responsive.css') }}" rel="stylesheet">
 
     <!-- Select2 CSS -->
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
 </head>
 
@@ -83,40 +83,40 @@
 
     .header-v1 .nav a {
 
-    color: #000;
+        color: #000;
 
-}
+    }
 
 
 
-.header-transparent .site-header {
+    .header-transparent .site-header {
 
-    background-color: white;
+        background-color: white;
 
-    position: absolute;
+        position: absolute;
 
-    top: 0;
+        top: 0;
 
-    left: 0;
+        left: 0;
 
-    width: 100%;
-    z-index: 999;
-    border-bottom: 1px solid rgba(35, 41, 81, 0.1);
-}
-.site-header {
+        width: 100%;
+        z-index: 999;
+        border-bottom: 1px solid rgba(35, 41, 81, 0.1);
+    }
+    .site-header {
 
-    background-color: #fff;
+        background-color: #fff;
 
-    position: relative;
+        position: relative;
 
-    padding: 12px 0;
+        padding: 12px 0;
 
-}
+    }
 
 /* ==========================================================================
    TOP BAR HEADER INFO SECTION
    ========================================================================== */
-.top-bar-header-info {
+   .top-bar-header-info {
     background-color: #0b132b;
     padding: 10px 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -217,7 +217,7 @@
     background-color: #222;
 }
 
-  .header-v1 .nav li li:hover>ul {
+.header-v1 .nav li li:hover>ul {
     top: 0;
     left: -webkit-calc(100% + 10px);
     left: calc(-102% + 0px);
@@ -316,7 +316,7 @@
 
 /* new Setting */
 .nav ul ul {
-   background: #ff0000 !important
+ background: #ff0000 !important
 }
 
 .nav li li:hover {
@@ -325,7 +325,7 @@
 }
 
 .nav li li {
-     padding: 0px 0px !important;
+   padding: 0px 0px !important;
 }
 
 .sub-menu li {
@@ -424,7 +424,7 @@
         <div class="top-bar-header-info hidden-xs hidden-sm">
             <div class="container">
                 <div class="top-bar-inner">
-                    
+
                     <!-- Address Item -->
                     <div class="top-info-item">
                         <i class="flaticon-signs top-info-icon"></i>
@@ -501,144 +501,144 @@
                                           <li><a href="#">GOTOGO Post Business Package</a></li>
                                           <!-- <li><a href="{{route('website.logistic')}}">Logistic Services </a></li> -->
                                           <li><a href="{{route('website.ecommerce')}}">B2B Service </a></li>
-                                         
-                                         
-                                            <ul>
-                                                <li><a href="#">Gotogo Post Booking Service</a></li>
-                                                <li><a href="#">India Post Booking Service</a></li>
-                                            </ul>
-                                          </li>
-                                        </ul>
 
-                                    </li> --}}
+
+                                          <ul>
+                                            <li><a href="#">Gotogo Post Booking Service</a></li>
+                                            <li><a href="#">India Post Booking Service</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+
+                            </li> --}}
+                            <li class="has-children">
+                                <a href="{{route('website.services')}}" class="dropdown-toggle">Services</a>
+                                <ul class="sub-menu">
+
+
                                     <li class="has-children">
-                                        <a href="{{route('website.services')}}" class="dropdown-toggle">Services</a>
+                                        <a href="#">Courier Booking Services</a>
                                         <ul class="sub-menu">
-                                    
-                                           
                                             <li class="has-children">
-                                                <a href="#">Courier Booking Services</a>
-                                                <ul class="sub-menu">
-                                                    <li class="has-children">
-                                                    <li><a href="#">GOTOGO Super Speed Packet</a></li>
-                                                    <li><a href="#">GOTOGO Express Package</a></li>
-                                                    <li><a href="#">GOTOGO Secure Packet</a></li>
-                                                       
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                    
-                                           
-                                            <li class="has-children">
-                                                <a href="#">GOTOGO Digital Courier Services</a>
-                                                <ul class="sub-menu">
-                                                    <li class="has-children">
-                                                        <a href="#">E2E</a>
-                                                        <a href="#">E2H</a>
-                                                       
-                                                    </li>
+                                                <li><a href="#">GOTOGO Super Speed Packet</a></li>
+                                                <li><a href="#">GOTOGO Express Package</a></li>
+                                                <li><a href="#">GOTOGO Secure Packet</a></li>
 
-                                                </ul>
                                             </li>
-                                            <li class="has-children">
-                                                <a href="#">GOTOGO All India Post Services</a>
-                                                <ul class="sub-menu">
-                                                    <li class="has-children">
-                                                    <li><a href="#">GOTOGO Speed Packet</a></li>
-                                                    <li><a href="#">GOTOGO Business Package</a></li>
-                                                        
-                                                    </li>
-
-                                                </ul>
-                                            </li>
-                                    
-                                            <li class="has-children">
-                                                <a href="#">International Service</a>
-                                                <ul class="sub-menu">
-                                                    <li class="has-children">
-                                                        <a href="#">B2B</a>
-                                                        <a href="#">B2C</a>
-                                                        
-                                                    </li>
-
-                                                </ul>
-                                            </li>
-                                           
                                         </ul>
                                     </li>
                                     
 
-                                    {{-- <li class="has-children"><a href="#" class="dropdown-toggle">Pages</a>
-
+                                    <li class="has-children">
+                                        <a href="#">GOTOGO Digital Courier Services</a>
                                         <ul class="sub-menu">
+                                            <li class="has-children">
+                                                <a href="#">E2E</a>
+                                                <a href="#">E2H</a>
 
-                
-                                            <li><a href="{{route('website.faq')}}">FAQS</a></li>
-
-                                            <li><a href="#">Our Prices</a></li>
-
-                                            <li><a href="{{route('website.terms')}}">T & C</a></li>
-
-                                            <li><a href="#">Request A Quote</a></li>
-
-                                            <li><a href="{{route('website.track')}}">Track Your Shipment</a></li>
-
-        
-                                        </ul>
-
-                                    </li> --}}
-
-                                    <li><a href="{{route('website.contact')}}">Contact</a></li>
-
-                                    <li><a href="{{route('website.about')}}">About Us</a></li>
-                                    <li><a href="{{route('website.pay')}}">Payment</a></li>
-
-                                    <li class="has-children"><a href="#" class="dropdown-toggle fh-btn btn" style="color:white">Login</a>
-
-                                        <ul class="sub-menu">  
-                                            <li><a href="{{route('franchise.login')}}">Bussiness Associate</a></li>
-                                            
-                                            <li><a href="{{route('cms.login')}}">City Process Hub</a></li>
-                                            
-                                            <li><a href="{{route('pph.login')}}">Prime Process Hub</a></li>
-                                            
-                                            <li><a href="{{route('deliveryBoy.login')}}">Delivery | Pickup Boy</a></li>
-                                            <li><a href="{{route('customer.login')}}">Bussiness Bulk Customer</a></li>
-                                            <li><a href="{{route('market.login')}}">Sales Marketing Manager</a></li>
-                                        </ul>
-
-                                    </li>
-
-                                    <li class="has-children"><a href="#" class="dropdown-toggle fh-btn btn" style="color:white">Register</a> 
-
-                                        <ul class="sub-menu">
-
-                                            <li><a href="{{route('franchise.register')}}">Bussiness Associate</a>
-                                           
                                             </li>
 
-                                            <li><a href="{{route('cms.register')}}">City Process Hub</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="has-children">
+                                        <a href="#">GOTOGO All India Post Services</a>
+                                        <ul class="sub-menu">
+                                            <li class="has-children">
+                                                <li><a href="#">GOTOGO Speed Packet</a></li>
+                                                <li><a href="#">GOTOGO Business Package</a></li>
 
-                                            <li><a href="{{route('pph.register')}}">Prime Process Hub</a></li>
-                                               <li><a href="{{route('deliveryBoy.register')}}">Delivery | Pickup Boy</a></li>
-                                               <li><a href="{{route('franchise.combo.index')}}"> Associate Hub Center</a></li>
-                                               <li><a href="{{route('customer.register')}}">Bussiness Bulk Customer</a></li>
-                                               <li><a href="{{route('market.register')}}">Sales Marketing Manager</a></li>
+                                            </li>
 
                                         </ul>
-
                                     </li>
-                                 
+                                    
+                                    <li class="has-children">
+                                        <a href="#">International Service</a>
+                                        <ul class="sub-menu">
+                                            <li class="has-children">
+                                                <a href="#">B2B</a>
+                                                <a href="#">B2C</a>
+
+                                            </li>
+
+                                        </ul>
+                                    </li>
+
+                                </ul>
+                            </li>
+
+
+                            {{-- <li class="has-children"><a href="#" class="dropdown-toggle">Pages</a>
+
+                                <ul class="sub-menu">
+
+
+                                    <li><a href="{{route('website.faq')}}">FAQS</a></li>
+
+                                    <li><a href="#">Our Prices</a></li>
+
+                                    <li><a href="{{route('website.terms')}}">T & C</a></li>
+
+                                    <li><a href="#">Request A Quote</a></li>
+
+                                    <li><a href="{{route('website.track')}}">Track Your Shipment</a></li>
+
 
                                 </ul>
 
-                            </nav>
+                            </li> --}}
 
-                        </div>
+                            <li><a href="{{route('website.contact')}}">Contact</a></li>
 
-                    </div>
+                            <li><a href="{{route('website.about')}}">About Us</a></li>
+                            <li><a href="{{route('website.pay')}}">Payment</a></li>
 
-                    <a href="#" class="navbar-toggle">
+                            <li class="has-children"><a href="#" class="dropdown-toggle fh-btn btn" style="color:white">Login</a>
+
+                                <ul class="sub-menu">  
+                                    <li><a href="{{route('franchise.login')}}">Bussiness Associate</a></li>
+
+                                   <!--  <li><a href="{{route('cms.login')}}">City Process Hub</a></li>
+
+                                    <li><a href="{{route('pph.login')}}">Prime Process Hub</a></li>
+
+                                    <li><a href="{{route('deliveryBoy.login')}}">Delivery | Pickup Boy</a></li> -->
+                                    <li><a href="{{route('customer.login')}}">Bussiness Bulk Customer</a></li>
+                                    <li><a href="{{route('market.login')}}">Sales Marketing Manager</a></li>
+                                </ul>
+
+                            </li>
+
+                            <li class="has-children"><a href="#" class="dropdown-toggle fh-btn btn" style="color:white">Register</a> 
+
+                                <ul class="sub-menu">
+
+                                    <li><a href="{{route('franchise.register')}}">Bussiness Associate</a>
+
+                                    </li>
+
+                                            {{-- <li><a href="{{route('cms.register')}}">City Process Hub</a></li> --}}
+
+                                            {{-- <li><a href="{{route('pph.register')}}">Prime Process Hub</a></li> --}}
+                                               <li><a href="{{route('deliveryBoy.register')}}">Delivery | Pickup Boy</a></li>
+                                               {{-- <li><a href="{{route('franchise.combo.index')}}"> Associate Hub Center</a></li> --}}
+                                               <li><a href="{{route('customer.register')}}">Bussiness Bulk Customer</a></li>
+                                               <li><a href="{{route('market.register')}}">Sales Marketing Manager</a></li>
+
+                                           </ul>
+
+                                       </li>
+
+
+                                   </ul>
+
+                               </nav>
+
+                           </div>
+
+                       </div>
+
+                       <a href="#" class="navbar-toggle">
 
                         <span class="navbar-icon">
 
@@ -659,16 +659,16 @@
 
         <!--mobile view-->
 
-    <div class="primary-mobile-nav header-v1" id="primary-mobile-nav" role="navigation">
+        <div class="primary-mobile-nav header-v1" id="primary-mobile-nav" role="navigation">
 
-        <a href="#" class="close-canvas-mobile-panel">×</a>
+            <a href="#" class="close-canvas-mobile-panel">×</a>
 
-        <ul class="menu">
+            <ul class="menu">
 
-            <li class=""><a href="{{route('website.index')}}">Home</a>
-            </li>
+                <li class=""><a href="{{route('website.index')}}">Home</a>
+                </li>
 
-            <li class="menu-item-has-children"><a href="#" class="dropdown-toggle">Services</a>
+                <li class="menu-item-has-children"><a href="#" class="dropdown-toggle">Services</a>
 
                 <!-- <ul class="sub-menu">
 
@@ -684,78 +684,79 @@
 
                 <ul class="sub-menu">
 
-                                          <li><a href="{{route('website.services')}}">Courier Booking Services</a></li>
-                                          <li><a href="{{route('website.services')}}">GOTOGO Speed Packet </a></li>
-                                          <li><a href="{{route('website.roadFreight')}}">GOTOGO Express </a></li>
-                                         
-                                          <li><a href="{{route('website.insta')}}"> GOTOGO Secure Packet</a></li>
-                                          <!-- <li><a href="{{route('website.logistic')}}">Logistic Services </a></li> -->
-                                          <li><a href="{{route('website.ecommerce')}}">B2B Service </a></li>
-                                          <li><a href="#">Digital Courier Service  </a></li>
-                                          <li><a href="#">Gotogo Post All India Post Service  </a>
-                                            <ul>
-                                                <li><a href="#">Gotogo Speed Packaet</a></li>
-                                                <li><a href="#">GOTOGO Business Package</a></li>
-                                            </ul>
-                                          </li>
-                                        </ul>
+                  <li><a href="{{route('website.services')}}">Courier Booking Services</a></li>
+                  <li><a href="{{route('website.services')}}">GOTOGO Speed Packet </a></li>
+                  <li><a href="{{route('website.roadFreight')}}">GOTOGO Express </a></li>
 
-            </li>
+                  <li><a href="{{route('website.insta')}}"> GOTOGO Secure Packet</a></li>
+                  <!-- <li><a href="{{route('website.logistic')}}">Logistic Services </a></li> -->
+                  <li><a href="{{route('website.ecommerce')}}">B2B Service </a></li>
+                  <li><a href="#">Digital Courier Service  </a></li>
+                  <li><a href="#">Gotogo Post All India Post Service  </a>
+                    <ul>
+                        <li><a href="#">Gotogo Speed Packaet</a></li>
+                        <li><a href="#">GOTOGO Business Package</a></li>
+                    </ul>
+                </li>
+            </ul>
 
-            <li class="menu-item-has-children"><a href="#" class="dropdown-toggle">Pages</a>
+        </li>
 
-                <ul class="sub-menu">
+        <li class="menu-item-has-children"><a href="#" class="dropdown-toggle">Pages</a>
 
-                    <li><a href="about-us.html">About Us</a></li>
+            <ul class="sub-menu">
 
-                    <li><a href="faqs.html">FAQS</a></li>
+                <li><a href="about-us.html">About Us</a></li>
 
-                    <li><a href="our-prices.html">Our Prices</a></li>
+                <li><a href="faqs.html">FAQS</a></li>
 
-                    <li><a href="testimonials.html">Testimonials</a></li>
+                <li><a href="our-prices.html">Our Prices</a></li>
 
-                </ul>
+                <li><a href="testimonials.html">Testimonials</a></li>
 
-            </li>
+            </ul>
 
-            <li><a href="{{route('website.contact')}}">Contact</a></li>
+        </li>
 
-            <li><a href="{{route('website.about')}}">About Us</a></li>
-            <li><a href="{{route('website.pay')}}">Payment</a></li>
+        <li><a href="{{route('website.contact')}}">Contact</a></li>
 
-            <li class="menu-item-has-children extra-menu-item menu-item-button-link">  <a href="#" class="">Login</a>
+        <li><a href="{{route('website.about')}}">About Us</a></li>
+        <li><a href="{{route('website.pay')}}">Payment</a></li>
 
-                <ul class="sub-menu">  
-                    <li><a class="fh-btn" href="{{route('deliveryBoy.login')}}">Delivery Boy</a></li>
-                    <li><a class="fh-btn" href="{{route('franchise.login')}}">Franchise</a></li>
-                    <li><a class="fh-btn" href="{{route('cms.login')}}">CPH</a></li>
-                    <li><a class="fh-btn" href="{{route('cms.login')}}">PPH</a></li>
-                    <li><a class="fh-btn" href="{{route('customer.login')}}">Premium E-Customer Services</a></li>
-                    <li><a class="fh-btn" href="{{route('market.login')}}">Marketing Manager</a></li>
-                </ul>
+        <li class="menu-item-has-children extra-menu-item menu-item-button-link">  <a href="#" class="">Login</a>
 
-            </li>
+            <ul class="sub-menu">  
 
-            <li class="menu-item-has-children extra-menu-item menu-item-button-link">  <a href="#" class="">Register</a>
+               <li><a class="fh-btn" href="{{route('franchise.login')}}">Franchise</a></li>                    
+                <li><a class="fh-btn" href="{{route('deliveryBoy.login')}}">Delivery Boy</a></li>
+               <li><a class="fh-btn" href="{{route('cms.login')}}">CPH</a></li>
+               <li><a class="fh-btn" href="{{route('cms.login')}}">PPH</a></li> 
+               <li><a class="fh-btn" href="{{route('customer.login')}}">Premium E-Customer Services</a></li>
+               <li><a class="fh-btn" href="{{route('market.login')}}">Marketing Manager</a></li>
+           </ul>
 
-                <ul class="sub-menu">  
-                    <li><a class="fh-btn" href="{{route('deliveryBoy.register')}}">Delivery Boy</a></li>
-                    <li><a class="fh-btn" href="{{route('franchise.register')}}">Franchise</a></li>
-                    <li><a class="fh-btn" href="{{route('cms.register')}}">CPH</a></li>
-                    <li><a class="fh-btn" href="{{route('cms.register')}}">PPH</a></li>
-                    <li><a class="fh-btn" href="{{route('franchise.combo.index')}}">Hub Center</a></li>
-                    <li><a class="fh-btn" href="{{route('customer.register')}}">Premium E-Customer Services</a></li>
-                    <li><a href="{{route('market.register')}}">Marketing Manager</a></li>
-                </ul>
+       </li>
 
-            </li>
+       <li class="menu-item-has-children extra-menu-item menu-item-button-link">  <a href="#" class="">Register</a>
 
+        <ul class="sub-menu">  
+            <li><a class="fh-btn" href="{{route('deliveryBoy.register')}}">Delivery Boy</a></li>
+            <li><a class="fh-btn" href="{{route('franchise.register')}}">Franchise</a></li>
+            <li><a class="fh-btn" href="{{route('cms.register')}}">CPH</a></li>
+            <li><a class="fh-btn" href="{{route('cms.register')}}">PPH</a></li>
+            <li><a class="fh-btn" href="{{route('franchise.combo.index')}}">Hub Center</a></li>
+            <li><a class="fh-btn" href="{{route('customer.register')}}">Premium E-Customer Services</a></li>
+            <li><a href="{{route('market.register')}}">Marketing Manager</a></li>
         </ul>
 
+    </li>
+
+</ul>
 
 
-    </div>
 
-    {{-- <div id="off-canvas-layer" class="off-canvas-layer"></div> --}}
+</div>
+
+{{-- <div id="off-canvas-layer" class="off-canvas-layer"></div> --}}
 
     <!--mobile view-->

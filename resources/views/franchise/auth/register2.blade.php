@@ -12,7 +12,7 @@
 
         <meta name="author" content="Dreamguys - Bootstrap Admin Template" />
 
-        <title>Franchise|Register</title>
+        <title>Business Associate|Register</title>
 
         <link href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/8.11.8/sweetalert2.min.css" rel="stylesheet" type="text/css" />
 
@@ -162,7 +162,7 @@
 
                     <div class="account-box">
                         <div class="account-wrapper">
-                            <h3 class="account-title mb-3">Franchise Register Form</h3>
+                            <h3 class="account-title mb-3">Business Associate Register Form</h3>
 
                             <!-- Row -->
 

@@ -31,22 +31,22 @@
                                     </div>
                                 </div>
                                 <div class="col-md-4 mb-3">
-                                    <label for="father_name">Father/Husband Name <span class="text-danger">*</span></label>
+                                    <label for="father_name">Director/Owner Name <span class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fa fa-user"></i></span>
-                                        <input type="text" class="form-control @error('father_name') is-invalid @enderror" id="father_name" name="father_name" value="{{old('father_name')}}" placeholder="Father/Husband Name" required>
+                                        <input type="text" class="form-control @error('father_name') is-invalid @enderror" id="father_name" name="father_name" value="{{old('father_name')}}" placeholder="Director/Owner Name" required>
                                         <div class="invalid-feedback">
-                                            Please provide father/husband name
+                                            Please provide Director/Owner Name
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-4 mb-3">
-                                    <label for="mobile">Mobile <span class="text-danger">*</span></label>
+                                    <label for="mobile">Firm/Company/Mobile <span class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fa fa-building"></i></span>
-                                        <input type="text" class="form-control NumberValidate @error('mobile') is-invalid @enderror" maxlength="10" id="mobile" name="mobile" value="{{old('mobile')}}" placeholder="Mobile." required>
+                                        <input type="text" class="form-control NumberValidate @error('mobile') is-invalid @enderror" maxlength="10" id="mobile" name="mobile" value="{{old('mobile')}}" placeholder="Firm/Company/Mobile" required>
                                         <div class="invalid-feedback">
-                                            Please provide mobile number
+                                            Please provide Firm/Company/Mobile
                                         </div>
                                     </div>
                                 </div>
@@ -256,11 +256,9 @@
                 </div>
             </form>
         </div>
-        <!-- /Custom Boostrap Validation -->
 
     </div>
 </div>
-<!-- /Row -->
 
 @push('page-javascript')
 

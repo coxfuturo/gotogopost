@@ -514,6 +514,7 @@ Route::post('india-post-speed-post/preview', [IndiaPostSpeedPostController::clas
     Route::controller(FranchiseCommissionController::class)->prefix('commission')->group(function () {
         Route::get('/commission', 'index')->name('franchise.commission.index');
         Route::get('/printCommissionDetail', 'printCommissionDetail')->name('franchise.commission.printCommissionDetail');
+        
     });
 
     // web.php

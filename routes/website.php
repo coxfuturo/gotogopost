@@ -5,17 +5,6 @@ use App\Http\Controllers\website\WebPaymentController;
 use App\Http\Controllers\api\user\PincodeController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
-
 Route::group(['namespace' => 'website'], function () {
     Route::get('/', [HomeController::class, 'index'])->name('website.index');
     Route::post('/getPinCodes', [HomeController::class, 'getPinCodes'])->name('website.getPinCodes');
@@ -23,7 +12,6 @@ Route::group(['namespace' => 'website'], function () {
     Route::get('/about', [HomeController::class, 'about'])->name('website.about');
     Route::get('/contact', [HomeController::class, 'contact'])->name('website.contact');
     Route::get('/services', [HomeController::class, 'services'])->name('website.services');
-    // Route::get('/trackholder', [HomeController::class, 'trackOrder'])->name('website.trackholder');
     Route::get('/ocean-freight-forwarding', [HomeController::class, 'ocean'])->name('website.oceanfreightforwarding');
     Route::get('/air-freight-forwarding', [HomeController::class, 'air'])->name('website.airfreightforwarding');
     Route::get('/faq', [HomeController::class, 'faq'])->name('website.faq');
@@ -40,14 +28,9 @@ Route::group(['namespace' => 'website'], function () {
     Route::get('/deleteUser', [HomeController::class, 'deleteUser'])->name('website.deleteUser');
     Route::post('/user/deleteUserAccount', [HomeController::class, 'deleteUserAccount'])->name('website.deleteUserAccount');
 
-
     Route::get('/deleteDelivery', [HomeController::class, 'deleteDelivery'])->name('website.deleteDelivery');
     Route::post('/user/deleteDeliveryAccount', [HomeController::class, 'deleteDeliveryAccount'])->name('website.deleteDeliveryAccount');
 
-
-
-
-    // Payment
     Route::get('/pay', [WebPaymentController::class, 'index'])->name('website.pay');
     Route::match(['GET', 'POST'], '/store', [WebPaymentController::class, 'store'])->name('website.payment.store');
     Route::get('/print/paymentHistory', [WebPaymentController::class, 'printPaymentHistory'])->name('website.payment.printpaymentHistory');
@@ -68,5 +51,5 @@ Route::group(['namespace' => 'website'], function () {
 
     Route::match(['GET', 'POST'], '/testmail', [HomeController::class, 'testmail'])->name('website.testmail');
     Route::match(['GET', 'POST'], '/register/pcakage', [HomeController::class, 'registerPackage'])->name('website.register.pcakage');
-        Route::post('/getPrice', [PincodeController::class, 'getPrice'])->name('website.getPrice');
+    Route::post('/getPrice', [PincodeController::class, 'getPrice'])->name('website.getPrice');
 });

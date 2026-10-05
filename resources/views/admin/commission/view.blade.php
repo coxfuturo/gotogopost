@@ -1,23 +1,8 @@
 @extends('admin.layouts.master')
 
-
-
 @section('title') Commission Details @endsection
 
-
-
 @section('content')
-
-
-
-
-
-<!-- Search Filter -->
-
-
-
-
-<!-- Search Filter -->
 
 @if ($errors->any())
 

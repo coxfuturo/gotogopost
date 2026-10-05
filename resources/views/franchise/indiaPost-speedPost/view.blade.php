@@ -56,7 +56,7 @@
                        <h5 class="card-title mb-0">Pickup Details</h5>
                     </div>
                     <div class="col-sm-8">
-                       <h5 class="card-title mb-0">Franchise GST: {{ $data->franchise->gst_number }}</h5>
+                       <h5 class="card-title mb-0">Business Associate GST: {{ $data->franchise->gst_number }}</h5>
                     </div>
                    </div>
                     <div class="card-body">

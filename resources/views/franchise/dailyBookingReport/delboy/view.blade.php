@@ -538,7 +538,7 @@
             </div>
             <div class="modal-body">
                 <div class="form-header">
-                    <h3>Franchise Image</h3>
+                    <h3>Business Associate Image</h3>
                 </div>
                 <div class="modal-btn delete-action">
                     <div class="row">

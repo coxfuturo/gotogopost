@@ -1,6 +1,6 @@
 @extends('admin.layouts.master')
 
-@section('title') Create Franchise @endsection
+@section('title') Create Business Associative @endsection
 
 @section('content')
 <!-- Row -->
@@ -30,20 +30,20 @@
                                     </div>
                                 </div>
                                 <div class="col-md-4 mb-3">
-                                    <label for="father_name">Father/Husband Name <span class="text-danger">*</span></label>
+                                    <label for="father_name">Director/Owner Name <span class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fa fa-user"></i></span>
-                                        <input type="text" class="form-control @error('father_name') is-invalid @enderror" id="father_name" name="father_name" value="{{old('father_name')}}" placeholder="Father/Husband Name" required>
+                                        <input type="text" class="form-control @error('father_name') is-invalid @enderror" id="father_name" name="father_name" value="{{old('father_name')}}" placeholder="Director/Owner Name" required>
                                         <div class="invalid-feedback">
-                                            Please provide father/husband name
+                                            Please provide Director/Owner name
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-4 mb-3">
-                                    <label for="mobile">Mobile <span class="text-danger">*</span></label>
+                                    <label for="mobile">Firm/Company/Mobile<span class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fa fa-building"></i></span>
-                                        <input type="text" class="form-control NumberValidate @error('mobile') is-invalid @enderror" maxlength="10" id="mobile" name="mobile" value="{{old('mobile')}}" placeholder="Mobile." required>
+                                        <input type="text" class="form-control NumberValidate @error('mobile') is-invalid @enderror" maxlength="10" id="mobile" name="mobile" value="{{old('mobile')}}" placeholder="Firm/Company/Mobile" required>
                                         <div class="invalid-feedback">
                                             Please provide mobile number
                                         </div>
@@ -126,7 +126,7 @@
                             </div>
                             <div class="row">
 
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-4 mb-3">
                                     <label for="society_name">Society/Company Name <span class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fa fa-building"></i></span>
@@ -137,7 +137,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-2 mb-3">
+                                <div class="col-md-4 mb-3">
                                     <label for="sector">Sector/Street No.</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fa fa-envelope"></i></span>
@@ -290,33 +290,32 @@
 
 @push('page-javascript')
 
-
 <script>
     $("#pincode").on("change", function() {
-            var pincode = $("#pincode").val();
+        var pincode = $("#pincode").val();
 
-            var name = $("#name").val();
+        var name = $("#name").val();
 
-            $.ajax({
-                type: "GET",
+        $.ajax({
+            type: "GET",
 
-                url: "{{ url('admin/city-state') }}/" + pincode + "?type=franchise",
+            url: "{{ url('admin/city-state') }}/" + pincode + "?type=franchise",
 
-                success: function(data) {
-                    if (data.success === true) {
-                        $(".customer_error").empty();
+            success: function(data) {
+                if (data.success === true) {
+                    $(".customer_error").empty();
 
-                        $("#district").empty().val(data.district);
+                    $("#district").empty().val(data.district);
 
-                        $("#state").empty().val(data.state);
+                    $("#state").empty().val(data.state);
 
-                        $("#generated_id").empty().val(data.generated_id);
-                    } else {
-                        $(".validerror").text("Please enter valid pincode");
-                    }
-                },
-            });
+                    $("#generated_id").empty().val(data.generated_id);
+                } else {
+                    $(".validerror").text("Please enter valid pincode");
+                }
+            },
         });
+    });
 
     function displayFile(id) {
         const fileInput = document.getElementById(`fileInput${id}`);

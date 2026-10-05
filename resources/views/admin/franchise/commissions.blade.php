@@ -4,11 +4,7 @@
 
 @section('content')
 
-
-
-
 @push('add-modal-code')
-
 
 @endpush
 
@@ -78,11 +74,11 @@
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive table-newdatatable" id="franchise_daily_booking_report">
-                    <table class="table table-new custom-table mb-0 datatable">
+                    <table class="table table-bordered custom-table datatable table-hover">
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Franchise No</th>
+                                <th>Business Associate No</th>
                                 <th>Name</th>
                                 <th>Mobile</th>
                                 <th>Pincode</th>
@@ -164,19 +160,7 @@
     </div>
 </div>
 
-
-
-
-
-
-
-
-
-
-
 @push('page-javascript')
-
-
 
 <script>
     function filterDailyBookingsReportByDate() {
@@ -220,9 +204,6 @@
         });
     }
 </script>
-
-
-
 
 @endpush
 

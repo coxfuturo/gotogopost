@@ -921,13 +921,28 @@ class IndiaPostBusinessController extends Controller
             if ($request->payment_method === "manager" || $request->payment_method === "pickup") {
                 $commission = $commission - $marketcommission ?? 0;
             }
-            FranchiseCommissionDetail::create([
-                "franchise_id" => $franchiseId,
-                "service_type" =>IndiaPostBusinessParcel::SERVICE_TYPE_INDIA_POST_BUSINESS,
-                "amount" => $payment_amount / 1.18,
-                "commission" => number_format($commission, 2, ".", ""),
-                "payment_method" => "prepaid",
-            ]);
+          // Franchise-specific commission
+$serviceType = IndiaPostBusinessParcel::SERVICE_TYPE_INDIA_POST_BUSINESS;
+
+$netAmount = $payment_amount / 1.18;
+
+$commissionData = $rateCalculater->calculateFranchiseCommission(
+    $franchiseId,
+    $serviceType,
+    $netAmount
+);
+
+$commissionRate = $commissionData['rate'];
+$commission = $commissionData['commission'];
+
+FranchiseCommissionDetail::create([
+    "franchise_id" => $franchiseId,
+    "service_type" => $serviceType,
+    "amount" => $netAmount,
+    "commission" => $commission,
+    "commission_rate" => $commissionRate,
+    "payment_method" => "prepaid",
+]);
 
             if ($request->payment_method === "manager" || $request->payment_method === "pickup") {
                 $datamanager = new ManagerCommissionDetail();

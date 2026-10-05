@@ -7,7 +7,7 @@
 	<meta name="description" content="Smarthr - Bootstrap Admin Template">
 	<meta name="keywords" content="admin, estimates, bootstrap, business, corporate, creative, management, minimal, modern, accounts, invoice, html5, responsive, CRM, Projects">
 	<meta name="author" content="Dreamguys - Bootstrap Admin Template">
-	<title>Premium Customer Services|Login </title>
+	<title>Business Bulk|Login </title>
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/8.11.8/sweetalert2.min.css" rel="stylesheet" type="text/css" />
 	<!-- Favicon -->
 	<link rel="shortcut icon" type="image/x-icon" href="{{asset('admin/assets/img/favicon.png')}}">
@@ -48,17 +48,19 @@
 
 				<div class="account-box">
 					<div class="account-wrapper">
-						<h3 class="account-title">Premium Customer Services Login</h3>
+						<h3 class="account-title">Business Bulk Customer Login</h3>
 						<!-- <p class="account-subtitle">Access to our dashboard</p> -->
 
 						<!-- Account Form -->
 						<form action="{{route('customer.login')}}" class="needs-validation" method="POST" novalidate>
 							@csrf
 							<div class="input-block">
-								<label class="col-form-label">Custumer Type <span class="text-danger">*</span></label>
+								<label class="col-form-label">Business Bulk Type <span class="text-danger">*</span></label>
 								  <select class="form-select type" name="type">
-									<option value="premium">E-commerces Customer</option>
-									<option value="prepaid">No E-commerces Customer/Prepaid</option>
+									<!-- <option value="premium">E-Commerces Customer</option> -->
+									<!-- <option value="prepaid">No E-commerces Customer/Prepaid</option> -->
+									<option value="premium">Marketing manager</option>
+									<option value="prepaid">Sales marketing manager </option>
 									
 								  </select>
 								<div class="invalid-feedback">

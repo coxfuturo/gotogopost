@@ -88,7 +88,7 @@
                         <thead>
                             <tr>
                                 <th>Select</th>
-                                <th>SN#</th>
+                                <th>Sr.No.</th>
                                 <th class="text-center">Barcode</th>
                                 <th class="text-center"><span>From Addresss</span></th>
                                 <th class="text-center">State</th>

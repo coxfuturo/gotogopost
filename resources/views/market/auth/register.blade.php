@@ -776,11 +776,11 @@
                                                             </div>
 
                                                              <div class="col-md-4 mb-3 location_col">
-                                                                <label for="gst_number">Link:-Office Near By Franchise</label>
+                                                                <label for="gst_number">Link:-Office Near By Business Associate</label>
 
                                                                 <div class="input-group">
                                                                     <select name="cph_link" class="form-control location_dropdown">
-                                                                        <option selected disabled>Please Select Franchise</option>
+                                                                        <option selected disabled>Please Select Business Associate</option>
                                                                     </select>
                                                                     
                                                                 </div>

@@ -121,7 +121,7 @@
             <div class="card-body">
                 
                 <div class="table-responsive table-newdatatable" id="franchise_daily_booking_report">
-                    <table class="table table-new custom-table mb-0 datatable">
+                    <table class="table table-bordered custom-table datatable table-hover">
                         <thead>
                             <tr>
                                 <th>#</th>

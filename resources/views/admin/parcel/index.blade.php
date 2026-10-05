@@ -11,8 +11,6 @@
     </div>
 </div> --}}
 @endpush
-
-
 <div class="row">
     <div class="col-md-12">
         <div class="card">
@@ -57,9 +55,6 @@
                             </tr>
                             @endforeach
                         </tbody>
-                        
-                        
-                        
                     </table>
                 </div>
             </div>
@@ -67,8 +62,6 @@
     </div>
 </div>
 
-
-<!-- Delete  Modal -->
 <div class="modal custom-modal fade" id="delete_modal" role="dialog">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -91,7 +84,6 @@
         </div>
     </div>
 </div>
-<!-- /Delete  Modal -->
 
 @push('page-javascript')
 <script type="text/javascript">

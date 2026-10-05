@@ -71,7 +71,7 @@
 
                 <div class="col-lg-12 col-md-12 col-sm-12 line-tabs">
                     <ul class="nav nav-tabs nav-tabs-bottom">
-                        <li class="nav-item"><a href="#franchise" data-bs-toggle="tab" class="nav-link active">Franchise</a></li>
+                        <li class="nav-item"><a href="#franchise" data-bs-toggle="tab" class="nav-link active">Business Associate</a></li>
                         <li class="nav-item"><a href="#cms" data-bs-toggle="tab" class="nav-link">CMS</a></li>
                         <li class="nav-item"><a href="#pph" data-bs-toggle="tab" class="nav-link">PPH</a></li>
                     </ul>
@@ -85,7 +85,7 @@
                             @csrf
                             <div class="d-flex align-items-center flex-column">
                                 <div class="input-block mb-4 form-focus ">
-                                    <label for="PickupName">Select Franchise<span class="text-danger">*</span></label>
+                                    <label for="PickupName">Select Business Associate<span class="text-danger">*</span></label>
                                     <select name="franchise_id" class="floating">
                                         <option value=""> -- Select -- </option>
                                         @foreach($franchise as $user)

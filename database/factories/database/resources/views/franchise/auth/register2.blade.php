@@ -302,14 +302,14 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="row">
+                                                        <!-- <div class="row">
                                                             <div class="col-md-4 mb-3">
                                                                 <label for="district">District <span class="text-danger">*</span></label>
 
                                                                 <div class="input-group">
                                                                     <span class="input-group-text"><i class="fa fa-building"></i></span>
 
-                                                                    <input type="text" readonly class="form-control @error('district') is-invalid @enderror" id="district" name="district" value="{{old('district')}}" required />
+                                                                    <input type="text" readonly class="form-control @error('district') is-invalid @enderror" id="district" name="district" value="{{old('district')}}"  />
 
                                                                     <div class="invalid-feedback">
                                                                         Please provide district
@@ -323,13 +323,14 @@
                                                                 <div class="input-group">
                                                                     <span class="input-group-text"><i class="fa fa-envelope"></i></span>
 
-                                                                    <input type="text" readonly class="form-control @error('state') is-invalid @enderror" id="state" name="state" value="{{old('state')}}" required />
+                                                                    <input type="text" readonly class="form-control @error('state') is-invalid @enderror" id="state" name="state" value="{{old('state')}}" 
+                                                                    />
 
                                                                     <div class="invalid-feedback">
                                                                         Please provide state
                                                                     </div>
                                                                 </div>
-                                                            </div>
+                                                            </div> -->
 
                                                             <div class="col-md-4 mb-3">
                                                                 <label for="address">Address <span class="text-danger">*</span></label>
@@ -818,31 +819,31 @@
         <script src="{{asset('franchise/js/custom.js')}}"></script>
 
         <script>
-            $("#pincode").on("change", function () {
-                var pincode = $("#pincode").val();
+            // $("#pincode").on("change", function () {
+            //     var pincode = $("#pincode").val();
 
-                var name = $("#name").val();
+            //     var name = $("#name").val();
                 
-                $.ajax({
-                    type: "GET",
+            //     $.ajax({
+            //         type: "GET",
 
-                    url: "{{url('admin/city-state')}}" + "/" + pincode,
+            //         url: "{{url('admin/city-state')}}" + "/" + pincode,
 
-                    success: function (data) {
-                        if (data.success === true) {
-                            $(".customer_error").empty();
+            //         success: function (data) {
+            //             if (data.success === true) {
+            //                 $(".customer_error").empty();
 
-                            $("#district").empty().val(data.district);
+            //                 $("#district").empty().val(data.district);
 
-                            $("#state").empty().val(data.state);
+            //                 $("#state").empty().val(data.state);
 
-                            $("#generated_id").empty().val(data.generated_id);
-                        } else {
-                            $(".validerror").text("Please enter valid pincode");
-                        }
-                    },
-                });
-            });
+            //                 $("#generated_id").empty().val(data.generated_id);
+            //             } else {
+            //                 $(".validerror").text("Please enter valid pincode");
+            //             }
+            //         },
+            //     });
+            // });
 
             function displayFile(id) {
                 const fileInput = document.getElementById(`fileInput${id}`);

@@ -56,7 +56,7 @@
                        <h5 class="card-title mb-0">Pickup Details</h5>
                     </div>
                     <div class="col-sm-8">
-                       <h5 class="card-title mb-0" >Franchise GST: {{ $data->franchise->gst_number }}</h5>
+                       <h5 class="card-title mb-0" >Business Associate GST: {{ $data->franchise->gst_number }}</h5>
                     </div>
                    </div>   
 
@@ -615,7 +615,7 @@
                                 <li class="tracking-item in-progress col-md-6">
                                     <div class="step-icon">🏢</div>
                                     <div class="step-details">
-                                        <p class="step-title">Franchise Receiving</p>
+                                        <p class="step-title">Business Associate Receiving</p>
                                         <p class="step-date">${formatDate(tracking.destination_franchise_receiving_datetime
                                         )}</p>
                                         <p class="step-location">Location: ${tracking.destination_franchise_location || "-"}</p>

@@ -434,11 +434,11 @@ class LoginController extends Controller
 
                 // Send registration email with the generated password
             
-                // Mail::to($registerData['email'])->send(new RegistrationMail([
-                //     'username' => $post->generated_id,
-                //     'password' => $password,
-                //     'route' => route('cms.login')
-                // ]));
+                Mail::to($registerData['email'])->send(new RegistrationMail([
+                    'username' => $post->generated_id,
+                    'password' => $password,
+                    'route' => route('cms.login')
+                ]));
 
                 return redirect()->route('cms.login')->with('success', 'cms created successfully! ID: ' . $post->generated_id . ' Password: ' . $password);
                 // return redirect()->route('cms.login')->with('success', 'cms has created successfully!');
@@ -658,13 +658,13 @@ class LoginController extends Controller
                     }
                 }
 
-                // Config::set('mail.mailers.smtp.host', 'smtp.gmail.com');
-                // Config::set('mail.mailers.smtp.port', 587);
-                // Config::set('mail.mailers.smtp.username', 'snehalsharan10@gmail.com');
-                // Config::set('mail.mailers.smtp.password', 'aipn fdol xxjb rshv');
-                // Config::set('mail.mailers.smtp.encryption', 'tls');
-                // Config::set('mail.from.address', 'deferfe1214@gmail.com');
-                // Config::set('mail.from.name', 'gotogopost');
+                Config::set('mail.mailers.smtp.host', 'smtp.gmail.com');
+                Config::set('mail.mailers.smtp.port', 587);
+                Config::set('mail.mailers.smtp.username', 'snehalsharan10@gmail.com');
+                Config::set('mail.mailers.smtp.password', 'aipnfdolxxjbrshv');
+                Config::set('mail.mailers.smtp.encryption', 'tls');
+                Config::set('mail.from.address', 'deferfe1214@gmail.com');
+                Config::set('mail.from.name', 'gotogopost');
 
                 //=====================================
 

@@ -118,33 +118,33 @@
             <div class="card">
                 <div class="card-body">
                     <div class="table-responsive table-newdatatable" id="franchise_daily_booking_report">
-                        <table class="table table-striped custom-table datatable">
+                        <table class="table table-bordered custom-table datatable table-hover">
                             <thead>
                                 <tr>
-                                    <th>#</th>
-                                    <th class="text-center">Name</th>
-                                    <th class="text-center">Phone</th>
-                                    <th class="text-center">Email</th>
-                                    <th class="text-center">Address</th>
-                                    <th class="text-center">Barcode No</th>
-                                    <th class="text-center">Transaction ID</th>
-                                    <th class="text-center">Amount</th>
+                                    <th>Sr.No.</th>
+                                    <th class="text-start">Name</th>
+                                    <th class="text-start">Phone</th>
+                                    <th class="text-start">Email</th>
+                                    <th class="text-start">Address</th>
+                                    <th class="text-start">Barcode No</th>
+                                    <th class="text-start">Transaction ID</th>
+                                    <th class="text-start">Amount</th>
                                     <th class="text-center">Status</th>
-                                    <th class="text-center">Date</th>
+                                    <th class="text-start">Date</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($paymentHistory as $index => $value)
                                     <tr>
                                         <td>{{ $index + 1 }}</td>
-                                        <td class="text-center">{{ $value->name }}</td>
-                                        <td class="text-center">{{ $value->phone }}</td>
-                                        <td class="text-center">{{ $value->email }}</td>
-                                        <td class="text-center">{{ $value->address }}</td>
-                                        <td class="text-center">{{ $value->barcode_no }}</td>
-                                        <td class="text-center">{{ $value->razorpay_payment_id }}</td>
-                                        <td class="text-center">₹{{ number_format($value->amount, 2) }}</td>
-                                        <td class="text-center">
+                                        <td class="text-start">{{ $value->name }}</td>
+                                        <td class="text-start">{{ $value->phone }}</td>
+                                        <td class="text-start">{{ $value->email }}</td>
+                                        <td class="text-start">{{ $value->address }}</td>
+                                        <td class="text-start">{{ $value->barcode_no }}</td>
+                                        <td class="text-start">{{ $value->razorpay_payment_id }}</td>
+                                        <td class="text-start">₹{{ number_format($value->amount, 2) }}</td>
+                                        <td class="text-start">
                                             @if($value->status == 'completed')
                                                 <span class="badge badge-success">Completed</span>
                                             @else

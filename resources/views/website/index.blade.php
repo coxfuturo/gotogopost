@@ -15,7 +15,7 @@
    GOTOGO POST - MASTER HOME PAGE DESIGN SYSTEM
    ========================================================================== */
 
-:root {
+   :root {
     --primary-red: #d9251d;
     --primary-red-hover: #b91c1c;
     --dark-navy: #0b132b;
@@ -38,7 +38,7 @@ body {
    TRACK ORDER IMAGE BANNER
    ========================================= */
 
-.track-order-top {
+   .track-order-top {
     position: relative;
     width: 100%;
     height: 450px;
@@ -89,7 +89,7 @@ body {
    TABLET
    ========================================= */
 
-@media (max-width: 991px) {
+   @media (max-width: 991px) {
 
     .track-order-top {
         height: 380px;
@@ -110,7 +110,7 @@ body {
    MOBILE
    ========================================= */
 
-@media (max-width: 576px) {
+   @media (max-width: 576px) {
 
     .track-order-top {
         height: 320px;
@@ -1198,7 +1198,7 @@ body.modal-open {
    Existing classes only
    ========================================= */
 
-.testmonial-2 {
+   .testmonial-2 {
     background: #ffffff !important;
     padding: 0 !important;
     margin: 0 !important;
@@ -1231,8 +1231,8 @@ body.modal-open {
     border: 1px solid #dbe7f5 !important;
     border-radius: 18px !important;
     box-shadow:
-        0 10px 25px rgba(30, 80, 130, 0.10),
-        0 4px 10px rgba(0, 0, 0, 0.05) !important;
+    0 10px 25px rgba(30, 80, 130, 0.10),
+    0 4px 10px rgba(0, 0, 0, 0.05) !important;
 
     text-align: center !important;
 }
@@ -1297,7 +1297,7 @@ body.modal-open {
    MOBILE
    ========================================= */
 
-@media (max-width: 767px) {
+   @media (max-width: 767px) {
 
     .testmonial-2 .testi-wrapper {
         height: 350px !important;
@@ -1609,31 +1609,31 @@ body.modal-open {
 <div class="track-order-top">
     <div class="slick-slider">
         <div class="slick-slide">
-            <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=2400&q=90"
-                 alt="Global Logistics Shipping">
-        </div>
+         <img src="{{ asset('website/images/bg/go2go2.jpeg') }}" alt="Go2Go">
+     </div>
 
-        <div class="slick-slide">
-            <img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=2400&q=90"
-                 alt="Transport & Delivery Services">
-        </div>
-
-        <div class="slick-slide">
-            <img src="https://images.unsplash.com/photo-1616401784845-180882ba9ba8?auto=format&fit=crop&w=2400&q=90"
-                 alt="Courier Logistics">
-        </div>
-
-        <div class="slick-slide">
-            <img src="https://content.jdmagicbox.com/v2/comp/mumbai/y4/022pxx22.xx22.110530154445.m7y4/catalogue/maruti-cargo-and-courier-andheri-east-mumbai-courier-services-lq3iwntxlf.jpg"
-                 alt="Seamless Logistics Solutions">
-        </div>
+     <div class="slick-slide">
+        <img src="{{ asset('website/images/bg/go2go3.jpeg') }}" alt="Go2Go">
     </div>
 
+    {{-- <div class="slick-slide">
+        <img src="{{ asset('website/images/bg/go2go4.jpeg') }}" alt="Go2Go">
+    </div> --}}
+
+    <div class="slick-slide">
+        <img src="{{ asset('website/images/bg/go2go5.jpeg') }}" alt="Go2Go">
+    </div>
+    <div class="slick-slide">
+        <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=2400&q=90"
+        alt="Global Logistics Shipping">
+    </div>
+
+
+
+
+</div>
+
 </div> 
-
-
-
-
 
 @push('script')
 <script>
@@ -1665,50 +1665,50 @@ body.modal-open {
 
 <script>
     const $tabs = document.querySelectorAll('.ai-tabs__link'),
-        $line = document.querySelector('.ai-tabs__line'),
+    $line = document.querySelector('.ai-tabs__line'),
 
-        getPos = ($currentTarget) => {
-            const $parentContainer = document.querySelector('.ai-tabs__tab-header ul'),
-                currentWidth = $currentTarget.offsetWidth,
-                currentPos = {
-                    top: $currentTarget.offsetTop - $parentContainer.offsetTop,
-                    left: $currentTarget.offsetLeft - $parentContainer.offsetLeft,
-                };
-            return currentPos;
-        },
-
-        onLoadLine = () => {
-            const $onLoadActive = document.querySelector('.ai-tabs--active'),
-                divId = $onLoadActive.getAttribute('href');
-
-            animateLine($onLoadActive, $line);
-            document.querySelector(divId).classList.add('ai-tabs__content--active');
-        },
-
-        animateLine = ($currentTarget, $l) => {
-            const widthOfLine = $l.offsetWidth,
-                currentWidth = $currentTarget.offsetWidth,
-                currentPos = getPos($currentTarget);
-
-            $l.style.left = `${currentPos.left}px`;
-            $l.style.width = `${currentWidth}px`;
-        },
-
-        setActive = (e, $tabs) => {
-            e.preventDefault();
-            const divId = e.currentTarget.getAttribute('href');
-
-            $tabs.forEach(($tab) => {
-                $tab.classList.remove('ai-tabs--active');
-            });
-
-            document.querySelectorAll('.ai-tabs__content').forEach(($content) => {
-                $content.classList.remove('ai-tabs__content--active');
-            });
-
-            e.currentTarget.classList.add('ai-tabs--active');
-            document.querySelector(divId).classList.add('ai-tabs__content--active');
+    getPos = ($currentTarget) => {
+        const $parentContainer = document.querySelector('.ai-tabs__tab-header ul'),
+        currentWidth = $currentTarget.offsetWidth,
+        currentPos = {
+            top: $currentTarget.offsetTop - $parentContainer.offsetTop,
+            left: $currentTarget.offsetLeft - $parentContainer.offsetLeft,
         };
+        return currentPos;
+    },
+
+    onLoadLine = () => {
+        const $onLoadActive = document.querySelector('.ai-tabs--active'),
+        divId = $onLoadActive.getAttribute('href');
+
+        animateLine($onLoadActive, $line);
+        document.querySelector(divId).classList.add('ai-tabs__content--active');
+    },
+
+    animateLine = ($currentTarget, $l) => {
+        const widthOfLine = $l.offsetWidth,
+        currentWidth = $currentTarget.offsetWidth,
+        currentPos = getPos($currentTarget);
+
+        $l.style.left = `${currentPos.left}px`;
+        $l.style.width = `${currentWidth}px`;
+    },
+
+    setActive = (e, $tabs) => {
+        e.preventDefault();
+        const divId = e.currentTarget.getAttribute('href');
+
+        $tabs.forEach(($tab) => {
+            $tab.classList.remove('ai-tabs--active');
+        });
+
+        document.querySelectorAll('.ai-tabs__content').forEach(($content) => {
+            $content.classList.remove('ai-tabs__content--active');
+        });
+
+        e.currentTarget.classList.add('ai-tabs--active');
+        document.querySelector(divId).classList.add('ai-tabs__content--active');
+    };
 
     $tabs.forEach(($tab) => {
         onLoadLine();
@@ -1751,7 +1751,6 @@ body.modal-open {
         }
     }
 
-    // Show the first tab initially
     showTab('1');
 </script>
 @endpush
@@ -1844,22 +1843,22 @@ body.modal-open {
     $(document).ready(function() {
         // Check if session has a success message
         @if(session('success'))
-            Swal.fire({
-                icon: "success",
-                title: "Success!",
-                text: "{{ session('success') }}",
-                confirmButtonText: "OK"
-            });
+        Swal.fire({
+            icon: "success",
+            title: "Success!",
+            text: "{{ session('success') }}",
+            confirmButtonText: "OK"
+        });
         @endif
 
         // Check if session has an error message
         @if(session('error'))
-            Swal.fire({
-                icon: "error",
-                title: "Error!",
-                text: "{{ session('error') }}",
-                confirmButtonText: "OK"
-            });
+        Swal.fire({
+            icon: "error",
+            title: "Error!",
+            text: "{{ session('error') }}",
+            confirmButtonText: "OK"
+        });
         @endif
 
         // Pincode AJAX lookup
@@ -1984,7 +1983,7 @@ body.modal-open {
             </div>
         </div>
         <p class="haeadingpara text-center paddbtm40">GOTOGO POST is more than logistics.
-<br /> We help optimize your packaging, manage material sourcing, and offer much more to support your business.
+            <br /> We help optimize your packaging, manage material sourcing, and offer much more to support your business.
         </p>
         <div class="welservices row">
             <div class="col-md-4 col-sm-6">
@@ -2088,13 +2087,13 @@ body.modal-open {
 <!-- special services end -->
 
 <script>
-$(document).ready(function(){
+    $(document).ready(function(){
 
-    $('.fh-icon-box').hover(
-        function() {
+        $('.fh-icon-box').hover(
+            function() {
             // Hover In
-            $(this).css({
-                'border': '2px solid #ff0000',
+                $(this).css({
+                    'border': '2px solid #ff0000',
                 'background-color': '#ff0000',   // use background-color instead of background
                 'box-shadow': '0 0 15px rgba(255, 0, 0, 0.3)',
                 'transform': 'translateY(-5px)',
@@ -2102,22 +2101,22 @@ $(document).ready(function(){
             });
 
             // Force text color changes
-            $(this).find('.box-title a, .desc p, .fh-icon img').css('color', '#fff');
-            $(this).find('.box-title a').css('color', '#fff');
-        },
-        function() {
+                $(this).find('.box-title a, .desc p, .fh-icon img').css('color', '#fff');
+                $(this).find('.box-title a').css('color', '#fff');
+            },
+            function() {
             // Hover Out
-            $(this).css({
-                'border': '2px solid transparent',
-                'background-color': '#fff',
-                'box-shadow': 'none',
-                'transform': 'translateY(0)'
-            });
-            $(this).find('.box-title a, .desc p').css('color', '#000');
-        }
-    );
+                $(this).css({
+                    'border': '2px solid transparent',
+                    'background-color': '#fff',
+                    'box-shadow': 'none',
+                    'transform': 'translateY(0)'
+                });
+                $(this).find('.box-title a, .desc p').css('color', '#000');
+            }
+            );
 
-});
+    });
 </script>
 <!--home counters -->
 {{-- <section class="homecounts">
@@ -2131,11 +2130,11 @@ $(document).ready(function(){
 <!--home counters end -->
 <style>
     .custom-dropdown,
-.custom-dropdown option,
-.custom-dropdown optgroup {
-  text-align: justify;
-  text-justify: inter-word;
-}
+    .custom-dropdown option,
+    .custom-dropdown optgroup {
+      text-align: justify;
+      text-justify: inter-word;
+  }
 
 </style>
 <!--why choose us -->
@@ -2188,20 +2187,20 @@ $(document).ready(function(){
                                 <div class="col-md-6 col-xs-12 col-sm-12">
                                     <p class="field">
                                         <!-- <select id="services" placeholder="Service*" name=""> -->
-                                        <select id="services" name="service" class="form-control custom-dropdown">
-                                            <optgroup label="GOTOGO POST BOOKING SERVICES" class="gotogo-group">
-                                                <option value="1">Gotogo Super Speed Packet</option>
-                                                <option value="3">Gotogo Express Parcel</option>
-                                                <option value="4">Gotogo Secure Parcel</option>
-                                            </optgroup>
-                                            <optgroup label="ALL INDIA-POST SERVICES" class="india-post-group">
-                                                <option value="5">SP Inland Domestic</option>
-                                                <option value="6">SP Parcel Domestic</option>
-                                                <option value="6">SP Parcel Business</option>
-                                            </optgroup>
-                                        </select>
-                                    </p>
-                                </div> 
+                                            <select id="services" name="service" class="form-control custom-dropdown">
+                                                <optgroup label="GOTOGO POST BOOKING SERVICES" class="gotogo-group">
+                                                    <option value="1">Gotogo Super Speed Packet</option>
+                                                    <option value="3">Gotogo Express Parcel</option>
+                                                    <option value="4">Gotogo Secure Parcel</option>
+                                                </optgroup>
+                                                <optgroup label="ALL INDIA-POST SERVICES" class="india-post-group">
+                                                    <option value="5">SP Inland Domestic</option>
+                                                    <option value="6">SP Parcel Domestic</option>
+                                                    <option value="6">SP Parcel Business</option>
+                                                </optgroup>
+                                            </select>
+                                        </p>
+                                    </div> 
                                 <!-- <div class="col-md-6 col-xs-12 col-sm-12">
                                     <p class="field">
                                         <select id="services" name="service" class="form-control custom-dropdown" required>
@@ -2224,17 +2223,17 @@ $(document).ready(function(){
                                         <input name="weight" id="Weight" value="" placeholder="Weight in gm*" type="text">
                                     </p>
                                 </div>
-                                 <div class="col-md-6 col-xs-12 col-sm-12">
+                                <div class="col-md-6 col-xs-12 col-sm-12">
                                     <p class="field">
                                         <input name="width" id="width" value="" placeholder="Width in gm*" type="text">
                                     </p>
                                 </div>
-                                 <div class="col-md-6 col-xs-12 col-sm-12">
+                                <div class="col-md-6 col-xs-12 col-sm-12">
                                     <p class="field">
                                         <input name="length" id="length" value="" placeholder="Length in gm*" type="text">
                                     </p>
                                 </div>
-                                 <div class="col-md-6 col-xs-12 col-sm-12">
+                                <div class="col-md-6 col-xs-12 col-sm-12">
                                     <p class="field">
                                         <input name="height" id="height" value="" placeholder="Height in gm*" type="text">
                                     </p>
@@ -2356,7 +2355,7 @@ $(document).ready(function(){
 <!--partener end -->
 <style>
     .owl-theme .owl-controls {
-    margin-top: -80px;
+        margin-top: -80px;
     }
 </style>
 <!--testimonials -->
@@ -2366,7 +2365,7 @@ $(document).ready(function(){
             <div class="testi-wrapper" style="background-image:url(images/main-slider/testi-1.jpg)">
                 <div class="container">
                     <div class="testi-item">
-                       
+
                         <div class="testi-content">
                             <div class="testi-star">
                                 <i class="fa fa-star fa-md"></i>
@@ -2385,7 +2384,7 @@ $(document).ready(function(){
             <div class="testi-wrapper" style="background-image:url(images/main-slider/testi-3.jpg)">
                 <div class="container">
                     <div class="testi-item">
-                        
+
                         <div class="testi-content">
                             <div class="testi-star">
                                 <i class="fa fa-star fa-md"></i>
@@ -2404,7 +2403,7 @@ $(document).ready(function(){
             <div class="testi-wrapper" style="background-image:url(images/main-slider/testi-2.jpg)">
                 <div class="container">
                     <div class="testi-item">
-                       
+
                         <div class="testi-content">
                             <div class="testi-star">
                                 <i class="fa fa-star fa-md"></i>
@@ -2554,7 +2553,7 @@ $(document).ready(function(){
         $('.invalid-feedback').hide();
 
         $('#parcel-rate-submit').on('click', function(e) {
-            
+
             e.preventDefault();
             const from = $('#FromPincode').val();
             const to = $('#ToPincode').val();
@@ -2601,7 +2600,7 @@ $(document).ready(function(){
             let url = $('#price-form').attr('action');
             var csrfToken = "{{ csrf_token() }}";
 
-           
+
 
             $.ajax({
                 type: 'POST',
@@ -2633,7 +2632,7 @@ $(document).ready(function(){
 </script>
 
 
- <script>
+<script>
     var swiper = new Swiper('.swiper-container', {
         loop: true,
         autoplay: {

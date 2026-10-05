@@ -1,11 +1,6 @@
 @extends('admin.layouts.master')
 @section('title') Link @endsection
 @section('content')
-
-
-
-
-
 <style>
     .select2-container {
         box-sizing: border-box;
@@ -61,8 +56,6 @@
         }
     }
 </style>
-
-
 <div class="row justify-content-center">
     <div class="col-sm-12 col-md-6">
         <div class="card">
@@ -70,20 +63,18 @@
 
                 <div class="col-lg-12 col-md-12 col-sm-12 line-tabs">
                     <ul class="nav nav-tabs nav-tabs-bottom">
-                        <li class="nav-item"><a href="#franchise" data-bs-toggle="tab" class="nav-link active">GOTOGO</a></li>
-                        <li class="nav-item"><a href="#cms" data-bs-toggle="tab" class="nav-link">India Post</a></li>
+                        <li class="nav-item"><a href="#franchise" data-bs-toggle="tab" class="nav-link active">Gotogo</a></li>
+                        <li class="nav-item"><a href="#cms" data-bs-toggle="tab" class="nav-link">All India Post</a></li>
                     </ul>
                 </div>
 
                 <div class="tab-content">
-
-                    <!-- franchise start -->
                     <div id="franchise" class="pro-overview tab-pane fade show active">
                         <form action="{{route('admin.gotogoLink.store')}}" method="POST">
                             @csrf
                             <div class="d-flex align-items-center flex-column">
                                 <div class="input-block mb-4 form-focus ">
-                                    <label for="PickupName">Select Franchise<span class="text-danger">*</span></label>
+                                    <label for="PickupName">Select Business Associate<span class="text-danger">*</span></label>
                                     <select name="franchise_no" class="floating">
                                         <option value=""> -- Select -- </option>
                                         @foreach($franchise as $user)
@@ -95,7 +86,7 @@
 
                             <div class="d-flex align-items-center flex-column mt-3">
                                 <div class="input-block mb-4 form-focus ">
-                                    <label for="PickupName">Select CPH<span class="text-danger">*</span></label>
+                                    <label for="PickupName">Select P.O/CPH<span class="text-danger">*</span></label>
                                     <select name="cms_no" class="floating">
                                         <option value=""> -- Select -- </option>
                                         @foreach($cms as $user)
@@ -132,7 +123,7 @@
                             @csrf
                             <div class="d-flex align-items-center flex-column">
                                 <div class="input-block mb-4 form-focus">
-                                    <label for="franchise_id">Select Franchise<span class="text-danger">*</span></label>
+                                    <label for="franchise_id">Select Business Associate<span class="text-danger">*</span></label>
                                     <select name="franchise_no" id="franchise_id" class="floating">
                                         <option value="">-- Select --</option>
                                         @foreach($franchise as $user)
@@ -153,13 +144,11 @@
                             </div>
 
                             <div class="mb-2 mt-2 px-4 barcode-input-container">
-
                                 <label for="bnpl">Enter <span id="dynamic-city"></span> BPNL No<span class="text-danger">*</span></label>
-
                                 <div class="input-group mt-1">
                                     <span class="input-group-text"><i class="fa fa-building"></i></span>
                                     <input type="text" class="form-control" id="bnpl_no" name="bnpl_no" placeholder="Enter BPNL No">
-                                    <div class="invalid-feedback">Please provide BPNL No</div>
+                                    <div class="invalid-feedback">Please Provide BPNL No</div>
                                     <div class="invalid-feedback validerror-origin"></div>
                                 </div>
                             </div>
@@ -169,7 +158,7 @@
                                 <div class="input-group mt-1">
                                     <span class="input-group-text"><i class="fa fa-building"></i></span>
                                     <input type="text" class="form-control" id="customer_id" name="customer_id" placeholder="Enter Customer ID">
-                                    <div class="invalid-feedback">Please provide Customer ID</div>
+                                    <div class="invalid-feedback">Please Provide Customer ID</div>
                                     <div class="invalid-feedback validerror-origin"></div>
                                 </div>
                             </div>
@@ -179,7 +168,7 @@
                                 <div class="input-group mt-1">
                                     <span class="input-group-text"><i class="fa fa-building"></i></span>
                                     <input type="text" class="form-control " id="contract_id" name="contract_id" placeholder="Enter Contract ID">
-                                    <div class="invalid-feedback">Please provide Contract ID</div>
+                                    <div class="invalid-feedback">Please Provide Contract ID</div>
                                     <div class="invalid-feedback validerror-origin"></div>
                                 </div>
                             </div>
@@ -192,9 +181,7 @@
                         </form>
 
                     </div>
-                    <!-- cms end-->
 
-                    <!-- pph start -->
                     <div class="tab-pane fade" id="pph">
                         <form action="{{route('admin.pph-barcode-upload.store')}}" method="POST">
                             @csrf
@@ -228,7 +215,7 @@
                                     <span class="input-group-text"><i class="fa fa-building"></i></span>
                                     <input type="text" class="form-control NumberValidate " maxlength="6" id="originPincode" name="seriesAmount" value="" placeholder="Enter Barcode series amount">
                                     <div class="invalid-feedback">
-                                        Please provide pincode
+                                        Please Provide Pincode
                                     </div>
                                     <div class="invalid-feedback validerror-origin">
                                     </div>
@@ -241,23 +228,17 @@
                             </div>
                         </form>
                     </div>
-                    <!-- pph end-->
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-
-
 @push('page-javascript')
 <script type="text/javascript">
     $(document).ready(function() {
-
         $("#city").on('change', function() {
             $('#dynamic-city').text($(this).val());
         });
-
     });
 </script>
 

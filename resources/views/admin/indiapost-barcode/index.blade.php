@@ -1,10 +1,8 @@
 @extends('admin.layouts.master')
-
 @section('title') IndiaPost Barcode @endsection
-
 @section('content')
-
 @push('add-modal-code')
+
 <div class="col-auto float-end ms-auto">
     <button class="btn add-btn" data-bs-toggle="modal" data-bs-target="#barcodeModal" onclick="resetModal()">
         <i class="fa-solid fa-plus"></i> Add
@@ -27,7 +25,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-striped custom-table datatable">
+                    <table class="table table-bordered custom-table datatable table-hover">
                         <thead>
                             <tr>
                                 <th>SN#</th>
@@ -45,12 +43,12 @@
                             <tr>
                                 <td>{{ $i+1 }}</td>
                                 <td class="text-center">
-                                @if($data->service_type == 5)
-                                  {{\App\Models\Admin::INDIA_POST_SPEED}}
-                                @else
-                                  {{\App\Models\Admin::INDIA_POST_BUSINESS}}
-                                @endif
-                               </td>
+                                    @if($data->service_type == 5)
+                                    {{\App\Models\Admin::INDIA_POST_SPEED}}
+                                    @else
+                                    {{\App\Models\Admin::INDIA_POST_BUSINESS}}
+                                    @endif
+                                </td>
                                 <td class="text-center">{{ $data->state }}</td>
                                 <td class="text-center">{{ $data->code }}</td>
                                 <td class="text-center">{{ $data->prefix . $data->range_from . $data->postfix }}</td>
@@ -81,12 +79,9 @@
     </div>
 </div>
 
-<!-- Create/Edit Modal -->
 <div class="modal fade" id="barcodeModal" tabindex="-1" aria-labelledby="barcodeModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
-
-            
+        <div class="modal-content">            
             <form id="barcodeForm" action="{{ route('indiapostbarcodes.store') }}" method="POST">
                 @csrf
                 <input type="hidden" name="_method" value="POST" id="formMethod">
@@ -109,7 +104,7 @@
                         <select class="form-select" name="state" id="state" required>
                             <option selected disabled>Select State</option>
                             @foreach($states as $state)
-                                <option value="{{ $state }}">{{ $state }}</option>
+                            <option value="{{ $state }}">{{ $state }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -151,7 +146,6 @@
         $('#barcodeForm').attr('action', '{{ route('indiapostbarcodes.store') }}');
         $('#barcodeForm').append('<input type="hidden" name="_method" value="POST" id="formMethod">');
     }
-
     function editModal(data) {
         $('#barcode_id').val(data.id);
         $('#state').val(data.state);
@@ -159,11 +153,9 @@
         $('#prefix').val(data.prefix);
         $('#range_from').val(data.range_from);
         $('#range_to').val(data.range_to);
-        $('#postfix').val(data.postfix);
-        
+        $('#postfix').val(data.postfix); 
         $('#formMethod').remove(); // Remove existing _method input to avoid duplication
         $('#barcodeForm').append('<input type="hidden" name="_method" value="POST" id="formMethod">');
-        
         $('#barcodeModalLabel').text('Edit Barcode');
         $('#barcodeForm').attr('action', 'indiapostbarcodes/' + data.id + '/update');
         $('#barcodeModal').modal('show');
@@ -171,28 +163,27 @@
 </script>
 
 <script>
-function deleteBarcode(id) {
-    if (confirm('Are you sure you want to delete this barcode?')) {
-        let form = $('<form>', {
-            'method': 'GET',
-            'action': '{{ route("indiapostbarcodes.destroy", ":id") }}'.replace(':id', id)
-        });
+    function deleteBarcode(id) {
+        if (confirm('Are you sure you want to delete this barcode?')) {
+            let form = $('<form>', {
+                'method': 'GET',
+                'action': '{{ route("indiapostbarcodes.destroy", ":id") }}'.replace(':id', id)
+            });
 
-        let methodInput = $('<input>', {
-            'type': 'hidden',
-            'name': '_method',
-            'value': 'GET'
-        });
+            let methodInput = $('<input>', {
+                'type': 'hidden',
+                'name': '_method',
+                'value': 'GET'
+            });
 
-        let csrfInput = $('<input>', {
-            'type': 'hidden',
-            'name': '_token',
-            'value': '{{ csrf_token() }}'
-        });
-
-        form.append(methodInput, csrfInput).appendTo('body').submit();
+            let csrfInput = $('<input>', {
+                'type': 'hidden',
+                'name': '_token',
+                'value': '{{ csrf_token() }}'
+            });
+            form.append(methodInput, csrfInput).appendTo('body').submit();
+        }
     }
-}
 </script>    
 
 @endsection

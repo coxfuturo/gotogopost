@@ -2,7 +2,7 @@
 
 
 
-@section('title') GOTOGO Super Fast @endsection
+@section('title') Gotogo Super Fast @endsection
 
 
 @section('header-right-part')

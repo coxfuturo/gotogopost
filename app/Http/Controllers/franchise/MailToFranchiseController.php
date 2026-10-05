@@ -302,13 +302,27 @@ class MailToFranchiseController extends Controller
             // Store attachments
             MailAttachment::insert($attachments);
 
-            // Store commission details
-            FranchiseCommissionDetail::create([
-                'franchise_id' => Franchise::getFranchiseId(),
-                'service_type' => Mail::E2H,
-                'amount' => $total_payment_amount, // Total amount yahan store hoga
-                'commission' => $total_commission, // Total commission store hoga
-            ]);
+          // Franchise-specific commission
+$franchiseId = Franchise::getFranchiseId();
+$serviceType = Mail::E2H;
+
+$commissionData = $rateCalculator->calculateFranchiseCommission(
+    $franchiseId,
+    $serviceType,
+    $total_payment_amount
+);
+
+$commissionRate = $commissionData['rate'];
+$total_commission = $commissionData['commission'];
+
+// Store commission details
+FranchiseCommissionDetail::create([
+    'franchise_id' => $franchiseId,
+    'service_type' => $serviceType,
+    'amount' => $total_payment_amount,
+    'commission' => $total_commission,
+    'commission_rate' => $commissionRate,
+]);
 
             // Send email
             $attachmentsPaths = array_map(fn($attachment) => public_path($attachment['file_path']), $attachments);

@@ -127,9 +127,9 @@
                     </div>
 
                      <div class="col-sm-6 mb-3">
-                         <label for="franchise_id" class="form-label">Franchise</label>
+                         <label for="franchise_id" class="form-label">Business Associate</label>
                          <select name="franchise_id" class="form-select location_dropdown" required>
-                             <option select disabled>Select Franchise</option>
+                             <option select disabled>Select Business Associate</option>
                          </select>
                          @error('franchise_id')
                                  <small class="text-danger">{{ $message }}</small>

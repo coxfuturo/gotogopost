@@ -1,7 +1,7 @@
 
 @extends('admin.layouts.master')
 
-@section('title') Franchise Management @endsection
+@section('title') Business Associate Management @endsection
 
 @section('content')
     <!-- Chat Main Row -->

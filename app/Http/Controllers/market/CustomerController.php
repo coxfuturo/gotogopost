@@ -22,8 +22,8 @@ use Carbon\Carbon;
 
 class CustomerController extends Controller
 {
-   public function index(Request $request)
-{
+ public function index(Request $request)
+ {
     $market_id= auth()->guard('market')->id();
     $query = NoRegisterCustomer::with('manager');
 
@@ -32,25 +32,25 @@ class CustomerController extends Controller
         $searchKey = $request->input('searchKey');
         $query->where(function ($q) use ($searchKey) {
             $q->where('name', 'like', '%' . $searchKey . '%')
-              ->orWhere('phone', 'like', '%' . $searchKey . '%')
-              ->orWhere('email', 'like', '%' . $searchKey . '%')
-              ->orWhere('pincode', 'like', '%' . $searchKey . '%')
-              ->orWhere('city', 'like', '%' . $searchKey . '%')
-              ->orWhere('state', 'like', '%' . $searchKey . '%'); 
+            ->orWhere('phone', 'like', '%' . $searchKey . '%')
+            ->orWhere('email', 'like', '%' . $searchKey . '%')
+            ->orWhere('pincode', 'like', '%' . $searchKey . '%')
+            ->orWhere('city', 'like', '%' . $searchKey . '%')
+            ->orWhere('state', 'like', '%' . $searchKey . '%'); 
         });
     }
 
     // Date filter (d-m-Y format)
     if ($request->filled('date')) {
-            $date = Carbon::createFromFormat('d-m-Y', $request->input('date'))->format('Y-m-d');
-            $query->whereDate('created_at', $date);
+        $date = Carbon::createFromFormat('d-m-Y', $request->input('date'))->format('Y-m-d');
+        $query->whereDate('created_at', $date);
         
     }
-                $query->where('type','manager');
-                $query->where('market_id',$market_id);
-                $query->orderBy("bulk_batch_id", "ASC")
-                      ->orderBy("excel_row_no", "ASC");
-                $data['data'] = $query->get();
+    $query->where('type','manager');
+    $query->where('market_id',$market_id);
+$query->orderBy("id", "ASC");
+
+$data['data'] = $query->get();
 
     // ✅ Add parcel count for each customer
     foreach ($data['data'] as $customer) {
@@ -67,75 +67,75 @@ class CustomerController extends Controller
 
 
 
-     public function export(Request $request)
+public function export(Request $request)
 {
-   $market_id= auth()->guard('market')->id();
+ $market_id= auth()->guard('market')->id();
 
-   $customer = MManager::find($market_id);
+ $customer = MManager::find($market_id);
 
-    $query = NoRegisterCustomer::with('manager');
+ $query = NoRegisterCustomer::with('manager');
 
     // Search key filter
-    if ($request->filled('searchKey')) {
-        $searchKey = $request->input('searchKey');
-        $query->where(function ($q) use ($searchKey) {
-            $q->where('name', 'like', '%' . $searchKey . '%')
-              ->orWhere('phone', 'like', '%' . $searchKey . '%')
-              ->orWhere('email', 'like', '%' . $searchKey . '%')
-              ->orWhere('pincode', 'like', '%' . $searchKey . '%')
-              ->orWhere('city', 'like', '%' . $searchKey . '%')
-              ->orWhere('state', 'like', '%' . $searchKey . '%'); 
-        });
-    }
+ if ($request->filled('searchKey')) {
+    $searchKey = $request->input('searchKey');
+    $query->where(function ($q) use ($searchKey) {
+        $q->where('name', 'like', '%' . $searchKey . '%')
+        ->orWhere('phone', 'like', '%' . $searchKey . '%')
+        ->orWhere('email', 'like', '%' . $searchKey . '%')
+        ->orWhere('pincode', 'like', '%' . $searchKey . '%')
+        ->orWhere('city', 'like', '%' . $searchKey . '%')
+        ->orWhere('state', 'like', '%' . $searchKey . '%'); 
+    });
+}
 
     // Date filter (d-m-Y format)
-    if ($request->filled('date')) {
-            $date = Carbon::createFromFormat('d-m-Y', $request->input('date'))->format('Y-m-d');
-            $query->whereDate('created_at', $date);
-        
-    }          
-                $query->where('type','manager');
-                $query->where('market_id',$market_id);
-                $query->orderBy("bulk_batch_id", "ASC")
-                      ->orderBy("excel_row_no", "ASC");
-    $parcels = $query->get();
+if ($request->filled('date')) {
+    $date = Carbon::createFromFormat('d-m-Y', $request->input('date'))->format('Y-m-d');
+    $query->whereDate('created_at', $date);
+    
+}          
+$query->where('type','manager');
+$query->where('market_id',$market_id);
+$query->orderBy("bulk_batch_id", "ASC")
+->orderBy("excel_row_no", "ASC");
+$parcels = $query->get();
 
-        $spreadsheet = new Spreadsheet();
+$spreadsheet = new Spreadsheet();
 
-        $sheet = $spreadsheet->getActiveSheet();
+$sheet = $spreadsheet->getActiveSheet();
 
-        $headings = [
+$headings = [
 
-            'Sl',
-            'Franchise',
-            'Marketing Manager',
-            'Name',
-            'Mobile',
-            'Email',
-            'GST',
+    'Sl',
+    'Franchise',
+    'Marketing Manager',
+    'Name',
+    'Mobile',
+    'Email',
+    'GST',
 
-            'Pincode',
-            'City',
+    'Pincode',
+    'City',
 
-            'State',
-            'Address',
-            
-        ];
+    'State',
+    'Address',
+    
+];
 
-        $column = 'A';
+$column = 'A';
 
-        foreach ($headings as $heading) {
+foreach ($headings as $heading) {
 
-            $sheet->setCellValue($column . '1', $heading);
+    $sheet->setCellValue($column . '1', $heading);
 
-            $column++;
-        }
+    $column++;
+}
 
         $row = 2; // Start from the second row
 
         foreach ($parcels as $key => $parcel) {
 
-        
+            
             // Set cell values
 
             $sheet->setCellValue('A' . $row, $key + 1);
@@ -181,91 +181,91 @@ class CustomerController extends Controller
 
         return $response;
 
-}
+    }
 
     public function create(){
         return view('market.customer.create');
     }
 
-   public function store(Request $request)
-{
+    public function store(Request $request)
+    {
     // Step 1: Validate the request
-    $request->validate([
-        'name'            => 'required|string|max:255',
-        'register_type'            => 'required',
-        'mobile'          => 'required',
-        'pincode'         => 'required|digits:6',
-        'city'            => 'required|string|max:255',
-        'state'           => 'required|string|max:255',
-        'address'   => 'required|string|max:500',
+        $request->validate([
+            'name'            => 'required|string|max:255',
+            'register_type'            => 'required',
+            'mobile'          => 'required',
+            'pincode'         => 'required|digits:6',
+            'city'            => 'required|string|max:255',
+            'state'           => 'required|string|max:255',
+            'address'   => 'required|string|max:500',
         'franchise_id'    => 'required|exists:franchises,id', // Added existence validation
     ]);
-  $market_id= auth()->guard('market')->id();
+        $market_id= auth()->guard('market')->id();
     // Step 2: Check if customer already exists as manager
-    $mobileExists = NoRegisterCustomer::where('phone', $request->mobile)->where('market_id',$market_id)
-    ->where('type', 'manager')
-    ->exists();
-
-if ($mobileExists) {
-    return redirect()->back()->with('error', 'Mobile number already exists for a Customer!');
-}
-
-if (!empty($request->email)) {
-    $emailExists = NoRegisterCustomer::where('email', $request->email)->where('market_id',$market_id)
+        $mobileExists = NoRegisterCustomer::where('phone', $request->mobile)->where('market_id',$market_id)
         ->where('type', 'manager')
         ->exists();
 
-    if ($emailExists) {
-        return redirect()->back()->with('error', 'Email already exists for a Customer!');
-    }
-}
+        if ($mobileExists) {
+            return redirect()->back()->with('error', 'Mobile number already exists for a Customer!');
+        }
+
+        if (!empty($request->email)) {
+            $emailExists = NoRegisterCustomer::where('email', $request->email)->where('market_id',$market_id)
+            ->where('type', 'manager')
+            ->exists();
+
+            if ($emailExists) {
+                return redirect()->back()->with('error', 'Email already exists for a Customer!');
+            }
+        }
 
 
     // Step 3: Fetch the franchise
-    $franchise = Franchise::find($request->franchise_id);
+        $franchise = Franchise::find($request->franchise_id);
 
-    if (!$franchise) {
-        return redirect()->back()->with('error', 'Franchise not found.');
-    }
-   $mobile = $request->mobile;
+        if (!$franchise) {
+            return redirect()->back()->with('error', 'Franchise not found.');
+        }
+        $mobile = $request->mobile;
     // Step 4: Generate a random 10-digit numeric password
-    $password = substr(str_shuffle('0123456789'), 0, 10);
-    $pass = Hash::make($password);
+        $password = substr(str_shuffle('0123456789'), 0, 10);
+        $pass = Hash::make($password);
     // Step 5: Create the new franchise manager
-    NoRegisterCustomer::create([
-        'name'         => $request->input('name'),
-        'type'         => 'manager',
-        'franchise_id' => $franchise->id,
-        'market_id'    => $market_id,
-        'register_type'=> $request->input('register_type'),
-        'phone'        => $request->input('mobile'),
-        'gst_number'   => $request->input('gst_no'),
-        'email'        => $request->input('email'),
-        'pincode'      => $request->input('pincode'),
-        'city'         => $request->input('city'),
-        'state'        => $request->input('state'),
-        'address'      => $request->input('address'),
-        'password'     => $pass,
-		'status'        => 1,
-    ]);
+        NoRegisterCustomer::create([
+            'name'         => $request->input('name'),
+            'type'         => 'manager',
+            'franchise_id' => $franchise->id,
+            'market_id'    => $market_id,
+            'register_type'=> $request->input('register_type'),
+            'phone'        => $request->input('mobile'),
+            'gst_number'   => $request->input('gst_no'),
+            'email'        => $request->input('email'),
+            'pincode'      => $request->input('pincode'),
+            'city'         => $request->input('city'),
+            'state'        => $request->input('state'),
+            'address'      => $request->input('address'),
+            'password'     => $pass,
+            'status'        => 1,
+        ]);
     // Send SMS to pickup mobile
-            try {
-               $notification = new SMSNotification($mobile, 'WELCOME', [$mobile,$password]);
-                $response = $notification->sendMessage();
-            } catch (\Exception $e) {
-                \Log::error('Error sending SMS to pickup mobile: ' . $e->getMessage());
-            }
-   session()->flash('success', 'Customer created successfully!');
-   return redirect()->route('market.customer.index');
+        try {
+         $notification = new SMSNotification($mobile, 'WELCOME', [$mobile,$password]);
+         $response = $notification->sendMessage();
+     } catch (\Exception $e) {
+        \Log::error('Error sending SMS to pickup mobile: ' . $e->getMessage());
+    }
+    session()->flash('success', 'Customer created successfully!');
+    return redirect()->route('market.customer.index');
 }
 
 public function edit($id){
-     $data = NoRegisterCustomer::find($id);
-     $franchise = Franchise::where('city',$data->city)->get();
-        return view('market.customer.update',compact('data','franchise'));
-    }
+   $data = NoRegisterCustomer::find($id);
+   $franchise = Franchise::where('city',$data->city)->get();
+   return view('market.customer.update',compact('data','franchise'));
+}
 
-    public function update(Request $request, $customer_id)
+public function update(Request $request, $customer_id)
 {
     $request->validate([
         'name'          => 'required|string|max:255',
@@ -282,17 +282,17 @@ public function edit($id){
 
     // Step 1: Fetch existing customer
     $customer = NoRegisterCustomer::where('id', $customer_id)
-        ->where('market_id', $market_id)
-        ->where('type', 'manager')
-        ->firstOrFail();
+    ->where('market_id', $market_id)
+    ->where('type', 'manager')
+    ->firstOrFail();
 
     // Step 2: Check for duplicate mobile (only if changed)
     if ($customer->phone !== $request->mobile) {
         $mobileExists = NoRegisterCustomer::where('phone', $request->mobile)
-            ->where('market_id', $market_id)
-            ->where('type', 'manager')
-            ->where('id', '!=', $customer->id)
-            ->exists();
+        ->where('market_id', $market_id)
+        ->where('type', 'manager')
+        ->where('id', '!=', $customer->id)
+        ->exists();
 
         if ($mobileExists) {
             return redirect()->back()->with('error', 'Mobile number already exists for a Customer!');
@@ -302,10 +302,10 @@ public function edit($id){
     // Step 3: Check for duplicate email (only if changed and not empty)
     if (!empty($request->email) && $customer->email !== $request->email) {
         $emailExists = NoRegisterCustomer::where('email', $request->email)
-            ->where('market_id', $market_id)
-            ->where('type', 'manager')
-            ->where('id', '!=', $customer->id)
-            ->exists();
+        ->where('market_id', $market_id)
+        ->where('type', 'manager')
+        ->where('id', '!=', $customer->id)
+        ->exists();
 
         if ($emailExists) {
             return redirect()->back()->with('error', 'Email already exists for a Customer!');
@@ -327,7 +327,7 @@ public function edit($id){
     ]);
 
     session()->flash('success', 'Customer updated successfully!');
-   return redirect()->route('market.customer.index');
+    return redirect()->route('market.customer.index');
 
 }
 
@@ -356,64 +356,64 @@ public function view($id, $type, Request $request)
 
     if ($baseQuery) {
         $baseQuery->where('booking_type', 'manager')
-            ->whereHas('noregister', function ($query) use ($id) {
-                $query->where('id', $id);
-            });
+        ->whereHas('noregister', function ($query) use ($id) {
+            $query->where('id', $id);
+        });
 
         // Add searchKey filter (e.g. on recipient_name)
         if ($searchKey) {
             $baseQuery->where(function ($query) use ($searchKey) {
                 $query->where('pickup_name', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('pickup_mobile', 'LIKE', "%{$searchKey}%")
+                ->orWhere('pickup_mobile', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('pickup_email', 'LIKE', "%{$searchKey}%")
+                ->orWhere('pickup_email', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('pickup_pincode', 'LIKE', "%{$searchKey}%")
+                ->orWhere('pickup_pincode', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('pickup_city', 'LIKE', "%{$searchKey}%")
+                ->orWhere('pickup_city', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('pickup_state', 'LIKE', "%{$searchKey}%")
+                ->orWhere('pickup_state', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('pickup_address', 'LIKE', "%{$searchKey}%")
+                ->orWhere('pickup_address', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('consignee_name', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_name', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('consignee_mobile', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_mobile', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('consignee_email', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_email', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('consignee_pincode', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_pincode', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('consignee_city', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_city', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('consignee_state', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_state', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('consignee_address', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_address', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('barcode_no', 'LIKE', "%{$searchKey}%");
+                ->orWhere('barcode_no', 'LIKE', "%{$searchKey}%");
             });
         }
 
-      if ($date) {
+        if ($date) {
           $parsedDate = Carbon::createFromFormat('d-m-Y', $date)->format('Y-m-d');
           $baseQuery->whereDate('created_at', $parsedDate);
-     } else {
+      } else {
        // If no date is selected, default to today
-       $baseQuery->whereDate('created_at', Carbon::today());
+         $baseQuery->whereDate('created_at', Carbon::today());
      }
-         $baseQuery->where('status','!=',2);
-             $clonedQuery = clone $baseQuery;
-        $data['datas'] = $baseQuery->get();
-        $data['count'] = $clonedQuery->count();
-        $data['total_amount'] = $clonedQuery->sum('payment_amount'); 
-    } else {
-        $data['datas'] = collect(); 
-        $data['count'] = 0;
-        $data['total_amount'] = 0;
-    }
+     $baseQuery->where('status','!=',2);
+     $clonedQuery = clone $baseQuery;
+     $data['datas'] = $baseQuery->get();
+     $data['count'] = $clonedQuery->count();
+     $data['total_amount'] = $clonedQuery->sum('payment_amount'); 
+ } else {
+    $data['datas'] = collect(); 
+    $data['count'] = 0;
+    $data['total_amount'] = 0;
+}
 
-    return view('market.customer.view', $data);
+return view('market.customer.view', $data);
 }
 
 
@@ -423,10 +423,10 @@ public function parcelExport( Request $request)
     $searchKey = $request->input('searchKey');
     $date = $request->input('date');
 
-   $type=  $data['type'] = $request->input('type');
-   $id = $data['id'] = $request->input('id');
+    $type=  $data['type'] = $request->input('type');
+    $id = $data['id'] = $request->input('id');
 
-   $baseQuery = null;
+    $baseQuery = null;
 
     $customer = NoRegisterCustomer::find($id);
 
@@ -444,62 +444,62 @@ public function parcelExport( Request $request)
 
     if ($baseQuery) {
         $baseQuery->where('booking_type', 'manager')
-            ->whereHas('noregister', function ($query) use ($id) {
-                $query->where('id', $id);
-            });
+        ->whereHas('noregister', function ($query) use ($id) {
+            $query->where('id', $id);
+        });
 
         // Add searchKey filter (e.g. on recipient_name)
         if ($searchKey) {
             $baseQuery->where(function ($query) use ($searchKey) {
                 $query->where('pickup_name', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('pickup_mobile', 'LIKE', "%{$searchKey}%")
+                ->orWhere('pickup_mobile', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('pickup_email', 'LIKE', "%{$searchKey}%")
+                ->orWhere('pickup_email', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('pickup_pincode', 'LIKE', "%{$searchKey}%")
+                ->orWhere('pickup_pincode', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('pickup_city', 'LIKE', "%{$searchKey}%")
+                ->orWhere('pickup_city', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('pickup_state', 'LIKE', "%{$searchKey}%")
+                ->orWhere('pickup_state', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('pickup_address', 'LIKE', "%{$searchKey}%")
+                ->orWhere('pickup_address', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('consignee_name', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_name', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('consignee_mobile', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_mobile', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('consignee_email', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_email', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('consignee_pincode', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_pincode', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('consignee_city', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_city', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('consignee_state', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_state', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('consignee_address', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_address', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('barcode_no', 'LIKE', "%{$searchKey}%");
+                ->orWhere('barcode_no', 'LIKE', "%{$searchKey}%");
             });
         }
 
-      if ($date) {
+        if ($date) {
           $parsedDate = Carbon::createFromFormat('d-m-Y', $date)->format('Y-m-d');
           $baseQuery->whereDate('created_at', $parsedDate);
-     } else {
+      } else {
        // If no date is selected, default to today
-       $baseQuery->whereDate('created_at', Carbon::today());
+         $baseQuery->whereDate('created_at', Carbon::today());
      }
 
-             $clonedQuery = clone $baseQuery;
-        $parcels = $baseQuery->get();
-        $parcelscount = $clonedQuery->count();
-        $parcelsamount = $clonedQuery->sum('payment_amount'); 
-    } else {
-        $parcels = collect(); 
-        $parcelscount = 0;
-        $parcelsamount = 0;
-    }
+     $clonedQuery = clone $baseQuery;
+     $parcels = $baseQuery->get();
+     $parcelscount = $clonedQuery->count();
+     $parcelsamount = $clonedQuery->sum('payment_amount'); 
+ } else {
+    $parcels = collect(); 
+    $parcelscount = 0;
+    $parcelsamount = 0;
+}
 
      // Create a new Spreadsheet object
 $spreadsheet = new Spreadsheet();
@@ -565,14 +565,14 @@ foreach ($parcels as $key => $parcel) {
     $row++;
 }
 
-        $writer = new Xlsx($spreadsheet);
+$writer = new Xlsx($spreadsheet);
 
-        $response = new StreamedResponse(function () use ($writer) {
+$response = new StreamedResponse(function () use ($writer) {
 
-            $writer->save('php://output');
-        });
+    $writer->save('php://output');
+});
 
-        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+$response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 
 $filename = 'MarketManagerCustomerParcels=' . $customer->name . '.xlsx';
 $response->headers->set('Content-Disposition', 'attachment; filename="' . $filename . '"');
@@ -580,7 +580,7 @@ $response->headers->set('Content-Disposition', 'attachment; filename="' . $filen
 $response->headers->set('Cache-Control', 'max-age=0');
 
 
-        return $response;
+return $response;
 }
 
 public function totalCount($id, Request $request)
@@ -602,28 +602,28 @@ public function totalCount($id, Request $request)
 
     foreach ($parcelModels as $model) {
         $query = $model::with('noregister')
-            ->where('booking_type', 'manager')
-            ->whereHas('noregister', function ($q) use ($id) {
-                $q->where('id', $id);
-            });
+        ->where('booking_type', 'manager')
+        ->whereHas('noregister', function ($q) use ($id) {
+            $q->where('id', $id);
+        });
 
         if ($searchKey) {
             $query->where(function ($q) use ($searchKey) {
                 $q->where('pickup_name', 'LIKE', "%{$searchKey}%")
-                    ->orWhere('pickup_mobile', 'LIKE', "%{$searchKey}%")
-                    ->orWhere('pickup_email', 'LIKE', "%{$searchKey}%")
-                    ->orWhere('pickup_pincode', 'LIKE', "%{$searchKey}%")
-                    ->orWhere('pickup_city', 'LIKE', "%{$searchKey}%")
-                    ->orWhere('pickup_state', 'LIKE', "%{$searchKey}%")
-                    ->orWhere('pickup_address', 'LIKE', "%{$searchKey}%")
-                    ->orWhere('consignee_name', 'LIKE', "%{$searchKey}%")
-                    ->orWhere('consignee_mobile', 'LIKE', "%{$searchKey}%")
-                    ->orWhere('consignee_email', 'LIKE', "%{$searchKey}%")
-                    ->orWhere('consignee_pincode', 'LIKE', "%{$searchKey}%")
-                    ->orWhere('consignee_city', 'LIKE', "%{$searchKey}%")
-                    ->orWhere('consignee_state', 'LIKE', "%{$searchKey}%")
-                    ->orWhere('consignee_address', 'LIKE', "%{$searchKey}%")
-                    ->orWhere('barcode_no', 'LIKE', "%{$searchKey}%");
+                ->orWhere('pickup_mobile', 'LIKE', "%{$searchKey}%")
+                ->orWhere('pickup_email', 'LIKE', "%{$searchKey}%")
+                ->orWhere('pickup_pincode', 'LIKE', "%{$searchKey}%")
+                ->orWhere('pickup_city', 'LIKE', "%{$searchKey}%")
+                ->orWhere('pickup_state', 'LIKE', "%{$searchKey}%")
+                ->orWhere('pickup_address', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_name', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_mobile', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_email', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_pincode', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_city', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_state', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_address', 'LIKE', "%{$searchKey}%")
+                ->orWhere('barcode_no', 'LIKE', "%{$searchKey}%");
             });
         }
 
@@ -660,28 +660,28 @@ public function totalAmount($id, Request $request)
 
     foreach ($parcelModels as $model) {
         $query = $model::with('noregister')
-            ->where('booking_type', 'manager')
-            ->whereHas('noregister', function ($q) use ($id) {
-                $q->where('id', $id);
-            });
+        ->where('booking_type', 'manager')
+        ->whereHas('noregister', function ($q) use ($id) {
+            $q->where('id', $id);
+        });
 
         if ($searchKey) {
             $query->where(function ($q) use ($searchKey) {
                 $q->where('pickup_name', 'LIKE', "%{$searchKey}%")
-                    ->orWhere('pickup_mobile', 'LIKE', "%{$searchKey}%")
-                    ->orWhere('pickup_email', 'LIKE', "%{$searchKey}%")
-                    ->orWhere('pickup_pincode', 'LIKE', "%{$searchKey}%")
-                    ->orWhere('pickup_city', 'LIKE', "%{$searchKey}%")
-                    ->orWhere('pickup_state', 'LIKE', "%{$searchKey}%")
-                    ->orWhere('pickup_address', 'LIKE', "%{$searchKey}%")
-                    ->orWhere('consignee_name', 'LIKE', "%{$searchKey}%")
-                    ->orWhere('consignee_mobile', 'LIKE', "%{$searchKey}%")
-                    ->orWhere('consignee_email', 'LIKE', "%{$searchKey}%")
-                    ->orWhere('consignee_pincode', 'LIKE', "%{$searchKey}%")
-                    ->orWhere('consignee_city', 'LIKE', "%{$searchKey}%")
-                    ->orWhere('consignee_state', 'LIKE', "%{$searchKey}%")
-                    ->orWhere('consignee_address', 'LIKE', "%{$searchKey}%")
-                    ->orWhere('barcode_no', 'LIKE', "%{$searchKey}%");
+                ->orWhere('pickup_mobile', 'LIKE', "%{$searchKey}%")
+                ->orWhere('pickup_email', 'LIKE', "%{$searchKey}%")
+                ->orWhere('pickup_pincode', 'LIKE', "%{$searchKey}%")
+                ->orWhere('pickup_city', 'LIKE', "%{$searchKey}%")
+                ->orWhere('pickup_state', 'LIKE', "%{$searchKey}%")
+                ->orWhere('pickup_address', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_name', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_mobile', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_email', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_pincode', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_city', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_state', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_address', 'LIKE', "%{$searchKey}%")
+                ->orWhere('barcode_no', 'LIKE', "%{$searchKey}%");
             });
         }
 
@@ -727,7 +727,7 @@ public function cancel(Request $request, $id, $type)
 
 public function cancelReport($id, $type, Request $request)
 {
-   
+ 
     $searchKey = $request->input('searchKey');
     $date = $request->input('date');
 
@@ -750,65 +750,65 @@ public function cancelReport($id, $type, Request $request)
 
     if ($baseQuery) {
         $baseQuery->where('booking_type', 'manager')
-            ->whereHas('noregister', function ($query) use ($id) {
-                $query->where('id', $id);
-            });
+        ->whereHas('noregister', function ($query) use ($id) {
+            $query->where('id', $id);
+        });
 
         // Add searchKey filter (e.g. on recipient_name)
         if ($searchKey) {
             $baseQuery->where(function ($query) use ($searchKey) {
                 $query->where('pickup_name', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('pickup_mobile', 'LIKE', "%{$searchKey}%")
+                ->orWhere('pickup_mobile', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('pickup_email', 'LIKE', "%{$searchKey}%")
+                ->orWhere('pickup_email', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('pickup_pincode', 'LIKE', "%{$searchKey}%")
+                ->orWhere('pickup_pincode', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('pickup_city', 'LIKE', "%{$searchKey}%")
+                ->orWhere('pickup_city', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('pickup_state', 'LIKE', "%{$searchKey}%")
+                ->orWhere('pickup_state', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('pickup_address', 'LIKE', "%{$searchKey}%")
+                ->orWhere('pickup_address', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('consignee_name', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_name', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('consignee_mobile', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_mobile', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('consignee_email', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_email', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('consignee_pincode', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_pincode', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('consignee_city', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_city', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('consignee_state', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_state', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('consignee_address', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_address', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('barcode_no', 'LIKE', "%{$searchKey}%");
+                ->orWhere('barcode_no', 'LIKE', "%{$searchKey}%");
             });
         }
 
-      if ($date) {
+        if ($date) {
           $parsedDate = Carbon::createFromFormat('d-m-Y', $date)->format('Y-m-d');
           $baseQuery->whereDate('created_at', $parsedDate);
-     } else {
+      } else {
        // If no date is selected, default to today
-       $baseQuery->whereDate('created_at', Carbon::today());
+         $baseQuery->whereDate('created_at', Carbon::today());
      }
      $baseQuery->where('status', 2);
 
-             $clonedQuery = clone $baseQuery;
-        $data['datas'] = $baseQuery->get();
-        $data['count'] = $clonedQuery->count();
-        $data['total_amount'] = $clonedQuery->sum('payment_amount'); 
-    } else {
-        $data['datas'] = collect(); 
-        $data['count'] = 0;
-        $data['total_amount'] = 0;
-    }
+     $clonedQuery = clone $baseQuery;
+     $data['datas'] = $baseQuery->get();
+     $data['count'] = $clonedQuery->count();
+     $data['total_amount'] = $clonedQuery->sum('payment_amount'); 
+ } else {
+    $data['datas'] = collect(); 
+    $data['count'] = 0;
+    $data['total_amount'] = 0;
+}
 
-    return view('market.customer.cancel', $data);
+return view('market.customer.cancel', $data);
 }
 
 public function parcelExportCancel( Request $request)
@@ -817,10 +817,10 @@ public function parcelExportCancel( Request $request)
     $searchKey = $request->input('searchKey');
     $date = $request->input('date');
 
-   $type=  $data['type'] = $request->input('type');
-   $id = $data['id'] = $request->input('id');
+    $type=  $data['type'] = $request->input('type');
+    $id = $data['id'] = $request->input('id');
 
-   $baseQuery = null;
+    $baseQuery = null;
 
     $customer = NoRegisterCustomer::find($id);
 
@@ -838,62 +838,62 @@ public function parcelExportCancel( Request $request)
 
     if ($baseQuery) {
         $baseQuery->where('booking_type', 'manager')
-            ->whereHas('noregister', function ($query) use ($id) {
-                $query->where('id', $id);
-            });
+        ->whereHas('noregister', function ($query) use ($id) {
+            $query->where('id', $id);
+        });
 
         // Add searchKey filter (e.g. on recipient_name)
         if ($searchKey) {
             $baseQuery->where(function ($query) use ($searchKey) {
                 $query->where('pickup_name', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('pickup_mobile', 'LIKE', "%{$searchKey}%")
+                ->orWhere('pickup_mobile', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('pickup_email', 'LIKE', "%{$searchKey}%")
+                ->orWhere('pickup_email', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('pickup_pincode', 'LIKE', "%{$searchKey}%")
+                ->orWhere('pickup_pincode', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('pickup_city', 'LIKE', "%{$searchKey}%")
+                ->orWhere('pickup_city', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('pickup_state', 'LIKE', "%{$searchKey}%")
+                ->orWhere('pickup_state', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('pickup_address', 'LIKE', "%{$searchKey}%")
+                ->orWhere('pickup_address', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('consignee_name', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_name', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('consignee_mobile', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_mobile', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('consignee_email', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_email', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('consignee_pincode', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_pincode', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('consignee_city', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_city', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('consignee_state', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_state', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('consignee_address', 'LIKE', "%{$searchKey}%")
+                ->orWhere('consignee_address', 'LIKE', "%{$searchKey}%")
 
-                    ->orWhere('barcode_no', 'LIKE', "%{$searchKey}%");
+                ->orWhere('barcode_no', 'LIKE', "%{$searchKey}%");
             });
         }
 
-      if ($date) {
+        if ($date) {
           $parsedDate = Carbon::createFromFormat('d-m-Y', $date)->format('Y-m-d');
           $baseQuery->whereDate('created_at', $parsedDate);
-     } else {
+      } else {
        // If no date is selected, default to today
-       $baseQuery->whereDate('created_at', Carbon::today());
+         $baseQuery->whereDate('created_at', Carbon::today());
      }
      $baseQuery->where('status', 2);
-             $clonedQuery = clone $baseQuery;
-        $parcels = $baseQuery->get();
-        $parcelscount = $clonedQuery->count();
-        $parcelsamount = $clonedQuery->sum('payment_amount'); 
-    } else {
-        $parcels = collect(); 
-        $parcelscount = 0;
-        $parcelsamount = 0;
-    }
+     $clonedQuery = clone $baseQuery;
+     $parcels = $baseQuery->get();
+     $parcelscount = $clonedQuery->count();
+     $parcelsamount = $clonedQuery->sum('payment_amount'); 
+ } else {
+    $parcels = collect(); 
+    $parcelscount = 0;
+    $parcelsamount = 0;
+}
 
      // Create a new Spreadsheet object
 $spreadsheet = new Spreadsheet();
@@ -959,14 +959,14 @@ foreach ($parcels as $key => $parcel) {
     $row++;
 }
 
-        $writer = new Xlsx($spreadsheet);
+$writer = new Xlsx($spreadsheet);
 
-        $response = new StreamedResponse(function () use ($writer) {
+$response = new StreamedResponse(function () use ($writer) {
 
-            $writer->save('php://output');
-        });
+    $writer->save('php://output');
+});
 
-        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+$response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 
 $filename = 'MarketManagerCustomerCancelParcels=' . $customer->name . '.xlsx';
 $response->headers->set('Content-Disposition', 'attachment; filename="' . $filename . '"');
@@ -974,12 +974,12 @@ $response->headers->set('Content-Disposition', 'attachment; filename="' . $filen
 $response->headers->set('Cache-Control', 'max-age=0');
 
 
-        return $response;
+return $response;
 }
 
 //   Details 
 
- public function details($id, $type)
+public function details($id, $type)
 {
     if ($type == 1) {
         $data = GotogoSpeedPostParcel::findOrFail($id);
@@ -994,25 +994,25 @@ $response->headers->set('Cache-Control', 'max-age=0');
     } else {
         return redirect()->back()->with('error', 'Invalid type!');
     }
-      
-        $fuel_charge = $data->fuel_charge;
-        $pickup_charge = $data->pickup_charge;
-        $other_service_charge = $data->other_service_charge;
-        $total_payment_amount = $data->payment_amount;
-        $net_price = $total_payment_amount / 1.18;
-        $amount = $net_price - ($fuel_charge + $pickup_charge + $other_service_charge);
-        $gst = number_format($net_price * 0.18, 2, '.', '');
-        $net_price_formatted = number_format($net_price, 2, '.', '');
+    
+    $fuel_charge = $data->fuel_charge;
+    $pickup_charge = $data->pickup_charge;
+    $other_service_charge = $data->other_service_charge;
+    $total_payment_amount = $data->payment_amount;
+    $net_price = $total_payment_amount / 1.18;
+    $amount = $net_price - ($fuel_charge + $pickup_charge + $other_service_charge);
+    $gst = number_format($net_price * 0.18, 2, '.', '');
+    $net_price_formatted = number_format($net_price, 2, '.', '');
 
-        $rateDetails = [
-            'fuel_charge' => $fuel_charge,
-            'pickup_charge' => $pickup_charge,
-            'other_service_charge' => $other_service_charge,
-            'total_payment_amount' => number_format($total_payment_amount, 2, '.', ''),
-            'net_price' => $net_price_formatted,
-            'amount' => number_format($amount, 2, '.', ''),
-            'gst' => $gst,
-        ];
+    $rateDetails = [
+        'fuel_charge' => $fuel_charge,
+        'pickup_charge' => $pickup_charge,
+        'other_service_charge' => $other_service_charge,
+        'total_payment_amount' => number_format($total_payment_amount, 2, '.', ''),
+        'net_price' => $net_price_formatted,
+        'amount' => number_format($amount, 2, '.', ''),
+        'gst' => $gst,
+    ];
 
     return view('market.parcel.details', compact('data', 'rateDetails','type'));
 }
@@ -1032,14 +1032,14 @@ public function trackOrder($id, $type)
     } else {
         return redirect()->back()->with('error', 'Invalid type!');
     }
-      
-       return response()->json([
-            'trackingDetails' => $trackingDetails
-        ]);
+    
+    return response()->json([
+        'trackingDetails' => $trackingDetails
+    ]);
 
-    }
+}
 
-    public function fullPrint($id, $type)
+public function fullPrint($id, $type)
 {
     if ($type == 1) {
         $parcel = GotogoSpeedPostTrackOrder::where('parcel_id', $id)->first();
@@ -1064,46 +1064,46 @@ public function trackOrder($id, $type)
     } else {
         return redirect()->back()->with('error', 'Invalid type!');
     }
-      
-      $generator = new BarcodeGeneratorPNG();
-        $code = $parcel->barcode_no;
-        $barcode = $generator->getBarcode($code, $generator::TYPE_CODE_128);
-        $barcode = base64_encode($barcode);
+    
+    $generator = new BarcodeGeneratorPNG();
+    $code = $parcel->barcode_no;
+    $barcode = $generator->getBarcode($code, $generator::TYPE_CODE_128);
+    $barcode = base64_encode($barcode);
 
-        $fuel_charge = $parcel->fuel_charge;
-        $pickup_charge = $parcel->pickup_charge;
-        $other_service_charge = $parcel->other_service_charge;
-        $total_payment_amount = $parcel->payment_amount;
-        $net_price = $total_payment_amount / 1.18;
-        $amount = $net_price - ($fuel_charge + $pickup_charge + $other_service_charge);
-        $gst = number_format($net_price * 0.18, 2, '.', '');
-        $net_price_formatted = number_format($net_price, 2, '.', '');
+    $fuel_charge = $parcel->fuel_charge;
+    $pickup_charge = $parcel->pickup_charge;
+    $other_service_charge = $parcel->other_service_charge;
+    $total_payment_amount = $parcel->payment_amount;
+    $net_price = $total_payment_amount / 1.18;
+    $amount = $net_price - ($fuel_charge + $pickup_charge + $other_service_charge);
+    $gst = number_format($net_price * 0.18, 2, '.', '');
+    $net_price_formatted = number_format($net_price, 2, '.', '');
 
 
-        $rateDetails = [
-            'fuel_charge' => $fuel_charge,
-            'pickup_charge' => $pickup_charge,
-            'other_service_charge' => $other_service_charge,
-            'total_payment_amount' => number_format($total_payment_amount, 2, '.', ''),
-            'net_price' => $net_price_formatted,
-            'amount' => number_format($amount, 2, '.', ''),
-            'gst' => $gst,
-        ];
+    $rateDetails = [
+        'fuel_charge' => $fuel_charge,
+        'pickup_charge' => $pickup_charge,
+        'other_service_charge' => $other_service_charge,
+        'total_payment_amount' => number_format($total_payment_amount, 2, '.', ''),
+        'net_price' => $net_price_formatted,
+        'amount' => number_format($amount, 2, '.', ''),
+        'gst' => $gst,
+    ];
 
     $otherPageContent = View::make('print.' . $file . '.fullPrint', [
-    'parcel' => $parcel,
-    'barcode' => $barcode,
-    'rateDetails' => $rateDetails,
-    'type' => 1,
-    'title' => $title
-])->render();
+        'parcel' => $parcel,
+        'barcode' => $barcode,
+        'rateDetails' => $rateDetails,
+        'type' => 1,
+        'title' => $title
+    ])->render();
 
-        return response()->json([
+    return response()->json([
 
-            'otherPageContent' => $otherPageContent
+        'otherPageContent' => $otherPageContent
 
-        ]);
+    ]);
 
-    }
+}
 
 }

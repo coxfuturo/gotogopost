@@ -41,7 +41,7 @@ class FranchisePaymentController extends Controller
         $api = new Api('rzp_live_hZ7MLP0RaGm3Dx', 'XVMFy4TcNEkX9Yf2x2nhjUPn');
         // $api = new Api(env('RAZORPAY_KEY'), env('RAZORPAY_SECRET'));
 
-           $amount = $input['amount'];
+        $amount = $input['amount'];
         try {
             // Create an initial payment record with status 'pending'
             try {
@@ -95,6 +95,31 @@ class FranchisePaymentController extends Controller
 
                     } else {
                         $paymentRecord->update(['status' => 'failed']);
+                    }
+                    if ($response['status'] == 'captured') {
+                        $paymentRecord->update(['status' => 'completed']);
+
+    // Update franchise balance
+                        $user = Auth::guard('franchise')->user();
+
+                        if ($input['type'] === 'gotogo') {
+                            $user->gotogo_balance += $amount;
+                        }
+
+                        if ($input['type'] === 'indiapost') {
+                            $user->indiapost_balance += $amount;
+                        }
+
+                        $user->save();
+
+    // Payment successful -> Franchise Dashboard
+                        return redirect()->route('franchise.dashboard')
+                        ->with('success', 'Payment done successfully');
+
+                    } else {
+                        $paymentRecord->update(['status' => 'failed']);
+
+                        return back()->with('error', 'Payment failed');
                     }
                 } catch (\Exception $e) {
                     return back()->with('error', 'Error updating payment status: ' . $e->getMessage());
@@ -189,22 +214,24 @@ class FranchisePaymentController extends Controller
         $franchiseDetails = Franchise::findOrFail($id);
         if ($startDate && $endDate) {
 
-            $startDate = \Carbon\Carbon::parse($startDate)->startOfDay();
-            $endDate = \Carbon\Carbon::parse($endDate)->endOfDay();
+            $startDate = Carbon::parse($startDate)->startOfDay();
+            $endDate = Carbon::parse($endDate)->endOfDay();
             $data = FranchiseCredit::where('franchise_id', $id)
-                ->whereBetween('created_at', [$startDate, $endDate])
-                ->orderBy('created_at', 'desc')
-                ->get();
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->orderBy('created_at', 'desc')
+            ->get();
+           
         } else {
             $today = Carbon::today();
             $data = FranchiseCredit::where('franchise_id', $id)
-                ->orderBy('created_at', 'desc')
-                ->get();
+            ->orderBy('created_at', 'desc')
+            ->get();
         }
+        
 
         return view('franchise.franchise-payment.creditPayment', compact('data', 'franchiseDetails'));
     }
 
-   
+    
 
 }

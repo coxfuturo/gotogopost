@@ -1,8 +1,6 @@
 @extends('admin.layouts.master') @section('title') Gotogo Postal Rates @endsection @section('content')
-<!-- Row -->
 <div class="row">
    <div class="col-sm-12">
-      <!-- Custom Boostrap Validation -->
       <div class="card">
          @if (request()->query('type') == "1" )
          <form action="{{ route('admin.gotogo-postal-rates.store', ['type' => request()->query('type')]) }}" enctype="multipart/form-data" method="POST" class="needs-validation" novalidate>
@@ -34,49 +32,49 @@
                   <div class="col-sm">
                      <div class="row">
                         <div class="col-md-2 mb-3">
-                           <label for="w{{ $inputPrefix }}local">Local  <span class="text-danger">*</span></label>
+                           <label for="w{{ $inputPrefix }}local">Local <span class="text-danger">*</span></label>
                            <input type="text" class="form-control @error('w'.$inputPrefix.'local') is-invalid @enderror" 
-                              id="w{{ $inputPrefix }}local" 
-                              name="w{{ $inputPrefix }}local" 
-                              placeholder="₹" 
-                              value="{{ old('w'.$inputPrefix.'local') }}" required />
-                           <div class="invalid-feedback">Please Enter Postal rate</div>
+                           id="w{{ $inputPrefix }}local" 
+                           name="w{{ $inputPrefix }}local" 
+                           placeholder="₹" 
+                           value="{{ old('w'.$inputPrefix.'local') }}" required />
+                           <div class="invalid-feedback">Please Enter Postal Rate</div>
                         </div>
                         <div class="col-md-2 mb-3">
                            <label for="w{{ $inputPrefix }}200km">Upto 200 Kms <span class="text-danger">*</span></label>
                            <input type="text" class="form-control @error('w'.$inputPrefix.'200km') is-invalid @enderror" 
-                              id="w{{ $inputPrefix }}200km" 
-                              name="w{{ $inputPrefix }}200km" 
-                              placeholder="₹" 
-                              value="{{ old('w'.$inputPrefix.'200km') }}" required />
-                           <div class="invalid-feedback">Please Enter Postal rate</div>
+                           id="w{{ $inputPrefix }}200km" 
+                           name="w{{ $inputPrefix }}200km" 
+                           placeholder="₹" 
+                           value="{{ old('w'.$inputPrefix.'200km') }}" required />
+                           <div class="invalid-feedback">Please Enter Postal Rate</div>
                         </div>
                         <div class="col-md-2 mb-3">
                            <label for="w{{ $inputPrefix }}201to1000km">201 - 1000 Kms <span class="text-danger">*</span></label>
                            <input type="text" class="form-control @error('w'.$inputPrefix.'201to1000km') is-invalid @enderror" 
-                              id="w{{ $inputPrefix }}201to1000km" 
-                              name="w{{ $inputPrefix }}201to1000km" 
-                              placeholder="₹" 
-                              value="{{ old('w'.$inputPrefix.'201to1000km') }}" required />
-                           <div class="invalid-feedback">Please Enter Postal rate</div>
+                           id="w{{ $inputPrefix }}201to1000km" 
+                           name="w{{ $inputPrefix }}201to1000km" 
+                           placeholder="₹" 
+                           value="{{ old('w'.$inputPrefix.'201to1000km') }}" required />
+                           <div class="invalid-feedback">Please Enter Postal Rate</div>
                         </div>
                         <div class="col-md-2 mb-3">
                            <label for="w{{ $inputPrefix }}1001to2000km">1001 - 2000 Kms <span class="text-danger">*</span></label>
                            <input type="text" class="form-control @error('w'.$inputPrefix.'1001to2000km') is-invalid @enderror" 
-                              id="w{{ $inputPrefix }}1001to2000km" 
-                              name="w{{ $inputPrefix }}1001to2000km" 
-                              placeholder="₹" 
-                              value="{{ old('w'.$inputPrefix.'1001to2000km') }}" required />
-                           <div class="invalid-feedback">Please Enter Postal rate</div>
+                           id="w{{ $inputPrefix }}1001to2000km" 
+                           name="w{{ $inputPrefix }}1001to2000km" 
+                           placeholder="₹" 
+                           value="{{ old('w'.$inputPrefix.'1001to2000km') }}" required />
+                           <div class="invalid-feedback">Please Enter Postal Rate</div>
                         </div>
                         <div class="col-md-2 mb-3">
                            <label for="w{{ $inputPrefix }}Above2000km">Above 2000 Kms <span class="text-danger">*</span></label>
                            <input type="text" class="form-control @error('w'.$inputPrefix.'Above2000km') is-invalid @enderror" 
-                              id="w{{ $inputPrefix }}Above2000km" 
-                              name="w{{ $inputPrefix }}Above2000km" 
-                              placeholder="₹" 
-                              value="{{ old('w'.$inputPrefix.'Above2000km') }}" required />
-                           <div class="invalid-feedback">Please Enter Postal rate</div>
+                           id="w{{ $inputPrefix }}Above2000km" 
+                           name="w{{ $inputPrefix }}Above2000km" 
+                           placeholder="₹" 
+                           value="{{ old('w'.$inputPrefix.'Above2000km') }}" required />
+                           <div class="invalid-feedback">Please Enter Postal Rate</div>
                         </div>
                      </div>
                   </div>
@@ -108,27 +106,27 @@
                         <div class="col-md-2 mb-3">
                            <label for="w2000gmLocal">Local  <span class="text-danger">*</span></label>
                            <input type="text" class="form-control @error('w2000gmLocal') is-invalid @enderror" id="w2000gmLocal" name="w2000gmLocal" placeholder="₹" value="{{ old('w2000gmLocal') }}" required />
-                           <div class="invalid-feedback">Please Enter Postal rate</div>
+                           <div class="invalid-feedback">Please Enter Postal Rate</div>
                         </div>
                         <div class="col-md-2 mb-3">
                            <label for="w2000gm200km">Upto 200 Kms <span class="text-danger">*</span></label>
                            <input type="text" class="form-control @error('w2000gm200km') is-invalid @enderror" id="w2000gm200km" name="w2000gm200km" placeholder="₹" value="{{ old('w2000gm200km') }}" required />
-                           <div class="invalid-feedback">Please Enter Postal rate</div>
+                           <div class="invalid-feedback">Please Enter Postal Rate</div>
                         </div>
                         <div class="col-md-2 mb-3">
                            <label for="w2000gm201to1000km">201 - 1000 Kms <span class="text-danger">*</span></label>
                            <input type="text" class="form-control @error('w2000gm201to1000km') is-invalid @enderror" id="w2000gm201to1000km" name="w2000gm201to1000km" placeholder="₹" value="{{ old('w2000gm201to1000km') }}" required />
-                           <div class="invalid-feedback">Please Enter Postal rate</div>
+                           <div class="invalid-feedback">Please Enter Postal Rate</div>
                         </div>
                         <div class="col-md-2 mb-3">
                            <label for="w2000gm1001to2000km">1001 - 2000 Kms <span class="text-danger">*</span></label>
                            <input type="text" class="form-control @error('w2000gm1001to2000km') is-invalid @enderror" id="w2000gm1001to2000km" name="w2000gm1001to2000km" placeholder="₹" value="{{ old('w2000gm1001to2000km') }}" required />
-                           <div class="invalid-feedback">Please Enter Postal rate</div>
+                           <div class="invalid-feedback">Please Enter Postal Rate</div>
                         </div>
                         <div class="col-md-2 mb-3">
                            <label for="w2000gmAbove2000km">Above 2000 Kms <span class="text-danger">*</span></label>
                            <input type="text" class="form-control @error('w2000gmAbove2000km') is-invalid @enderror" id="w2000gmAbove2000km" name="w2000gmAbove2000km" placeholder="₹" value="{{ old('w2000gmAbove2000km') }}" required />
-                           <div class="invalid-feedback">Please Enter Postal rate</div>
+                           <div class="invalid-feedback">Please Enter Postal Rate</div>
                         </div>
                      </div>
                   </div>
@@ -145,27 +143,27 @@
                         <div class="col-md-2 mb-3">
                            <label for="w3000gmLocal">Local  <span class="text-danger">*</span></label>
                            <input type="text" class="form-control @error('w3000gmLocal') is-invalid @enderror" id="w3000gmLocal" name="w3000gmLocal" placeholder="₹" value="{{ old('w3000gmLocal') }}" required />
-                           <div class="invalid-feedback">Please Enter Postal rate</div>
+                           <div class="invalid-feedback">Please Enter Postal Rate</div>
                         </div>
                         <div class="col-md-2 mb-3">
                            <label for="w3000gm200km">Upto 200 Kms <span class="text-danger">*</span></label>
                            <input type="text" class="form-control @error('w3000gm200km') is-invalid @enderror" id="w3000gm200km" name="w3000gm200km" placeholder="₹" value="{{ old('w3000gm200km') }}" required />
-                           <div class="invalid-feedback">Please Enter Postal rate</div>
+                           <div class="invalid-feedback">Please Enter Postal Rate</div>
                         </div>
                         <div class="col-md-2 mb-3">
                            <label for="w3000gm201to1000km">201 - 1000 Kms <span class="text-danger">*</span></label>
                            <input type="text" class="form-control @error('w3000gm201to1000km') is-invalid @enderror" id="w3000gm201to1000km" name="w3000gm201to1000km" placeholder="₹" value="{{ old('w3000gm201to1000km') }}" required />
-                           <div class="invalid-feedback">Please Enter Postal rate</div>
+                           <div class="invalid-feedback">Please Enter Postal Rate</div>
                         </div>
                         <div class="col-md-2 mb-3">
                            <label for="w3000gm1001to2000km">1001 - 2000 Kms <span class="text-danger">*</span></label>
                            <input type="text" class="form-control @error('w3000gm1001to2000km') is-invalid @enderror" id="w3000gm1001to2000km" name="w3000gm1001to2000km" placeholder="₹" value="{{ old('w3000gm1001to2000km') }}" required />
-                           <div class="invalid-feedback">Please Enter Postal rate</div>
+                           <div class="invalid-feedback">Please Enter Postal Rate</div>
                         </div>
                         <div class="col-md-2 mb-3">
                            <label for="w3000gmAbove2000km">Above 2000 Kms <span class="text-danger">*</span></label>
                            <input type="text" class="form-control @error('w3000gmAbove2000km') is-invalid @enderror" id="w3000gmAbove2000km" name="w3000gmAbove2000km" placeholder="₹" value="{{ old('w3000gmAbove2000km') }}" required />
-                           <div class="invalid-feedback">Please Enter Postal rate</div>
+                           <div class="invalid-feedback">Please Enter Postal Rate</div>
                         </div>
                      </div>
                   </div>
@@ -197,27 +195,27 @@
                         <div class="col-md-2 mb-3">
                            <label for="w100gmLocal">Local  <span class="text-danger">*</span></label>
                            <input type="text" class="form-control @error('w100gmLocal') is-invalid @enderror" id="w100gmLocal" name="w100gmLocal" placeholder="₹" value="{{ old('w100gmLocal') }}" required />
-                           <div class="invalid-feedback">Please Enter Postal rate</div>
+                           <div class="invalid-feedback">Please Enter Postal Rate</div>
                         </div>
                         <div class="col-md-2 mb-3">
                            <label for="w100gm200km">Upto 200 Kms <span class="text-danger">*</span></label>
                            <input type="text" class="form-control @error('w100gm200km') is-invalid @enderror" id="w100gm200km" name="w100gm200km" placeholder="₹" value="{{ old('w100gm200km') }}" required />
-                           <div class="invalid-feedback">Please Enter Postal rate</div>
+                           <div class="invalid-feedback">Please Enter Postal Rate</div>
                         </div>
                         <div class="col-md-2 mb-3">
                            <label for="w100gm201to1000km">201 - 1000 Kms <span class="text-danger">*</span></label>
                            <input type="text" class="form-control @error('w100gm201to1000km') is-invalid @enderror" id="w100gm201to1000km" name="w100gm201to1000km" placeholder="₹" value="{{ old('w100gm201to1000km') }}" required />
-                           <div class="invalid-feedback">Please Enter Postal rate</div>
+                           <div class="invalid-feedback">Please Enter Postal Rate</div>
                         </div>
                         <div class="col-md-2 mb-3">
                            <label for="w100gm1001to2000km">1001 - 2000 Kms <span class="text-danger">*</span></label>
                            <input type="text" class="form-control @error('w100gm1001to2000km') is-invalid @enderror" id="w100gm1001to2000km" name="w100gm1001to2000km" placeholder="₹" value="{{ old('w100gm1001to2000km') }}" required />
-                           <div class="invalid-feedback">Please Enter Postal rate</div>
+                           <div class="invalid-feedback">Please Enter Postal Rate</div>
                         </div>
                         <div class="col-md-2 mb-3">
                            <label for="w100gmAbove2000km">Above 2000 Kms <span class="text-danger">*</span></label>
                            <input type="text" class="form-control @error('w100gmAbove2000km') is-invalid @enderror" id="w100gmAbove2000km" name="w100gmAbove2000km" placeholder="₹" value="{{ old('w100gmAbove2000km') }}" required />
-                           <div class="invalid-feedback">Please Enter Postal rate</div>
+                           <div class="invalid-feedback">Please Enter Postal Rate</div>
                         </div>
                      </div>
                   </div>
@@ -249,27 +247,27 @@
                         <div class="col-md-2 mb-3">
                            <label for="first2pages_local">Local  <span class="text-danger">*</span></label>
                            <input type="text" class="form-control @error('first2pages_local') is-invalid @enderror" id="first2pages_local" name="first2pages_local" placeholder="₹" value="{{ old('first2pages_local') }}" required />
-                           <div class="invalid-feedback">Please enter postal rate</div>
+                           <div class="invalid-feedback">Please Enter Postal Rate</div>
                         </div>
                         <div class="col-md-2 mb-3">
                            <label for="first2pages_200km">Upto 200 Kms <span class="text-danger">*</span></label>
                            <input type="text" class="form-control @error('first2pages_200km') is-invalid @enderror" id="first2pages_200km" name="first2pages_200km" placeholder="₹" value="{{ old('first2pages_200km') }}" required />
-                           <div class="invalid-feedback">Please enter postal rate</div>
+                           <div class="invalid-feedback">Please Enter Postal Rate</div>
                         </div>
                         <div class="col-md-2 mb-3">
                            <label for="first2pages_201to1000km">201 - 1000 Kms <span class="text-danger">*</span></label>
                            <input type="text" class="form-control @error('first2pages_201to1000km') is-invalid @enderror" id="first2pages_201to1000km" name="first2pages_201to1000km" placeholder="₹" value="{{ old('first2pages_201to1000km') }}" required />
-                           <div class="invalid-feedback">Please enter postal rate</div>
+                           <div class="invalid-feedback">Please Enter Postal Rate</div>
                         </div>
                         <div class="col-md-2 mb-3">
                            <label for="first2pages_1001to2000km">1001 - 2000 Kms <span class="text-danger">*</span></label>
                            <input type="text" class="form-control @error('first2pages_1001to2000km') is-invalid @enderror" id="first2pages_1001to2000km" name="first2pages_1001to2000km" placeholder="₹" value="{{ old('first2pages_1001to2000km') }}" required />
-                           <div class="invalid-feedback">Please enter postal rate</div>
+                           <div class="invalid-feedback">Please Enter Postal Rate</div>
                         </div>
                         <div class="col-md-2 mb-3">
                            <label for="first2pages_above2000km">Above 2000 Kms <span class="text-danger">*</span></label>
                            <input type="text" class="form-control @error('first2pages_above2000km') is-invalid @enderror" id="first2pages_above2000km" name="first2pages_above2000km" placeholder="₹" value="{{ old('first2pages_above2000km') }}" required />
-                           <div class="invalid-feedback">Please enter postal rate</div>
+                           <div class="invalid-feedback">Please Enter Postal Rate</div>
                         </div>
                      </div>
                   </div>
@@ -286,27 +284,27 @@
                         <div class="col-md-2 mb-3">
                            <label for="additional_page_local">Local  <span class="text-danger">*</span></label>
                            <input type="text" class="form-control @error('additional_page_local') is-invalid @enderror" id="additional_page_local" name="additional_page_local" placeholder="₹" value="{{ old('additional_page_local') }}" required />
-                           <div class="invalid-feedback">Please enter postal rate</div>
+                           <div class="invalid-feedback">Please Enter Postal Rate</div>
                         </div>
                         <div class="col-md-2 mb-3">
                            <label for="additional_page_200km">Upto 200 Kms <span class="text-danger">*</span></label>
                            <input type="text" class="form-control @error('additional_page_200km') is-invalid @enderror" id="additional_page_200km" name="additional_page_200km" placeholder="₹" value="{{ old('additional_page_200km') }}" required />
-                           <div class="invalid-feedback">Please enter postal rate</div>
+                           <div class="invalid-feedback">Please Enter Postal Rate</div>
                         </div>
                         <div class="col-md-2 mb-3">
                            <label for="additional_page_201to1000km">201 - 1000 Kms <span class="text-danger">*</span></label>
                            <input type="text" class="form-control @error('additional_page_201to1000km') is-invalid @enderror" id="additional_page_201to1000km" name="additional_page_201to1000km" placeholder="₹" value="{{ old('additional_page_201to1000km') }}" required />
-                           <div class="invalid-feedback">Please enter postal rate</div>
+                           <div class="invalid-feedback">Please Enter Postal Rate</div>
                         </div>
                         <div class="col-md-2 mb-3">
                            <label for="additional_page_1001to2000km">1001 - 2000 Kms <span class="text-danger">*</span></label>
                            <input type="text" class="form-control @error('additional_page_1001to2000km') is-invalid @enderror" id="additional_page_1001to2000km" name="additional_page_1001to2000km" placeholder="₹" value="{{ old('additional_page_1001to2000km') }}" required />
-                           <div class="invalid-feedback">Please enter postal rate</div>
+                           <div class="invalid-feedback">Please Enter Postal Rate</div>
                         </div>
                         <div class="col-md-2 mb-3">
                            <label for="additional_page_above2000km">Above 2000 Kms <span class="text-danger">*</span></label>
                            <input type="text" class="form-control @error('additional_page_above2000km') is-invalid @enderror" id="additional_page_above2000km" name="additional_page_above2000km" placeholder="₹" value="{{ old('additional_page_above2000km') }}" required />
-                           <div class="invalid-feedback">Please enter postal rate</div>
+                           <div class="invalid-feedback">Please Enter Postal Rate</div>
                         </div>
                      </div>
                   </div>
@@ -325,8 +323,6 @@
          </form>
          @endif
       </div>
-      <!-- /Custom Boostrap Validation -->
    </div>
 </div>
-<!-- /Row -->
 @endsection

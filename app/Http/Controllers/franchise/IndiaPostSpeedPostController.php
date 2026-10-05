@@ -3145,20 +3145,28 @@ public function confirmAndStoreExcel(Request $request, RateCalculator $rateCalcu
                     $franchise->decrement("india_credit_amount", $payment_amount);
                 }
                 
-                // Calculate commission
-                $commission = $rateCalculater->calculateCommissionForIndiaPost(
-                    $weight,
-                    $payment_amount,
-                    IndiaPostSpeedPostParcel::SERVICE_TYPE_INDIA_POST_SPEED
-                );
-                
-                FranchiseCommissionDetail::create([
-                    "franchise_id" => $franchiseId,
-                    "service_type" => IndiaPostSpeedPostParcel::SERVICE_TYPE_INDIA_POST_SPEED,
-                    "amount" => $payment_amount / 1.18,
-                    "commission" => number_format($commission, 2, ".", ""),
-                    "payment_method" => "prepaid",
-                ]);
+               // Calculate franchise-specific commission
+$serviceType = IndiaPostSpeedPostParcel::SERVICE_TYPE_INDIA_POST_SPEED;
+
+$netAmount = $payment_amount / 1.18;
+
+$commissionData = $rateCalculater->calculateFranchiseCommission(
+    $franchiseId,
+    $serviceType,
+    $netAmount
+);
+
+$commissionRate = $commissionData['rate'];
+$commission = $commissionData['commission'];
+
+FranchiseCommissionDetail::create([
+    "franchise_id" => $franchiseId,
+    "service_type" => $serviceType,
+    "amount" => $netAmount,
+    "commission" => $commission,
+    "commission_rate" => $commissionRate,
+    "payment_method" => "prepaid",
+]);
                 
                 // Save barcode
                 if ($barcodeOption === "barcode_auto" && $franchiseSeriesDetails) {

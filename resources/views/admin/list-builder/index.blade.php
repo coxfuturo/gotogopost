@@ -1,7 +1,5 @@
 @extends('admin.layouts.master')
-
 @section('title') {{ $listBuilderClass::$name }} @endsection
-
 @section('content')
 @php   @endphp
 <div class="row">
@@ -18,7 +16,6 @@
                         {{-- @endcan--}}
                         @endif
                     </div>
-
                 </div>
                 <h5 class="card-title mb-0 text-white">{{ $listBuilderClass::$name }}</h5>
             </div>
@@ -52,12 +49,11 @@
     </div>
 </div>
 
-
 <div class="row">
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-            {!! $listBuilderClass::beforeDataTable() !!}
+                {!! $listBuilderClass::beforeDataTable() !!}
                 <div class="table-responsive">
                     <table class="table table-striped custom-table datatable" id="dataTable">
                         <thead>
@@ -80,21 +76,20 @@
 
 @push('page-datatable')
 <script>
-        var dataTable = $('#dataTable').DataTable({
-            ajax: {
-                url: "{{request()->fullurl()}}",
+    var dataTable = $('#dataTable').DataTable({
+        ajax: {
+            url: "{{request()->fullurl()}}",
+        },
+        columns: [
+            {data: 'DT_RowIndex', width: '5%'},
+            @foreach($listBuilderClass::columns() as $column)
+            {{--                    @if($column->hasPermission($listBuilderClass::$permissionPrefix))--}}
+            {
+                data: "{{ $column->property }}"
             },
-            columns: [
-                {data: 'DT_RowIndex', width: '5%'},
-                    @foreach($listBuilderClass::columns() as $column)
-{{--                    @if($column->hasPermission($listBuilderClass::$permissionPrefix))--}}
-                {
-                    data: "{{ $column->property }}"
-                },
-{{--                @endif--}}
-                @endforeach
-            ]
-        });
-
-    </script>
+            {{--                @endif--}}
+            @endforeach
+        ]
+    });
+</script>
 @endpush

@@ -170,10 +170,10 @@
 
                     <div class="details">
 
-                        <div class="service-title">GOTOGO Business Parcel</div>
+                        <div class="service-title">Gotogo Business Parcel</div>
                         <table>
                             <tr>
-                                <td><strong>Franchise NO:</strong> {{ $linkDetail->franchise_no }}</td>
+                                <td><strong>Business Associate NO:</strong> {{ $linkDetail->franchise_no }}</td>
                             </tr>
                             <tr>
                                 <td><strong>CPH NO:</strong> {{ $linkDetail->cms_no }}</td>

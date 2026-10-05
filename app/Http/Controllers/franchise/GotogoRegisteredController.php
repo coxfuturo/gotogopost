@@ -791,13 +791,28 @@ class GotogoRegisteredController extends Controller
                 return response()->json(['status' => 400, 'message' => 'Balance Low']);
             }
 
-            FranchiseCommissionDetail::create([
-                "franchise_id" => $franchiseId,
-                "service_type" => GotogoRegisteredParcel::SERVICE_TYPE_GOTO_POST_REGISTERED,
-                "amount" => $payment_amount / 1.18,
-                "commission" => number_format($commission, 2, '.', ''),
-                "payment_method" => 'prepaid',
-            ]);
+          // Franchise-specific commission
+$serviceType = GotogoRegisteredParcel::SERVICE_TYPE_GOTO_POST_REGISTERED;
+
+$netAmount = $payment_amount / 1.18;
+
+$commissionData = $rateCalculater->calculateFranchiseCommission(
+    $franchiseId,
+    $serviceType,
+    $netAmount
+);
+
+$commissionRate = $commissionData['rate'];
+$commission = $commissionData['commission'];
+
+FranchiseCommissionDetail::create([
+    "franchise_id" => $franchiseId,
+    "service_type" => $serviceType,
+    "amount" => $netAmount,
+    "commission" => $commission,
+    "commission_rate" => $commissionRate,
+    "payment_method" => 'prepaid',
+]);
 
             if ($request->payment_method === 'manager' || $request->payment_method === 'pickup') {
         $datamanager = new ManagerCommissionDetail();

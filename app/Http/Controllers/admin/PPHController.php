@@ -316,14 +316,14 @@ class PPHController extends Controller
             foreach ($models as $serviceType => $model) {
                 $serviceNumber = $serviceNumbers[$serviceType] ?? null;
                 $bagfromfranchise = CMSBag::where('service_type', $serviceNumber)
-                    ->where('pph_id',  $id)
-                    ->whereDate('received_date', Carbon::today())
-                    ->pluck('id')
-                    ->toArray();
+                ->where('pph_id',  $id)
+                ->whereDate('received_date', Carbon::today())
+                ->pluck('id')
+                ->toArray();
 
                 $parcels = $model::whereIn('source_cms_bag_id', $bagfromfranchise)
-                    ->orWhereIn('destination_cms_bag_id', $bagfromfranchise)
-                    ->get();
+                ->orWhereIn('destination_cms_bag_id', $bagfromfranchise)
+                ->get();
 
                 $parcels->each(function ($parcel) use ($serviceType, $serviceNumber) {
                     $parcel->service_type = $serviceType;
@@ -345,14 +345,14 @@ class PPHController extends Controller
                 foreach ($models as $serviceType => $model) {
                     $serviceNumber = $serviceNumbers[$serviceType] ?? null;
                     $bagfromfranchise = CMSBag::where('service_type', $serviceNumber)
-                        ->where('pph_id',  $id)
-                        ->whereDate('received_date', $date)
-                        ->pluck('id')
-                        ->toArray();
+                    ->where('pph_id',  $id)
+                    ->whereDate('received_date', $date)
+                    ->pluck('id')
+                    ->toArray();
 
                     $parcels = $model::whereIn('source_cms_bag_id', $bagfromfranchise)
-                        ->orWhereIn('destination_cms_bag_id', $bagfromfranchise)
-                        ->get(['barcode_no', 'pickup_name', 'pickup_pincode', 'consignee_name', 'consignee_pincode']);
+                    ->orWhereIn('destination_cms_bag_id', $bagfromfranchise)
+                    ->get(['barcode_no', 'pickup_name', 'pickup_pincode', 'consignee_name', 'consignee_pincode']);
 
                     $parcels->each(function ($parcel) use ($serviceType, $serviceNumber) {
                         $parcel->service_type = $serviceType;
@@ -416,27 +416,28 @@ class PPHController extends Controller
     public function delete($id)
     {
         try {
-            PPH::findorfail($id)->delete();
-            return redirect()->route('admin.pph.index')->with('success', 'PPH Deleted Successfully');
-        } catch (\Exception $th) {
-            return back()->with('error', $th->getMessage())->withInput();
-        }
+         $pph = Pph::findOrFail($id);
+         $pph->delete();
+         return redirect()->route('admin.pph.index')->with('success', 'PPH Deleted Successfully');
+     } catch (\Exception $th) {
+        return back()->with('error', $th->getMessage())->withInput();
     }
+}
 
 
-    public function commissions(Request $request)
-    {
+public function commissions(Request $request)
+{
 
-        $data = PPH::all();
+    $data = PPH::all();
 
-        return view('admin.pph.commissions', compact('data'));
-    }
+    return view('admin.pph.commissions', compact('data'));
+}
 
 
-    public function commissionDetail(Request $request, $id)
-    {
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
+public function commissionDetail(Request $request, $id)
+{
+    $startDate = $request->input('start_date');
+    $endDate = $request->input('end_date');
 
         $serviceTypes = [1, 3, 4]; // Allowed service types
 
@@ -450,34 +451,34 @@ class PPHController extends Controller
 
         // Fetch commission details for existing service types
         $commissionData = PPHCommissionDetail::where('pph_id', $id)
-            ->whereIn('service_type', $serviceTypes)
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->selectRaw('service_type, COALESCE(SUM(amount), 0) as total_amount, COALESCE(SUM(commission), 0) as total_commission, MAX(created_at) as created_at')
-            ->groupBy('service_type')
-            ->get()
+        ->whereIn('service_type', $serviceTypes)
+        ->whereBetween('created_at', [$startDate, $endDate])
+        ->selectRaw('service_type, COALESCE(SUM(amount), 0) as total_amount, COALESCE(SUM(commission), 0) as total_commission, MAX(created_at) as created_at')
+        ->groupBy('service_type')
+        ->get()
             ->keyBy('service_type'); // Index by service_type for easy lookup
 
         // Ensure all service types are present with 0 values if missing
-        $data = collect($serviceTypes)->map(function ($serviceType) use ($commissionData) {
-            return (object) [
-                'service_type' => GotogoSpeedPostParcel::getServiceType($serviceType),
-                'total_amount' => $commissionData[$serviceType]->total_amount ?? 0,
-                'total_commission' => $commissionData[$serviceType]->total_commission ?? 0,
+            $data = collect($serviceTypes)->map(function ($serviceType) use ($commissionData) {
+                return (object) [
+                    'service_type' => GotogoSpeedPostParcel::getServiceType($serviceType),
+                    'total_amount' => $commissionData[$serviceType]->total_amount ?? 0,
+                    'total_commission' => $commissionData[$serviceType]->total_commission ?? 0,
                 'created_at' => $commissionData[$serviceType]->created_at ?? null, // Avoid error on created_at
             ];
         });
 
-        $franchiseDetails = PPH::findOrFail($id);
+            $franchiseDetails = PPH::findOrFail($id);
 
-        return view('admin.pph.commissionDetail', compact('data', 'franchiseDetails'));
-    }
+            return view('admin.pph.commissionDetail', compact('data', 'franchiseDetails'));
+        }
 
 
 
-    public function printCommissionDetail(Request $request, $id)
-    {
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
+        public function printCommissionDetail(Request $request, $id)
+        {
+            $startDate = $request->input('start_date');
+            $endDate = $request->input('end_date');
 
         $serviceTypes = [1, 3, 4]; // Allowed service types
         $gstRate = 18; // GST percentage
@@ -492,10 +493,10 @@ class PPHController extends Controller
         }
 
         $data = PPHCommissionDetail::where('pph_id', $id)
-            ->whereIn('service_type', $serviceTypes)
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->selectRaw('SUM(commission) as total_commission')
-            ->first();
+        ->whereIn('service_type', $serviceTypes)
+        ->whereBetween('created_at', [$startDate, $endDate])
+        ->selectRaw('SUM(commission) as total_commission')
+        ->first();
 
 
 

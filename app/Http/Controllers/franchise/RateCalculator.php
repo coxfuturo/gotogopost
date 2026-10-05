@@ -3,9 +3,6 @@
 
 
 namespace App\Http\Controllers\franchise;
-
-
-
 use App\Http\Controllers\Controller;
 use App\Models\PincodeMaster; 
 use App\Models\Pincode;
@@ -25,6 +22,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Psr\Http\Message\ResponseInterface;
 use App\Models\FranchiseCommissionDetail;
+use App\Models\FranchiseServiceCommission;
 
 
 
@@ -170,6 +168,25 @@ print_r($data); exit;
         'status' => false,
         'message' => 'Distance not found or location not valid',
         'api_response' => $data
+    ];
+}
+
+
+public function calculateFranchiseCommission(
+    $franchiseId,
+    $serviceType,
+    $amount
+) {
+    $commissionRate = FranchiseServiceCommission::getActiveRate(
+        $franchiseId,
+        $serviceType
+    );
+
+    $commission = ($amount * $commissionRate) / 100;
+
+    return [
+        'rate' => $commissionRate,
+        'commission' => number_format($commission, 2, '.', '')
     ];
 }
 

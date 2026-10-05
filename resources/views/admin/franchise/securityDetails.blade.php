@@ -7,13 +7,11 @@
 @push('add-modal-code')
 
 <div class="col-auto float-end ms-auto">
-    <button id="priceModalBtn" style="margin-right:10px;" class="btn add-btn">Add Security</button>
+    <button id="priceModalBtn" style="margin-right:10px;" class="btn add-btn">Add Advance</button>
 </div>
 @endpush
 
-
 @push('add-modal-code')
-
 
 @endpush
 
@@ -114,24 +112,19 @@
     </div>
 </form>
 
-
-
 <div class="row">
     <div class="col-md-12">
-
-        
         <div class="card">
             <div class="card-body">
                 <ul class="list-unstyled d-flex justify-content-between" style="flex-wrap:wrap">
-                    <li><strong>Franchise No:</strong> {{ $franchiseDetails->franchise_no }}</li>
+                    <li><strong>Business Associate No:</strong> {{ $franchiseDetails->franchise_no }}</li>
                     <li><strong>Name:</strong> {{ $franchiseDetails->name }}</li>
                     <li><strong>Pincode:</strong> {{ $franchiseDetails->pincode }}</li>
-            
                 </ul>
                 <ul class="list-unstyled d-flex justify-content-between" style="flex-wrap:wrap">
                     <li><strong>Mobile:</strong> {{ $franchiseDetails->mobile }}</li>
                     <li><strong>IndiaPost Balance:</strong> {{ $franchiseDetails->indiapost_balance }}</li>
-                    <li><strong>GOTOGO Balance:</strong> {{ $franchiseDetails->gotogo_balance  }}</li>
+                    <li><strong>Gotogo Balance:</strong> {{ $franchiseDetails->gotogo_balance  }}</li>
                 </ul>
                 <div class="table-responsive table-newdatatable" id="franchise_daily_booking_report">
                     <table class="table table-new custom-table mb-0 datatable">
@@ -162,29 +155,27 @@
        
     </div>
 </div>
-
-
 <!-- Price Modal -->
 <div class="modal fade" id="priceModal" tabindex="-1" aria-labelledby="priceModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="priceModalLabel">Add Credit</h5>
+                <h5 class="modal-title" id="priceModalLabel">Add Advance</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form action="{{ route('admin.franchise.securityDetails', ['id' => request()->route('id')]) }}" method = "Post">
                     @csrf
                      <div class="mb-3">
-                        <label for="select" class="form-label">Select Credit Type</label><br>
+                        <label for="select" class="form-label">Select Advance Type</label><br>
                         <select name="type" class="form-form" style="width:100%">
-                            <option value="gotogo">Gotogo Credit</option>
-                            <option value="indiaPost">India Post Credit</option>
+                            <option value="gotogo">Gotogo Post Serveces Advance Amount</option>
+                            <option value="indiaPost">India Post Serveces Advance Amount</option>
                         </select>
                     </div>
 
                     <div class="mb-3">
-                        <label for="price" class="form-label">Credit</label>
+                        <label for="price" class="form-label">Advance Amount</label>
                         <input type="text" class="form-control" name="amount" id="price" placeholder="Enter amount">
                     </div>
                     <button type="submit" class="btn btn-primary">Save</button>

@@ -25,6 +25,8 @@ use App\Http\Controllers\admin\WebPaymentController;
 use App\Http\Controllers\admin\PaymentController;
 use App\Http\Controllers\admin\IndiaPostBarcodeController;
 use App\Http\Controllers\admin\AllotedBarcodeController;
+use App\Http\Controllers\admin\ECustomerController;
+use App\Http\Controllers\admin\MManagerController;
 
 // use App\Http\Controllers\user\userController;
 
@@ -95,6 +97,8 @@ Route::group([
 
         Route::get('/payment/credit/{membertype}', 'paymentCreate')->name('admin.franchise.payment.create');
         Route::match(['GET', 'POST'], 'paymentCreate/store', 'store')->name('admin.franchise-payment.store');
+         Route::get('/view/{id}', 'view')->name('admin.franchise.view');
+         Route::post('/view/{id}/commission', 'saveFranchiseCommission')->name('admin.franchise.commission.save');
 
         // -------------------------
         //   Correct Service Routes
@@ -213,6 +217,126 @@ Route::group([
         Route::get('/delete/{id}', 'delete')->name('admin.pickup-details.delete');
     });
 
+Route::controller(ECustomerController::class)
+    ->prefix('e-customer')
+    ->group(function () {
+
+        Route::get('/index', 'index')
+            ->name('admin.e-customer.index');
+
+        Route::match(['GET', 'POST'], '/create', 'create')
+            ->name('admin.e-customer.create');
+
+        Route::match(['GET', 'POST'], '/edit/{id}', 'edit')
+            ->name('admin.e-customer.edit');
+
+        Route::post('/store', 'store')
+            ->name('admin.e-customer.store');
+
+        Route::post('/update/{id}', 'update')
+            ->name('admin.e-customer.update');
+
+        Route::post('/status', 'status')
+            ->name('admin.e-customer.status');
+
+        Route::get('/delete/{id}', 'delete')
+            ->name('admin.e-customer.delete');
+
+        Route::get('/view/{id}', 'view')
+    ->name('admin.e-customer.view');
+    Route::match(['GET', 'POST'], '/securityDetails/{id}', 'securityDetails')
+    ->name('admin.e-customer.securityDetails');
+    Route::post('/commission/save/{id}', 'saveCommission')
+    ->name('admin.e_customer.commission.save');
+
+    Route::post('/service-status', 'serviceStatus')
+            ->name('admin.e-customer.serviceStatus');
+
+
+        // -------------------------
+        // Business Bulk Services
+        // -------------------------
+
+        Route::get(
+            '/service/go-speed-post-parcel/{id}',
+            'speed_post_parcel'
+        )->name('admin.e-customer.service.go-speed-post-parcel');
+
+        Route::get(
+            '/service/go-business-parcel/{id}',
+            'bussiness_parcel'
+        )->name('admin.e-customer.service.go-business-parcel');
+
+        Route::get(
+            '/service/go-registered/{id}',
+            'registered'
+        )->name('admin.e-customer.service.go-registered');
+
+        Route::get(
+            '/service/india-post-speed-post/{id}',
+            'india_post_speed'
+        )->name('admin.e-customer.service.india-post-speed-post');
+
+        Route::get(
+            '/service/india-post-business/{id}',
+            'bussiness_post'
+        )->name('admin.e-customer.service.india-post-business');
+
+        Route::get(
+            '/service/india-post-business/air/{id}',
+            'bussiness_post_air'
+        )->name('admin.e-customer.service.india-post-business.air');
+    });
+
+
+// Sales Marketing Management
+Route::controller(MManagerController::class)->prefix('m-manager')->group(function () {
+    Route::get('/index', 'index')
+        ->name('admin.m_manager.index');
+
+    // Create
+    Route::match(['GET', 'POST'], '/create', 'create')
+        ->name('admin.m_manager.create');
+
+    // Store
+    Route::post('/store', 'store')
+        ->name('admin.m_manager.store');
+
+    // Edit
+    Route::match(['GET', 'POST'], '/edit/{id}', 'edit')
+        ->name('admin.m_manager.edit');
+
+    // Update
+    Route::post('/update/{id}', 'update')
+        ->name('admin.m_manager.update');
+
+    // View
+    Route::get('/view/{id}', 'view')
+        ->name('admin.m_manager.view');
+
+    // Status
+    Route::post('/status', 'status')
+        ->name('admin.m_manager.status');
+
+    // Advance Amount
+    Route::match(['GET', 'POST'], '/security-details/{id}', 'securityDetails')
+        ->name('admin.m_manager.securityDetails');
+
+    // Credit Amount
+    Route::match(['GET', 'POST'], '/credit-details/{id}', 'creditDetails')
+        ->name('admin.m_manager.creditDetails');
+
+    // Delete
+    Route::get('/delete/{id}', 'delete')
+        ->name('admin.m_manager.delete');
+
+        Route::post('/commission/save/{id}', 'saveCommission')
+    ->name('admin.m_manager.commission.save');
+
+    Route::post('/service-status', 'serviceStatus')
+    ->name('admin.m_manager.serviceStatus');
+});
+
     //Postal Rates Management
     Route::controller(PostalRatesController::class)->prefix('postal-rates')->group(function () {
         Route::get('/index', 'index')->name('admin.postal-rates.index');
@@ -276,6 +400,9 @@ Route::group([
         Route::post('/store', 'store')->name('admin.commission.store');
         Route::match(['GET', 'POST'], '/edit', 'edit')->name('admin.commission.edit');
         Route::get('/delete/{id}', 'delete')->name('admin.commission.delete');
+         Route::get('/franchise', 'franchiseCommission')->name('admin.commission.franchise');
+    Route::post('/franchise/save', 'saveFranchiseCommission')->name('admin.commission.franchise.save');
+
     });
 
     // India post commission
@@ -324,3 +451,4 @@ Route::group([
 
     Route::get('indiapostbarcodes/{id}/delete', [IndiaPostBarcodeController::class, 'destroy'])->name('indiapostbarcodes.destroy');
 });
+

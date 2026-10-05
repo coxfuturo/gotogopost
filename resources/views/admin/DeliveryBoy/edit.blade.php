@@ -1,7 +1,6 @@
 @extends('admin.layouts.master')
 @section('title') Delivery Boy Management @endsection
 @section('content')
-<!-- Row -->
 
 <style>
     .select2-container {
@@ -20,7 +19,6 @@
 <div class="row">
     <div class="col-sm-12">
 
-        <!-- Custom Boostrap Validation -->
         <div class="card">
             <form action="{{route('admin.deliveryBoy.edit',$data->id)}}" enctype="multipart/form-data" method="POST" class="needs-validation" novalidate>
                 @csrf
@@ -129,7 +127,7 @@
                                 </div>
 
                                 <div class="col-md-4 mb-3">
-                                    <label for="generated_id">Select Franchise</label>
+                                    <label for="generated_id">Select Business Associate</label>
                                     <div class="input-group">
                                         <select class="select-my" id="status" name="franchise_id" required>
                                             @foreach($franchise as $element)
@@ -158,11 +156,9 @@
 
             </form>
         </div>
-        <!-- /Custom Boostrap Validation -->
 
     </div>
 </div>
-<!-- /Row -->
 
 @push('page-javascript')
 
@@ -193,10 +189,8 @@
         const fileInput = document.getElementById(`fileInput${id}`);
         const fileContainer = document.getElementById(`fileContainer${id}`);
 
-        // Clear any previous content
         fileContainer.innerHTML = "";
 
-        // Check if a file is selected
         if (fileInput.files.length === 0) {
             fileContainer.innerHTML = "<p>No file selected.</p>";
             return;
@@ -205,7 +199,6 @@
         const fileType = file.type;
 
         if (fileType === "application/pdf") {
-            // Display PDF
             const reader = new FileReader();
             reader.onload = function(e) {
                 const pdfData = e.target.result;
